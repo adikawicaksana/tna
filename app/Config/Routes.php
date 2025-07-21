@@ -10,6 +10,7 @@ $routes->get('/login', 'Auth::login');
 $routes->post('/login', 'Auth::loginPost');
 $routes->post('/refresh-token', 'Auth::refreshWebToken');
 $routes->get('/logout', 'Auth::logout');
+$routes->get('/register', 'Register::index');
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth:web,autologin']);
 
 

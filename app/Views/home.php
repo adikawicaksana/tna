@@ -20,7 +20,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="assets/img/front-pages/landing-page/logo_provinsi_jatim.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -109,7 +109,14 @@
               aria-label="Toggle navigation">
               <i class="icon-base ti tabler-x icon-lg"></i>
             </button>
-            
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link fw-medium" aria-current="page" href="./">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link fw-medium" href="landing-page.html#landingFeatures">Formulir TNA SDMK</a>
+              </li>
+            </ul>
           </div>
           <div class="landing-menu-overlay d-lg-none"></div>
           <!-- Menu wrapper: End -->
@@ -119,7 +126,7 @@
 
             <!-- navbar button: Start -->
             <li>
-              <a href="./login" class="btn btn-primary" target="_blank"
+              <a href="./login" class="btn btn-primary"
                 ><span class="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span
                 ><span class="d-none d-md-block">Login/Register</span></a
               >

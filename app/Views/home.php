@@ -6,7 +6,7 @@
   class="layout-navbar-fixed layout-wide"
   dir="ltr"
   data-skin="default"
-  data-assets-path="assets/"
+  data-assets-path="<?= base_url('assets/') ?>"
   data-template="front-pages"
   data-bs-theme="light">
   <head>
@@ -15,12 +15,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Murnajati | Training Need Asessment</title>
+    <title><?= esc($title)?> Murnajati | Training Need Asessment</title>
 
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/img/front-pages/landing-page/logo_provinsi_jatim.png" />
+    <link rel="icon" type="image/x-icon" href="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,46 +29,46 @@
       href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap"
       rel="stylesheet" />
 
-    <link rel="stylesheet" href="assets/vendor/fonts/iconify-icons.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/fonts/iconify-icons.css') ?>" />
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
 
-    <link rel="stylesheet" href="assets/vendor/libs/node-waves/node-waves.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/node-waves/node-waves.css') ?>" />
 
-    <link rel="stylesheet" href="assets/vendor/libs/pickr/pickr-themes.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/pickr/pickr-themes.css') ?>" />
 
-    <link rel="stylesheet" href="assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="assets/css/demo.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/css/core.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('assets/css/demo.css') ?>" />
 
-    <link rel="stylesheet" href="assets/vendor/css/pages/front-page.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/css/pages/front-page.css') ?>" />
 
     <!-- Vendors CSS -->
 
     <!-- endbuild -->
 
-    <link rel="stylesheet" href="assets/vendor/libs/nouislider/nouislider.css" />
-    <link rel="stylesheet" href="assets/vendor/libs/swiper/swiper.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/nouislider/nouislider.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/swiper/swiper.css') ?>" />
 
     <!-- Page CSS -->
 
-    <link rel="stylesheet" href="assets/vendor/css/pages/front-page-landing.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/css/pages/front-page-landing.css') ?>" />
 
     <!-- Helpers -->
-    <script src="assets/vendor/js/helpers.js"></script>
+    <script src="<?= base_url('assets/vendor/js/helpers.js') ?>"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
-    <script src="assets/vendor/js/template-customizer.js"></script>
+    <script src="<?= base_url('assets/vendor/js/template-customizer.js') ?>"></script>
 
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 
-    <script src="assets/js/front-config.js"></script>
+    <script src="<?= base_url('assets/js/front-config.js') ?>"></script>
   </head>
 
   <body>
-    <script src="assets/vendor/js/dropdown-hover.js"></script>
-    <script src="assets/vendor/js/mega-dropdown.js"></script>
+    <script src="<?= base_url('assets/vendor/js/dropdown-hover.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/js/mega-dropdown.js') ?>"></script>
     <!-- Navbar: Start -->
     <nav class="layout-navbar shadow-none py-0">
       <div class="container">
@@ -90,7 +90,7 @@
             <a href="./" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <span class="text-primary">
-                  <img src="assets/img/front-pages/landing-page/logo_provinsi_jatim.png" height="32">
+                  <img src="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" height="32">
                 </span>
               </span>
               <span class="app-brand-text demo menu-text fw-bold ms-2 ps-1">MURNAJATI</span>
@@ -146,7 +146,7 @@
       <section id="hero-animation">
         <div id="landingHero" class="section-py landing-hero position-relative">
           <img
-            src="assets/img/front-pages/backgrounds/hero-bg.png"
+            src="<?= base_url('assets/img/front-pages/backgrounds/hero-bg.png') ?>"
             alt="hero background"
             class="position-absolute top-0 start-50 translate-middle-x object-fit-cover w-100 h-100"
             data-speed="1" />
@@ -164,13 +164,13 @@
               <a href="#" target="_blank">
                 <div id="heroAnimationImg" class="position-relative hero-dashboard-img">
                   <img
-                    src="assets/img/front-pages/landing-page/dashboard-murnajati.png"
+                    src="<?= base_url('assets/img/front-pages/landing-page/dashboard-murnajati.png') ?>"
                     alt="hero dashboard"
                     class="animation-img"
                     data-app-light-img="front-pages/landing-page/dashboard-murnajati.png"
                     data-app-dark-img="front-pages/landing-page/hero-dashboard-dark.png" />
                   <img
-                    src="assets/img/front-pages/landing-page/element-murnajati.png"
+                    src="<?= base_url('assets/img/front-pages/landing-page/element-murnajati.png') ?>"
                     alt="hero elements"
                     class="position-absolute hero-elements-img animation-img top-0 start-0"
                     data-app-light-img="front-pages/landing-page/element-murnajati.png"
@@ -194,7 +194,7 @@
             <span class="position-relative fw-extrabold z-1"
               >Everything you need
               <img
-                src="assets/img/front-pages/icons/section-title-icon.png"
+                src="<?= base_url('assets/img/front-pages/icons/section-title-icon.png') ?>"
                 alt="laptop charging"
                 class="section-title-img position-absolute object-fit-contain bottom-0 z-n1" />
             </span>
@@ -337,7 +337,7 @@
                 <span class="position-relative fw-extrabold z-1"
                   >What people say
                   <img
-                    src="assets/img/front-pages/icons/section-title-icon.png"
+                    src="<?= base_url('assets/img/front-pages/icons/section-title-icon.png') ?>"
                     alt="laptop charging"
                     class="section-title-img position-absolute object-fit-contain bottom-0 z-n1" />
                 </span>
@@ -364,7 +364,7 @@
                         <div class="card-body text-body d-flex flex-column justify-content-between h-100">
                           <div class="mb-4">
                             <img
-                              src="assets/img/front-pages/branding/logo-1.png"
+                              src="<?= base_url('assets/img/front-pages/branding/logo-1.png') ?>"
                               alt="client logo"
                               class="client-logo img-fluid" />
                           </div>
@@ -381,7 +381,7 @@
                           </div>
                           <div class="d-flex align-items-center">
                             <div class="avatar me-3 avatar-sm">
-                              <img src="assets/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
+                              <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt="Avatar" class="rounded-circle" />
                             </div>
                             <div>
                               <h6 class="mb-0">Cecilia Payne</h6>
@@ -396,7 +396,7 @@
                         <div class="card-body text-body d-flex flex-column justify-content-between h-100">
                           <div class="mb-4">
                             <img
-                              src="assets/img/front-pages/branding/logo-2.png"
+                              src="<?= base_url('assets/img/front-pages/branding/logo-2.png') ?>"
                               alt="client logo"
                               class="client-logo img-fluid" />
                           </div>
@@ -413,7 +413,7 @@
                           </div>
                           <div class="d-flex align-items-center">
                             <div class="avatar me-3 avatar-sm">
-                              <img src="assets/img/avatars/2.png" alt="Avatar" class="rounded-circle" />
+                              <img src="<?= base_url('assets/img/avatars/2.png') ?>" alt="Avatar" class="rounded-circle" />
                             </div>
                             <div>
                               <h6 class="mb-0">Eugenia Moore</h6>
@@ -428,7 +428,7 @@
                         <div class="card-body text-body d-flex flex-column justify-content-between h-100">
                           <div class="mb-4">
                             <img
-                              src="assets/img/front-pages/branding/logo-3.png"
+                              src="<?= base_url('assets/img/front-pages/branding/logo-3.png') ?>"
                               alt="client logo"
                               class="client-logo img-fluid" />
                           </div>
@@ -445,7 +445,7 @@
                           </div>
                           <div class="d-flex align-items-center">
                             <div class="avatar me-3 avatar-sm">
-                              <img src="assets/img/avatars/3.png" alt="Avatar" class="rounded-circle" />
+                              <img src="<?= base_url('assets/img/avatars/3.png') ?>" alt="Avatar" class="rounded-circle" />
                             </div>
                             <div>
                               <h6 class="mb-0">Curtis Fletcher</h6>
@@ -460,7 +460,7 @@
                         <div class="card-body text-body d-flex flex-column justify-content-between h-100">
                           <div class="mb-4">
                             <img
-                              src="assets/img/front-pages/branding/logo-4.png"
+                              src="<?= base_url('assets/img/front-pages/branding/logo-4.png') ?>"
                               alt="client logo"
                               class="client-logo img-fluid" />
                           </div>
@@ -477,7 +477,7 @@
                           </div>
                           <div class="d-flex align-items-center">
                             <div class="avatar me-3 avatar-sm">
-                              <img src="assets/img/avatars/4.png" alt="Avatar" class="rounded-circle" />
+                              <img src="<?= base_url('assets/img/avatars/4.png') ?>" alt="Avatar" class="rounded-circle" />
                             </div>
                             <div>
                               <h6 class="mb-0">Sara Smith</h6>
@@ -492,7 +492,7 @@
                         <div class="card-body text-body d-flex flex-column justify-content-between h-100">
                           <div class="mb-4">
                             <img
-                              src="assets/img/front-pages/branding/logo-5.png"
+                              src="<?= base_url('assets/img/front-pages/branding/logo-5.png') ?>"
                               alt="client logo"
                               class="client-logo img-fluid" />
                           </div>
@@ -509,7 +509,7 @@
                           </div>
                           <div class="d-flex align-items-center">
                             <div class="avatar me-3 avatar-sm">
-                              <img src="assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" />
+                              <img src="<?= base_url('assets/img/avatars/5.png') ?>" alt="Avatar" class="rounded-circle" />
                             </div>
                             <div>
                               <h6 class="mb-0">Eugenia Moore</h6>
@@ -524,7 +524,7 @@
                         <div class="card-body text-body d-flex flex-column justify-content-between h-100">
                           <div class="mb-4">
                             <img
-                              src="assets/img/front-pages/branding/logo-6.png"
+                              src="<?= base_url('assets/img/front-pages/branding/logo-6.png') ?>"
                               alt="client logo"
                               class="client-logo img-fluid" />
                           </div>
@@ -541,7 +541,7 @@
                           </div>
                           <div class="d-flex align-items-center">
                             <div class="avatar me-3 avatar-sm">
-                              <img src="assets/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
+                              <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt="Avatar" class="rounded-circle" />
                             </div>
                             <div>
                               <h6 class="mb-0">Sara Smith</h6>
@@ -568,7 +568,7 @@
               <div class="swiper-wrapper">
                 <div class="swiper-slide">
                   <img
-                    src="assets/img/front-pages/branding/logo_1-light.png"
+                    src="<?= base_url('assets/img/front-pages/branding/logo_1-light.png') ?>"
                     alt="client logo"
                     class="client-logo"
                     data-app-light-img="front-pages/branding/logo_1-light.png"
@@ -576,7 +576,7 @@
                 </div>
                 <div class="swiper-slide">
                   <img
-                    src="assets/img/front-pages/branding/logo_2-light.png"
+                    src="<?= base_url('assets/img/front-pages/branding/logo_2-light.png') ?>"
                     alt="client logo"
                     class="client-logo"
                     data-app-light-img="front-pages/branding/logo_2-light.png"
@@ -584,7 +584,7 @@
                 </div>
                 <div class="swiper-slide">
                   <img
-                    src="assets/img/front-pages/branding/logo_3-light.png"
+                    src="<?= base_url('assets/img/front-pages/branding/logo_3-light.png') ?>"
                     alt="client logo"
                     class="client-logo"
                     data-app-light-img="front-pages/branding/logo_3-light.png"
@@ -592,7 +592,7 @@
                 </div>
                 <div class="swiper-slide">
                   <img
-                    src="assets/img/front-pages/branding/logo_4-light.png"
+                    src="<?= base_url('assets/img/front-pages/branding/logo_4-light.png') ?>"
                     alt="client logo"
                     class="client-logo"
                     data-app-light-img="front-pages/branding/logo_4-light.png"
@@ -600,7 +600,7 @@
                 </div>
                 <div class="swiper-slide">
                   <img
-                    src="assets/img/front-pages/branding/logo_5-light.png"
+                    src="<?= base_url('assets/img/front-pages/branding/logo_5-light.png') ?>"
                     alt="client logo"
                     class="client-logo"
                     data-app-light-img="front-pages/branding/logo_5-light.png"
@@ -624,7 +624,7 @@
             <span class="position-relative fw-extrabold z-1"
               >Didukung oleh
               <img
-                src="assets/img/front-pages/icons/section-title-icon.png"
+                src="<?= base_url('assets/img/front-pages/icons/section-title-icon.png') ?>"
                 alt="laptop charging"
                 class="section-title-img position-absolute object-fit-contain bottom-0 z-n1" />
             </span>
@@ -637,7 +637,7 @@
                 <div
                   class="bg-label-primary border border-bottom-0 border-label-primary position-relative team-image-box">
                   <img
-                    src="assets/img/front-pages/landing-page/team-member-1.png"
+                    src="<?= base_url('assets/img/front-pages/landing-page/team-member-1.png') ?>"
                     class="position-absolute card-img-position bottom-0 start-50"
                     alt="human image" />
                 </div>
@@ -651,7 +651,7 @@
               <div class="card mt-3 mt-lg-0 shadow-none">
                 <div class="bg-label-info border border-bottom-0 border-label-info position-relative team-image-box">
                   <img
-                    src="assets/img/front-pages/landing-page/team-member-2.png"
+                    src="<?= base_url('assets/img/front-pages/landing-page/team-member-2.png') ?>"
                     class="position-absolute card-img-position bottom-0 start-50"
                     alt="human image" />
                 </div>
@@ -666,7 +666,7 @@
                 <div
                   class="bg-label-danger border border-bottom-0 border-label-danger position-relative team-image-box">
                   <img
-                    src="assets/img/front-pages/landing-page/team-member-3.png"
+                    src="<?= base_url('assets/img/front-pages/landing-page/team-member-3.png') ?>"
                     class="position-absolute card-img-position bottom-0 start-50"
                     alt="human image" />
                 </div>
@@ -681,7 +681,7 @@
                 <div
                   class="bg-label-success border border-bottom-0 border-label-success position-relative team-image-box">
                   <img
-                    src="assets/img/front-pages/landing-page/team-member-4.png"
+                    src="<?= base_url('assets/img/front-pages/landing-page/team-member-4.png') ?>"
                     class="position-absolute card-img-position bottom-0 start-50"
                     alt="human image" />
                 </div>
@@ -695,309 +695,6 @@
         </div>
       </section>
       <!-- Our great team: End -->
-
-      <!-- Pricing plans: Start -->
-      <section id="landingPricing" class="section-py bg-body landing-pricing">
-        <div class="container">
-          <div class="text-center mb-4">
-            <span class="badge bg-label-primary">Pricing Plans</span>
-          </div>
-          <h4 class="text-center mb-1">
-            <span class="position-relative fw-extrabold z-1"
-              >Tailored pricing plans
-              <img
-                src="assets/img/front-pages/icons/section-title-icon.png"
-                alt="laptop charging"
-                class="section-title-img position-absolute object-fit-contain bottom-0 z-n1" />
-            </span>
-            designed for you
-          </h4>
-          <p class="text-center pb-2 mb-7">
-            All plans include 40+ advanced tools and features to boost your product.<br />Choose the best plan to fit
-            your needs.
-          </p>
-          <div class="text-center mb-12">
-            <div class="position-relative d-inline-block pt-3 pt-md-0">
-              <label class="switch switch-sm switch-primary me-0">
-                <span class="switch-label fs-6 text-body me-3">Pay Monthly</span>
-                <input type="checkbox" class="switch-input price-duration-toggler" checked />
-                <span class="switch-toggle-slider">
-                  <span class="switch-on"></span>
-                  <span class="switch-off"></span>
-                </span>
-                <span class="switch-label fs-6 text-body ms-3">Pay Annual</span>
-              </label>
-              <div class="pricing-plans-item position-absolute d-flex">
-                <img
-                  src="assets/img/front-pages/icons/pricing-plans-arrow.png"
-                  alt="pricing plans arrow"
-                  class="scaleX-n1-rtl" />
-                <span class="fw-medium mt-2 ms-1"> Save 25%</span>
-              </div>
-            </div>
-          </div>
-          <div class="row g-6 pt-lg-5">
-            <!-- Basic Plan: Start -->
-            <div class="col-xl-4 col-lg-6">
-              <div class="card">
-                <div class="card-header">
-                  <div class="text-center">
-                    <img
-                      src="assets/img/front-pages/icons/paper-airplane.png"
-                      alt="paper airplane icon"
-                      class="mb-8 pb-2" />
-                    <h4 class="mb-0">Basic</h4>
-                    <div class="d-flex align-items-center justify-content-center">
-                      <span class="price-monthly h2 text-primary fw-extrabold mb-0">$19</span>
-                      <span class="price-yearly h2 text-primary fw-extrabold mb-0 d-none">$14</span>
-                      <sub class="h6 text-body-secondary mb-n1 ms-1">/mo</sub>
-                    </div>
-                    <div class="position-relative pt-2">
-                      <div class="price-yearly text-body-secondary price-yearly-toggle d-none">$ 168 / year</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <ul class="list-unstyled pricing-list">
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Timeline
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Basic search
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Live chat widget
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Email marketing
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Custom Forms
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Traffic analytics
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Basic Support
-                      </h6>
-                    </li>
-                  </ul>
-                  <div class="d-grid mt-8">
-                    <a href="payment-page.html" class="btn btn-label-primary">Get Started</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Basic Plan: End -->
-
-            <!-- Favourite Plan: Start -->
-            <div class="col-xl-4 col-lg-6">
-              <div class="card border border-primary shadow-xl">
-                <div class="card-header">
-                  <div class="text-center">
-                    <img src="assets/img/front-pages/icons/plane.png" alt="plane icon" class="mb-8 pb-2" />
-                    <h4 class="mb-0">Team</h4>
-                    <div class="d-flex align-items-center justify-content-center">
-                      <span class="price-monthly h2 text-primary fw-extrabold mb-0">$29</span>
-                      <span class="price-yearly h2 text-primary fw-extrabold mb-0 d-none">$22</span>
-                      <sub class="h6 text-body-secondary mb-n1 ms-1">/mo</sub>
-                    </div>
-                    <div class="position-relative pt-2">
-                      <div class="price-yearly text-body-secondary price-yearly-toggle d-none">$ 264 / year</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <ul class="list-unstyled pricing-list">
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Everything in basic
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Timeline with database
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Advanced search
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Marketing automation
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Advanced chatbot
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Campaign management
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Collaboration tools
-                      </h6>
-                    </li>
-                  </ul>
-                  <div class="d-grid mt-8">
-                    <a href="payment-page.html" class="btn btn-primary">Get Started</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Favourite Plan: End -->
-
-            <!-- Standard Plan: Start -->
-            <div class="col-xl-4 col-lg-6">
-              <div class="card">
-                <div class="card-header">
-                  <div class="text-center">
-                    <img
-                      src="assets/img/front-pages/icons/shuttle-rocket.png"
-                      alt="shuttle rocket icon"
-                      class="mb-8 pb-2" />
-                    <h4 class="mb-0">Enterprise</h4>
-                    <div class="d-flex align-items-center justify-content-center">
-                      <span class="price-monthly h2 text-primary fw-extrabold mb-0">$49</span>
-                      <span class="price-yearly h2 text-primary fw-extrabold mb-0 d-none">$37</span>
-                      <sub class="h6 text-body-secondary mb-n1 ms-1">/mo</sub>
-                    </div>
-                    <div class="position-relative pt-2">
-                      <div class="price-yearly text-body-secondary price-yearly-toggle d-none">$ 444 / year</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <ul class="list-unstyled pricing-list">
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Everything in premium
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Timeline with database
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Fuzzy search
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        A/B testing sanbox
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Custom permissions
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Social media automation
-                      </h6>
-                    </li>
-                    <li>
-                      <h6 class="d-flex align-items-center mb-3">
-                        <span class="badge badge-center rounded-pill bg-label-primary p-0 me-3"
-                          ><i class="icon-base ti tabler-check icon-12px"></i
-                        ></span>
-                        Sales automation tools
-                      </h6>
-                    </li>
-                  </ul>
-                  <div class="d-grid mt-8">
-                    <a href="payment-page.html" class="btn btn-label-primary">Get Started</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Standard Plan: End -->
-          </div>
-        </div>
-      </section>
-      <!-- Pricing plans: End -->
 
       <!-- Fun facts: Start -->
       <section id="landingFunFacts" class="section-py landing-fun-facts">
@@ -1128,7 +825,7 @@
             <span class="position-relative fw-extrabold z-1"
               >questions
               <img
-                src="assets/img/front-pages/icons/section-title-icon.png"
+                src="<?= base_url('assets/img/front-pages/icons/section-title-icon.png') ?>"
                 alt="laptop charging"
                 class="section-title-img position-absolute object-fit-contain bottom-0 z-n1" />
             </span>
@@ -1140,7 +837,7 @@
             <div class="col-lg-5">
               <div class="text-center">
                 <img
-                  src="assets/img/front-pages/landing-page/faq-boy-with-logos.png"
+                  src="<?= base_url('assets/img/front-pages/landing-page/faq-boy-with-logos.png') ?>"
                   alt="faq boy with logos"
                   class="faq-image" />
               </div>
@@ -1277,7 +974,7 @@
       <!-- CTA: Start -->
       <section id="landingCTA" class="section-py landing-cta position-relative p-lg-0 pb-0">
         <img
-          src="assets/img/front-pages/backgrounds/cta-bg-light.png"
+          src="<?= base_url('assets/img/front-pages/backgrounds/cta-bg-light.png') ?>"
           class="position-absolute bottom-0 end-0 scaleX-n1-rtl h-100 w-100 z-n1"
           alt="cta image"
           data-app-light-img="front-pages/backgrounds/cta-bg-light.png"
@@ -1291,7 +988,7 @@
             </div>
             <div class="col-lg-6 pt-lg-12 text-center text-lg-end">
               <img
-                src="assets/img/front-pages/landing-page/cta-dashboard.png"
+                src="<?= base_url('assets/img/front-pages/landing-page/cta-dashboard.png') ?>"
                 alt="cta dashboard"
                 class="img-fluid mt-lg-4" />
             </div>
@@ -1310,7 +1007,7 @@
             <span class="position-relative fw-extrabold z-1"
               >Let's work
               <img
-                src="assets/img/front-pages/icons/section-title-icon.png"
+                src="<?= base_url('assets/img/front-pages/icons/section-title-icon.png') ?>"
                 alt="laptop charging"
                 class="section-title-img position-absolute object-fit-contain bottom-0 z-n1" />
             </span>
@@ -1321,11 +1018,11 @@
             <div class="col-lg-5">
               <div class="contact-img-box position-relative border p-2 h-100">
                 <img
-                  src="assets/img/front-pages/icons/contact-border.png"
+                  src="<?= base_url('assets/img/front-pages/icons/contact-border.png') ?>"
                   alt="contact border"
                   class="contact-border-img position-absolute d-none d-lg-block scaleX-n1-rtl" />
                 <img
-                  src="assets/img/front-pages/landing-page/contact-customer-service.png"
+                  src="<?= base_url('assets/img/front-pages/landing-page/contact-customer-service.png') ?>"
                   alt="contact customer service"
                   class="contact-img w-100 scaleX-n1-rtl" />
                 <div class="p-4 pb-2">
@@ -1409,7 +1106,7 @@
     <footer class="landing-footer bg-body footer-text">
       <div class="footer-top position-relative overflow-hidden z-1">
         <img
-          src="assets/img/front-pages/backgrounds/footer-bg.png"
+          src="<?= base_url('assets/img/front-pages/backgrounds/footer-bg.png') ?>"
           alt="footer bg"
           class="footer-bg banner-bg-img z-n1" />
         <div class="container">
@@ -1514,10 +1211,10 @@
             <div class="col-lg-3 col-md-4">
               <h6 class="footer-title mb-6">Download our app</h6>
               <a href="javascript:void(0);" class="d-block mb-4"
-                ><img src="assets/img/front-pages/landing-page/apple-icon.png" alt="apple icon"
+                ><img src="<?= base_url('assets/img/front-pages/landing-page/apple-icon.png') ?>" alt="apple icon"
               /></a>
               <a href="javascript:void(0);" class="d-block"
-                ><img src="assets/img/front-pages/landing-page/google-play-icon.png" alt="google play icon"
+                ><img src="<?= base_url('assets/img/front-pages/landing-page/google-play-icon.png') ?>" alt="google play icon"
               /></a>
             </div>
           </div>
@@ -1533,7 +1230,7 @@
                 document.write(new Date().getFullYear());
               </script>
             </span>
-            <a href="https://pixinvent.com" target="_blank" class="fw-medium text-white">Pixinvent,</a>
+            <a href="https://pixinvent.com" target="_blank" class="fw-medium text-white">IT Murnajati</a>
             <span class="footer-bottom-text"> Made with ❤️ for a better web.</span>
           </div>
           <div>
@@ -1586,25 +1283,25 @@
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/theme.js -->
 
-    <script src="assets/vendor/libs/popper/popper.js"></script>
-    <script src="assets/vendor/js/bootstrap.js"></script>
-    <script src="assets/vendor/libs/node-waves/node-waves.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/popper/popper.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/js/bootstrap.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/node-waves/node-waves.js') ?>"></script>
 
-    <script src="assets/vendor/libs/@algolia/autocomplete-js.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/@algolia/autocomplete-js.js') ?>"></script>
 
-    <script src="assets/vendor/libs/pickr/pickr.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/pickr/pickr.js') ?>"></script>
 
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="assets/vendor/libs/nouislider/nouislider.js"></script>
-    <script src="assets/vendor/libs/swiper/swiper.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/nouislider/nouislider.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/swiper/swiper.js') ?>"></script>
 
     <!-- Main JS -->
 
-    <script src="assets/js/front-main.js"></script>
+    <script src="<?= base_url('assets/js/front-main.js') ?>"></script>
 
     <!-- Page JS -->
-    <script src="assets/js/front-page-landing.js"></script>
+    <script src="<?= base_url('assets/js/front-page-landing.js') ?>"></script>
   </body>
 </html>

@@ -5,7 +5,7 @@
   class="layout-wide customizer-hide"
   dir="ltr"
   data-skin="default"
-  data-assets-path="assets/"
+  data-assets-path="<?= base_url('assets/') ?>"
   data-template="vertical-menu-template"
   data-bs-theme="light">
   <head>
@@ -19,7 +19,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="<?= base_url('assets/img/favicon/favicon.ico') ?>" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,45 +28,46 @@
       href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap"
       rel="stylesheet" />
 
-    <link rel="stylesheet" href="assets/vendor/fonts/iconify-icons.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/fonts/iconify-icons.css') ?>" />
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
 
-    <link rel="stylesheet" href="assets/vendor/libs/node-waves/node-waves.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/node-waves/node-waves.css') ?>" />
 
-    <link rel="stylesheet" href="assets/vendor/libs/pickr/pickr-themes.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/pickr/pickr-themes.css') ?>" />
 
-    <link rel="stylesheet" href="assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="assets/css/demo.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/css/core.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('assets/css/demo.css') ?>" />
 
     <!-- Vendors CSS -->
 
-    <link rel="stylesheet" href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') ?>" />
 
     <!-- endbuild -->
 
     <!-- Vendor -->
-    <link rel="stylesheet" href="assets/vendor/libs/bs-stepper/bs-stepper.css" />
-    <link rel="stylesheet" href="assets/vendor/libs/bootstrap-select/bootstrap-select.css" />
-    <link rel="stylesheet" href="assets/vendor/libs/select2/select2.css" />
-    <link rel="stylesheet" href="assets/vendor/libs/@form-validation/form-validation.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/bs-stepper/bs-stepper.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/bootstrap-select/bootstrap-select.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/select2/select2.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/@form-validation/form-validation.css') ?>" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.2/dist/sweetalert2.min.css">
 
     <!-- Page CSS -->
 
     <!-- Page -->
-    <link rel="stylesheet" href="assets/vendor/css/pages/page-auth.css" />
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/css/pages/page-auth.css') ?>" />
 
     <!-- Helpers -->
-    <script src="assets/vendor/js/helpers.js"></script>
+    <script src="<?= base_url('assets/vendor/js/helpers.js') ?>"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
-    <script src="assets/vendor/js/template-customizer.js"></script>
+    <script src="<?= base_url('assets/vendor/js/template-customizer.js') ?>"></script>
 
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 
-    <script src="assets/js/config.js"></script>
+    <script src="<?= base_url('assets/js/config.js') ?>"></script>
   </head>
 
   <body>
@@ -77,7 +78,7 @@
       <a href="index.html" class="app-brand auth-cover-brand">
         <span class="app-brand-logo demo">
           <span class="text-primary">
-            <img src="assets/img/front-pages/landing-page/logo_provinsi_jatim.png" height="32">
+            <img src="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" height="32">
           </span>
         </span>
         <span class="app-brand-text demo text-heading fw-bold">MURNAJATI</span>
@@ -88,12 +89,12 @@
         <div
           class="d-none d-lg-flex col-lg-4 align-items-center justify-content-center p-5 position-relative auth-multisteps-bg-height">
           <img
-            src="assets/img/illustrations/auth-register-multisteps-illustration.png"
+            src="<?= base_url('assets/img/illustrations/auth-register-multisteps-illustration.png') ?>"
             alt="auth-register-multisteps"
             class="img-fluid"
             width="250" />
           <img
-            src="assets/img/illustrations/auth-register-multisteps-shape-light.png"
+            src="<?= base_url('assets/img/illustrations/auth-register-multisteps-shape-light.png') ?>"
             alt="auth-register-multisteps"
             class="platform-bg"
             data-app-light-img="illustrations/auth-register-multisteps-shape-light.png"
@@ -153,58 +154,41 @@
                         <label class="form-label">Kode Fasyankes</label>
                         <input
                           type="text"
-                          name="fasyankes_code"                          
+                          name="fasyankes_code" 
+                          id="fasyankes_code"                         
                           class="form-control"
-                          placeholder="10000xxxxx" />
+                          placeholder="10000xxxxx"/>
                       </div>
                       <div class="col-sm-6">
                         <label class="form-label">Tipe Fasyankes</label>
                         <input
                           type="text"
-                          name="fasyankes_tipe"
+                          id="fasyankes_type"
+                          name="fasyankes_type"
                           class="form-control"
-                          disabled />
+                          readonly />
                       </div>
-                      <div class="col-sm-6 form-password-toggle form-control-validation">                        
+                      <div class="col-sm-12 form-password-toggle form-control-validation">                        
                         <label class="form-label">Nama Fasyankes</label>
                         <input
                           type="text"
+                          id="fasyankes_name"
                           name="fasyankes_name"
                           class="form-control"
-                          disabled />
+                          readonly />
                       </div>
-                      <div class="col-sm-6 form-password-toggle form-control-validation">
-                        <label class="form-label" for="multiStepsConfirmPass">Confirm Password</label>
-                        <div class="input-group input-group-merge">
-                          <input
-                            type="password"
-                            id="multiStepsConfirmPass"
-                            name="multiStepsConfirmPass"
-                            class="form-control"
-                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                            aria-describedby="multiStepsConfirmPass2" />
-                          <span class="input-group-text cursor-pointer" id="multiStepsConfirmPass2"
-                            ><i class="icon-base ti tabler-eye-off"></i
-                          ></span>
-                        </div>
+                      <div class="col-sm-12 form-password-toggle form-control-validation">
+                        <label class="form-label" for="multiStepsConfirmPass">Alamat</label>                        
+                            <textarea 
+                                id="fasyankes_address"
+                                name="fasyankes_address" 
+                                class="form-control" 
+                                readonly >
+                            </textarea>
                       </div>
-                      <div class="col-md-12">
-                        <label class="form-label" for="multiStepsURL">Profile Link</label>
-                        <input
-                          type="text"
-                          name="multiStepsURL"
-                          id="multiStepsURL"
-                          class="form-control"
-                          placeholder="johndoe/profile"
-                          aria-label="johndoe" />
-                      </div>
-                      <div class="col-12 d-flex justify-content-between">
-                        <button class="btn btn-label-secondary btn-prev" disabled>
-                          <i class="icon-base ti tabler-arrow-left icon-xs me-sm-2 me-0"></i>
-                          <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                        </button>
-                        <button class="btn btn-primary btn-next">
-                          <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Next</span>
+                      <div class="col-12 d-flex justify-content-end">
+                        <button class="btn btn-primary btn-next" id="segment1" disabled>
+                          <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Selanjutnya</span>
                           <i class="icon-base ti tabler-arrow-right icon-xs"></i>
                         </button>
                       </div>
@@ -509,39 +493,80 @@
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/theme.js -->
 
-    <script src="assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/jquery/jquery.js') ?>"></script>
 
-    <script src="assets/vendor/libs/popper/popper.js"></script>
-    <script src="assets/vendor/js/bootstrap.js"></script>
-    <script src="assets/vendor/libs/node-waves/node-waves.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/popper/popper.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/js/bootstrap.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/node-waves/node-waves.js') ?>"></script>
 
-    <script src="assets/vendor/libs/@algolia/autocomplete-js.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/@algolia/autocomplete-js.js') ?>"></script>
 
-    <script src="assets/vendor/libs/pickr/pickr.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/pickr/pickr.js') ?>"></script>
 
-    <script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') ?>"></script>
 
-    <script src="assets/vendor/libs/hammer/hammer.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/hammer/hammer.js') ?>"></script>
 
-    <script src="assets/vendor/libs/i18n/i18n.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/i18n/i18n.js') ?>"></script>
 
-    <script src="assets/vendor/js/menu.js"></script>
+    <script src="<?= base_url('assets/vendor/js/menu.js') ?>"></script>
 
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="assets/vendor/libs/cleave-zen/cleave-zen.js"></script>
-    <script src="assets/vendor/libs/bs-stepper/bs-stepper.js"></script>
-    <script src="assets/vendor/libs/select2/select2.js"></script>
-    <script src="assets/vendor/libs/@form-validation/popular.js"></script>
-    <script src="assets/vendor/libs/@form-validation/bootstrap5.js"></script>
-    <script src="assets/vendor/libs/@form-validation/auto-focus.js"></script>
+    <script src="<?= base_url('assets/vendor/libs/cleave-zen/cleave-zen.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/bs-stepper/bs-stepper.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/select2/select2.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/@form-validation/popular.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/@form-validation/bootstrap5.js') ?>"></script>
+    <script src="<?= base_url('assets/vendor/libs/@form-validation/auto-focus.js') ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.2/dist/sweetalert2.all.min.js"></script>
 
     <!-- Main JS -->
 
-    <script src="assets/js/main.js"></script>
+    <script src="<?= base_url('assets/js/main.js') ?>"></script>
 
     <!-- Page JS -->
-    <script src="assets/js/pages-auth-multisteps.js"></script>
+    <script src="<?= base_url('assets/js/pages-auth-multisteps.js') ?>"></script>
+    <script>
+      $('#fasyankes_code').on('keypress', function(e) {
+        const base_url = "<?= base_url() ?>";
+        var url = base_url + 'api/fasyankes_check';
+          if (e.which === 13) { // 13 = tombol Enter
+              const value = $(this).val();
+              e.preventDefault(); 
+
+              $.ajax({
+                  url: url, 
+                  method: 'POST',
+                  data: { fasyankes_code: value },
+                  success: function(response) {
+                    var result = response.data;
+                    if(response.code===200){
+                      $('#fasyankes_type').val(result.fasyankes_type.toUpperCase());
+                      $('#fasyankes_name').val(result.fasyankes_name);                      
+                      $('#fasyankes_address').val(result.fasyankes_address);
+                      $('#segment1').prop('disabled', false);
+                    }else{
+                      $('#fasyankes_type').val("");
+                      $('#fasyankes_name').val("");                      
+                      $('#fasyankes_address').val("");
+                      $('#segment1').prop('disabled', true);
+                    }
+                    
+                      Swal.fire({
+                        // title: "Gagal!",
+                        text: response.message,
+                        icon: response.type
+                      });
+                  },
+                  error: function(xhr) {
+                      console.error(xhr.responseText);
+
+                  }
+              });
+          }
+      });
+    </script>
   </body>
 </html>

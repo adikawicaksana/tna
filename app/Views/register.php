@@ -591,8 +591,6 @@
 
     $('#fasyankes_code').on('keypress', function(e) {
 
-
-
       if (e.which === 13) {
         e.preventDefault();
         FasyankesDetail($(this).val());

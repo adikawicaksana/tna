@@ -54,4 +54,28 @@ class Register extends BaseController
             ])->setStatusCode(200);
         }
     }
+
+     public function postFasyankesSearch()
+    {
+        $keyword = $this->request->getPost('keyword');
+        $model = new FasyankesModel();
+        $results = $model->search($keyword);
+
+        $data = [];
+        foreach ($results as $row) {
+            $data[] = [
+                'id' => $row['id'],
+                'fasyankes_code' => $row['fasyankes_code'],
+                'text' => $row['fasyankes_name']
+            ];
+        }
+
+         return $this->response->setJSON([
+                'status'    => true,
+                'code'      => 200,                
+                'type'      => 'success',
+                'message'   => 'Data Fasyankes ditemukan',
+                'data'      => $data
+            ]);
+    }
 }

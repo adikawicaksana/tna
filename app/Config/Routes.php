@@ -25,6 +25,7 @@ $routes->post('api/v1/login', 'Api\Auth::login');
 $routes->post('api/v1/logout', 'Api\Auth::logout');
 
 $routes->post('api/fasyankes_check', 'register::postFasyankesCheck');
+$routes->post('api/fasyankes_search', 'register::postFasyankesSearch');
 
 
 $routes->post('api/v1/token/refresh', 'Api\Auth::refreshToken');

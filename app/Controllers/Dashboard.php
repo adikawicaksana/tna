@@ -7,6 +7,6 @@ class Dashboard extends BaseController
     {
       
 
-        echo view('dashboard');
+         return view('dashboard', ['title' => 'Dashboard']);
     }
 }

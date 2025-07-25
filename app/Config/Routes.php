@@ -24,8 +24,10 @@ $routes->group('api/v1', ['filter' => 'authjwt'], function ($routes) {
 $routes->post('api/v1/login', 'Api\Auth::login');
 $routes->post('api/v1/logout', 'Api\Auth::logout');
 
-$routes->post('api/fasyankes_check', 'register::postFasyankesCheck');
-$routes->post('api/fasyankes_search', 'register::postFasyankesSearch');
+$routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
+$routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
+$routes->post('api/institution_check', 'Api\General::postInstitutionCheck');
+$routes->post('api/institution_search', 'Api\General::postInstitutionSearch');
 
 
 $routes->post('api/v1/token/refresh', 'Api\Auth::refreshToken');

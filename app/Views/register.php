@@ -1,26 +1,22 @@
 <!doctype html>
 
-<html
-  lang="en"
-  class="layout-wide customizer-hide"
-  dir="ltr"
-  data-skin="default"
-  data-assets-path="<?= base_url('assets/') ?>"
-  data-template="vertical-menu-template"
-  data-bs-theme="light">
+<html lang="en" class="layout-wide customizer-hide" dir="ltr" data-skin="default"
+  data-assets-path="<?= base_url('assets/') ?>" data-template="vertical-menu-template" data-bs-theme="light">
 
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
+  <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-  <title><?= isset($title) ? esc($title) . ' | ' : '' ?>Murnajati</title>
+  <title>
+    <?= isset($title) ? esc($title) . ' | ' : '' ?>Murnajati
+  </title>
 
   <meta name="description" content="" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" />
+  <link rel="icon" type="image/x-icon"
+    href="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -76,7 +72,7 @@
 
   <div class="authentication-wrapper authentication-cover authentication-bg">
     <!-- Logo -->
-    <a href="index.html" class="app-brand auth-cover-brand">
+    <a href="<?= base_url(); ?>" class="app-brand auth-cover-brand">
       <span class="app-brand-logo demo">
         <span class="text-primary">
           <img src="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" height="32">
@@ -89,15 +85,10 @@
       <!-- Left Text -->
       <div
         class="d-none d-lg-flex col-lg-4 align-items-center justify-content-center p-5 position-relative auth-multisteps-bg-height">
-        <img
-          src="<?= base_url('assets/img/illustrations/auth-register-multisteps-illustration.png') ?>"
-          alt="auth-register-multisteps"
-          class="img-fluid"
-          width="250" />
-        <img
-          src="<?= base_url('assets/img/illustrations/auth-register-multisteps-shape-light.png') ?>"
-          alt="auth-register-multisteps"
-          class="platform-bg"
+        <img src="<?= base_url('assets/img/illustrations/auth-register-multisteps-illustration.png') ?>"
+          alt="auth-register-multisteps" class="img-fluid" width="250" />
+        <img src="<?= base_url('assets/img/illustrations/auth-register-multisteps-shape-light.png') ?>"
+          alt="auth-register-multisteps" class="platform-bg"
           data-app-light-img="illustrations/auth-register-multisteps-shape-light.png"
           data-app-dark-img="illustrations/auth-register-multisteps-shape-dark.png" />
       </div>
@@ -112,8 +103,7 @@
                 <button type="button" class="step-trigger">
                   <span class="bs-stepper-circle"><i class="icon-base ti tabler-file-analytics icon-md"></i></span>
                   <span class="bs-stepper-label">
-                    <span class="bs-stepper-title">Fasilitas Pelayanan Kesehatan</span>
-                    <span class="bs-stepper-subtitle">Detail</span>
+                    <span class="bs-stepper-title">Instansi</span>
                   </span>
                 </button>
               </div>
@@ -124,8 +114,7 @@
                 <button type="button" class="step-trigger">
                   <span class="bs-stepper-circle"><i class="icon-base ti tabler-user icon-md"></i></span>
                   <span class="bs-stepper-label">
-                    <span class="bs-stepper-title">Personal</span>
-                    <span class="bs-stepper-subtitle">Detail Informasi</span>
+                    <span class="bs-stepper-title">Detail Instansi</span>
                   </span>
                 </button>
               </div>
@@ -136,8 +125,7 @@
                 <button type="button" class="step-trigger">
                   <span class="bs-stepper-circle"><i class="icon-base ti tabler-credit-card icon-md"></i></span>
                   <span class="bs-stepper-label">
-                    <span class="bs-stepper-title">Billing</span>
-                    <span class="bs-stepper-subtitle">Payment Details</span>
+                    <span class="bs-stepper-title">Informasi Personal</span>
                   </span>
                 </button>
               </div>
@@ -148,71 +136,58 @@
                 <div id="accountDetailsValidation" class="content">
                   <div class="content-header mb-6">
                     <h4 class="mb-0">Informasi</h4>
-                    <p class="mb-0">Fasilitas Pelayanan Kesehatan (Fasyankes)</p>
+                    <p class="mb-0">Fasilitas Pelayanan Kesehatan (Fasyankes) atau Instansi Lainnya</p>
                   </div>
-                  <div class="row g-6">
-                    <div class="col-sm-6">
-                      <label class="form-label">Kode Fasyankes</label>
-                      <div class="position-relative">
-                        <input
-                          type="text"
-                          name="fasyankes_code"
-                          id="fasyankes_code"
-                          class="form-control"
-                          placeholder="10000xxxxx"
-                          autocomplete="off" />
-                        <style>
-                          .autocomplete-overlay .item {
-                            padding: 8px 16px;
-                            /* Tambahkan padding kiri-kanan */
-                            cursor: pointer;
-                            border-bottom: 1px solid #eee;
-                          }
 
-                          .autocomplete-overlay .item:last-child {
-                            border-bottom: none;
-                            /* Hilangkan garis di akhir */
-                          }
-
-                          .autocomplete-overlay .item:hover {
-                            background-color: #f8f9fa;
-                          }
-                        </style>
-                        <!-- Dropdown suggestion -->
-                        <div id="suggestions" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
-                          style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
-                        </div>
+                  <!-- Custom plan options -->
+                  <div class="row gap-md-0 gap-4 mb-12">
+                    <div class="col-md">
+                      <div class="form-check custom-option custom-option-icon">
+                        <label class="form-check-label custom-option-content" for="basicOption">
+                          <span class="custom-option-body">
+                            <i class="icon-base ti tabler-building-hospital"></i>
+                            <span class="custom-option-title"> FASYANKES </span>
+                          </span>
+                          <input name="fasyankes_mode" class="form-check-input" type="radio" value="fasyankes"
+                            checked />
+                        </label>
                       </div>
                     </div>
-                    <div class="col-sm-6">
-                      <label class="form-label">Tipe Fasyankes</label>
-                      <input
-                        type="text"
-                        id="fasyankes_type"
-                        name="fasyankes_type"
-                        class="form-control"
-                        readonly />
+                    <div class="col-md">
+                      <div class="form-check custom-option custom-option-icon">
+                        <label class="form-check-label custom-option-content" for="standardOption">
+                          <span class="custom-option-body">
+                            <i class="icon-base ti tabler-building"></i>
+                            <span class="custom-option-title"> NON FASYANKES </span>
+                          </span>
+                          <input name="fasyankes_mode" class="form-check-input" type="radio" value="non-fasyankes" />
+                        </label>
+                      </div>
                     </div>
-                    <div class="col-sm-12 form-password-toggle form-control-validation">
-                      <label class="form-label">Nama Fasyankes</label>
-                      <input
-                        type="text"
-                        id="fasyankes_name"
-                        name="fasyankes_name"
-                        class="form-control"
-                        readonly />
+                  </div>
+                  <!--/ Custom plan options -->
+                  <div class="card mb-6">
+                    <div class="card-body">
+                      <h5 class="card-title mb-1"><i class="icon-base ti tabler-building-hospital"></i> FASYANKES</h5>
+                      <p class="card-text">
+                         
+                        Bagi Anda SDMK atau non-SDMK yang bertugas di Fasilitas Pelayanan Kesehatan (Rumah Sakit, Puskesmas, Klinik, Laboratorium, Apotek, Praktik Dokter, Praktik Bidan, Praktik Perawat, atau Balai Kesehatan).
+                      </p>
                     </div>
-                    <div class="col-sm-12 form-password-toggle form-control-validation">
-                      <label class="form-label" for="multiStepsConfirmPass">Alamat</label>
-                      <textarea
-                        id="fasyankes_address"
-                        name="fasyankes_address"
-                        class="form-control"
-                        readonly>
-                            </textarea>
+                  </div>
+                  <div class="card mb-6">
+                    <div class="card-body">
+                      <h5 class="card-title mb-1"><i class="icon-base ti tabler-building"></i> NON FASYANKES</h5>
+                      <p class="card-text">
+                        Bagi Anda yang <strong>TIDAK BEKERJA</strong> di Fasilitas Pelayanan Kesehatan (Fasyankes), baik
+                        yang berstatus sebagai Sumber Daya Manusia Kesehatan (SDMK) maupun yang bukan SDMK (non-SDMK).
+                      </p>
                     </div>
+                  </div>
+                  <div class="row g-6">
+
                     <div class="col-12 d-flex justify-content-end">
-                      <button class="btn btn-primary btn-next" id="segment1" disabled>
+                      <button class="btn btn-primary btn-next" id="segment1">
                         <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Selanjutnya</span>
                         <i class="icon-base ti tabler-arrow-right icon-xs"></i>
                       </button>
@@ -221,67 +196,144 @@
                 </div>
                 <!-- Personal Info -->
                 <div id="personalInfoValidation" class="content">
-                  <div class="content-header mb-6">
-                    <h4 class="mb-0">Personal Information</h4>
-                    <p class="mb-0">Enter Your Personal Information</p>
-                  </div>
+
                   <div class="row g-6">
+                    <!-- Fasyankes Mode /start -->
+                      <div id="fasyankes_mode">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <label class="form-label">Kode Fasyankes</label>
+                            <div class="position-relative">
+                              <input type="text" name="fasyankes_code" id="fasyankes_code" class="form-control"
+                                placeholder="Cth.: 10000xxxxx" autocomplete="off" />
+                              <style>
+                                .autocomplete-overlay .item {
+                                  padding: 8px 16px;
+                                  cursor: pointer;
+                                  border-bottom: 1px solid #eee;
+                                }
+
+                                .autocomplete-overlay .item:last-child {
+                                  border-bottom: none;
+                                }
+
+                                .autocomplete-overlay .item:hover {
+                                  background-color: #f8f9fa;
+                                }
+                              </style>
+                              <!-- Dropdown suggestion -->
+                              <div id="suggestions" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
+                                style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-sm-6">
+                            <label class="form-label">Tipe Fasyankes</label>
+                            <input type="text" id="fasyankes_type" name="fasyankes_type" class="form-control" readonly />
+                          </div>
+                        </div>
+
+                        <div class="row mt-3">
+                          <div class="col-sm-12 form-password-toggle form-control-validation">
+                            <label class="form-label">Nama Fasyankes</label>
+                            <input type="text" id="fasyankes_name" name="fasyankes_name" class="form-control" readonly />
+                          </div>
+                          <div class="col-sm-12 form-password-toggle form-control-validation mt-2">
+                            <label class="form-label" for="multiStepsConfirmPass">Alamat</label>
+                            <textarea id="fasyankes_address" name="fasyankes_address" class="form-control" readonly></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    <!-- Fasyankes Mode /end -->
+                    
+                    <!-- Non Fasyankes Mode /start -->
+                      <div id="non_fasyankes_mode">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <label class="form-label">Nama Instansi</label>
+                            <div class="position-relative">
+                              <input type="text" name="institution_name" id="institution_name" class="form-control"
+                                placeholder="Cth.: UPT Murnajati" autocomplete="off" />
+                              <style>
+                                .autocomplete-overlay .item {
+                                  padding: 8px 16px;
+                                  cursor: pointer;
+                                  border-bottom: 1px solid #eee;
+                                }
+
+                                .autocomplete-overlay .item:last-child {
+                                  border-bottom: none;
+                                }
+
+                                .autocomplete-overlay .item:hover {
+                                  background-color: #f8f9fa;
+                                }
+                              </style>
+                              <!-- Dropdown suggestion -->
+                              <div id="institution_suggestions" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
+                                style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mt-3">
+                          <div class="col-sm-12 form-password-toggle form-control-validation mt-2">
+                            <label class="form-label" for="multiStepsConfirmPass">Alamat Institusi</label>
+                            <textarea id="institution_address" name="institution_address" class="form-control" readonly></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    <!-- Non Fasyankes Mode /end -->
+                    
+
+                    <div class="col-12 d-flex justify-content-between">
+                      <button class="btn btn-label-secondary btn-prev">
+                        <i class="icon-base ti tabler-arrow-left icon-xs me-sm-2 me-0"></i>
+                        <span class="align-middle d-sm-inline-block d-none">Sebelumnya</span>
+                      </button>
+                      <button class="btn btn-primary btn-next" id="segment2" disabled>
+                        <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Selanjutnya</span>
+                        <i class="icon-base ti tabler-arrow-right icon-xs"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Billing Links -->
+                <div id="billingLinksValidation" class="content">
+                  <div class="row g-6">
+
                     <div class="col-sm-6 form-control-validation">
                       <label class="form-label" for="multiStepsFirstName">First Name</label>
-                      <input
-                        type="text"
-                        id="multiStepsFirstName"
-                        name="multiStepsFirstName"
-                        class="form-control"
+                      <input type="text" id="multiStepsFirstName" name="multiStepsFirstName" class="form-control"
                         placeholder="John" />
                     </div>
                     <div class="col-sm-6">
                       <label class="form-label" for="multiStepsLastName">Last Name</label>
-                      <input
-                        type="text"
-                        id="multiStepsLastName"
-                        name="multiStepsLastName"
-                        class="form-control"
+                      <input type="text" id="multiStepsLastName" name="multiStepsLastName" class="form-control"
                         placeholder="Doe" />
                     </div>
                     <div class="col-sm-6">
                       <label class="form-label" for="multiStepsMobile">Mobile</label>
                       <div class="input-group">
                         <span class="input-group-text">US (+1)</span>
-                        <input
-                          type="text"
-                          id="multiStepsMobile"
-                          name="multiStepsMobile"
-                          class="form-control multi-steps-mobile"
-                          placeholder="202 555 0111" />
+                        <input type="text" id="multiStepsMobile" name="multiStepsMobile"
+                          class="form-control multi-steps-mobile" placeholder="202 555 0111" />
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <label class="form-label" for="multiStepsPincode">Pincode</label>
-                      <input
-                        type="text"
-                        id="multiStepsPincode"
-                        name="multiStepsPincode"
-                        class="form-control multi-steps-pincode"
-                        placeholder="Postal Code"
-                        maxlength="6" />
+                      <input type="text" id="multiStepsPincode" name="multiStepsPincode"
+                        class="form-control multi-steps-pincode" placeholder="Postal Code" maxlength="6" />
                     </div>
                     <div class="col-md-12 form-control-validation">
                       <label class="form-label" for="multiStepsAddress">Address</label>
-                      <input
-                        type="text"
-                        id="multiStepsAddress"
-                        name="multiStepsAddress"
-                        class="form-control"
+                      <input type="text" id="multiStepsAddress" name="multiStepsAddress" class="form-control"
                         placeholder="Address" />
                     </div>
                     <div class="col-md-12">
                       <label class="form-label" for="multiStepsArea">Landmark</label>
-                      <input
-                        type="text"
-                        id="multiStepsArea"
-                        name="multiStepsArea"
-                        class="form-control"
+                      <input type="text" id="multiStepsArea" name="multiStepsArea" class="form-control"
                         placeholder="Area/Landmark" />
                     </div>
                     <div class="col-sm-6 form-control-validation">
@@ -345,150 +397,11 @@
                         <option value="WY">Wyoming</option>
                       </select>
                     </div>
-                    <div class="col-12 d-flex justify-content-between">
-                      <button class="btn btn-label-secondary btn-prev">
-                        <i class="icon-base ti tabler-arrow-left icon-xs me-sm-2 me-0"></i>
-                        <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                      </button>
-                      <button class="btn btn-primary btn-next">
-                        <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Next</span>
-                        <i class="icon-base ti tabler-arrow-right icon-xs"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <!-- Billing Links -->
-                <div id="billingLinksValidation" class="content">
-                  <div class="content-header mb-6">
-                    <h4 class="mb-0">Select Plan</h4>
-                    <p class="mb-0">Select plan as per your requirement</p>
-                  </div>
-                  <!-- Custom plan options -->
-                  <div class="row gap-md-0 gap-4 mb-12">
-                    <div class="col-md">
-                      <div class="form-check custom-option custom-option-icon">
-                        <label class="form-check-label custom-option-content" for="basicOption">
-                          <span class="custom-option-body">
-                            <span class="d-block mb-2 h5">Basic</span>
-                            <span>A simple start for start ups & Students</span>
-                            <span class="d-flex justify-content-center mt-2">
-                              <sup class="text-primary h6 fw-normal pt-2 mb-0">$</sup>
-                              <span class="fw-medium h3 text-primary mb-0">0</span>
-                              <sub class="h6 fw-normal mt-3 mb-0 text-body-secondary">/month</sub>
-                            </span>
-                          </span>
-                          <input
-                            name="customRadioIcon"
-                            class="form-check-input"
-                            type="radio"
-                            value=""
-                            id="basicOption" />
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-md">
-                      <div class="form-check custom-option custom-option-icon">
-                        <label class="form-check-label custom-option-content" for="standardOption">
-                          <span class="custom-option-body">
-                            <span class="d-block mb-2 h5">Standard</span>
-                            <span>For small to medium businesses</span>
-                            <span class="d-flex justify-content-center mt-2">
-                              <sup class="text-primary h6 fw-normal pt-2 mb-0">$</sup>
-                              <span class="fw-medium h3 text-primary mb-0">99</span>
-                              <sub class="h6 fw-normal mt-3 mb-0 text-body-secondary">/month</sub>
-                            </span>
-                          </span>
-                          <input
-                            name="customRadioIcon"
-                            class="form-check-input"
-                            type="radio"
-                            value=""
-                            id="standardOption"
-                            checked />
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-md">
-                      <div class="form-check custom-option custom-option-icon">
-                        <label class="form-check-label custom-option-content" for="enterpriseOption">
-                          <span class="custom-option-body">
-                            <span class="d-block mb-2 h5">Enterprise</span>
-                            <span>Solution for enterprise & organizations</span>
-                            <span class="d-flex justify-content-center mt-2">
-                              <sup class="text-primary h6 fw-normal pt-2 mb-0">$</sup>
-                              <span class="fw-medium h3 text-primary mb-0">499</span>
-                              <sub class="h6 fw-normal mt-3 mb-0 text-body-secondary">/year</sub>
-                            </span>
-                          </span>
-                          <input
-                            name="customRadioIcon"
-                            class="form-check-input"
-                            type="radio"
-                            value=""
-                            id="enterpriseOption" />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <!--/ Custom plan options -->
-                  <div class="content-header mb-6">
-                    <h4 class="mb-0">Payment Information</h4>
-                    <p class="mb-0">Enter your card information</p>
-                  </div>
-                  <!-- Credit Card Details -->
-                  <div class="row g-6">
-                    <div class="col-md-12 form-control-validation">
-                      <label class="form-label w-100" for="multiStepsCard">Card Number</label>
-                      <div class="input-group input-group-merge">
-                        <input
-                          id="multiStepsCard"
-                          class="form-control multi-steps-card"
-                          name="multiStepsCard"
-                          type="text"
-                          placeholder="1356 3215 6548 7898"
-                          aria-describedby="multiStepsCardImg" />
-                        <span class="input-group-text cursor-pointer" id="multiStepsCardImg"><span class="card-type"></span></span>
-                      </div>
-                    </div>
-                    <div class="col-md-5">
-                      <label class="form-label" for="multiStepsName">Name On Card</label>
-                      <input
-                        type="text"
-                        id="multiStepsName"
-                        class="form-control"
-                        name="multiStepsName"
-                        placeholder="John Doe" />
-                    </div>
-                    <div class="col-6 col-md-4">
-                      <label class="form-label" for="multiStepsExDate">Expiry Date</label>
-                      <input
-                        type="text"
-                        id="multiStepsExDate"
-                        class="form-control multi-steps-exp-date"
-                        name="multiStepsExDate"
-                        placeholder="MM/YY" />
-                    </div>
-                    <div class="col-6 col-md-3">
-                      <label class="form-label" for="multiStepsCvv">CVV Code</label>
-                      <div class="input-group input-group-merge">
-                        <input
-                          type="text"
-                          id="multiStepsCvv"
-                          class="form-control multi-steps-cvv"
-                          name="multiStepsCvv"
-                          maxlength="3"
-                          placeholder="654" />
-                        <span class="input-group-text cursor-pointer" id="multiStepsCvvHelp"><i
-                            class="icon-base ti tabler-help text-body-secondary"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="top"
-                            title="Card Verification Value"></i></span>
-                      </div>
-                    </div>
+                    <!-- Credit Card Details -->
                     <div class="col-12 d-flex justify-content-between form-control-validation">
                       <button class="btn btn-label-secondary btn-prev">
                         <i class="icon-base ti tabler-arrow-left icon-xs me-sm-2 me-0"></i>
-                        <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                        <span class="align-middle d-sm-inline-block d-none">Sebelumnya</span>
                       </button>
                       <button type="submit" class="btn btn-success btn-next btn-submit">Submit</button>
                     </div>
@@ -561,18 +474,18 @@
         data: {
           fasyankes_code: value
         },
-        success: function(response) {
+        success: function (response) {
           var result = response.data;
           if (response.code === 200) {
             $('#fasyankes_type').val(result.fasyankes_type.toUpperCase());
             $('#fasyankes_name').val(result.fasyankes_name);
             $('#fasyankes_address').val(result.fasyankes_address);
-            $('#segment1').prop('disabled', false);
+            $('#segment2').prop('disabled', false);
           } else {
             $('#fasyankes_type').val("");
             $('#fasyankes_name').val("");
             $('#fasyankes_address').val("");
-            $('#segment1').prop('disabled', true);
+            $('#segment2').prop('disabled', true);
           }
 
           Swal.fire({
@@ -581,7 +494,7 @@
             icon: response.type
           });
         },
-        error: function(xhr) {
+        error: function (xhr) {
           console.error(xhr.responseText);
 
         }
@@ -589,15 +502,93 @@
 
     }
 
-    $('#fasyankes_code').on('keypress', function(e) {
+    function InstitutionDetail(id) {
+      const base_url = "<?= base_url() ?>";
+      var url = base_url + 'api/institution_check'; // 13 = tombol Enter
+      const value = id;
 
+      $.ajax({
+        url: url,
+        method: 'POST',
+        data: {
+          id: value
+        },
+        success: function (response) {
+          console.log(response)
+          var result = response.data;
+          if (response.code === 200) {
+            $('#institution_name').val(result.institution_name);
+            $('#institution_address').val(result.institution_address);
+            $('#segment2').prop('disabled', false);
+          } else {
+            $('#institution_name').val("");
+            $('#institution_address').val("");
+            $('#segment2').prop('disabled', true);
+          }
+
+          Swal.fire({
+            // title: "Gagal!",
+            text: response.message,
+            icon: response.type
+          });
+        },
+        error: function (xhr) {
+          console.error(xhr.responseText);
+
+        }
+      });
+
+    }
+
+    
+    $('#fasyankes_code').on('keypress', function (e) {
       if (e.which === 13) {
         e.preventDefault();
         FasyankesDetail($(this).val());
       }
     });
+    
+    $('#institution_name').on('keypress', function (e) {
+      if (e.which === 13) {
+        e.preventDefault();
+      }
+    });
 
-    $('#fasyankes_code').on('keyup', function() {
+    $('#institution_name').on('keyup', function () {
+      const base_url = "<?= base_url() ?>";
+      const url = base_url + 'api/institution_search';
+      let query = $(this).val();
+
+      if (query.length > 1) {
+        $.ajax({
+          url: url,
+          method: 'POST',
+          data: {
+            keyword: query
+          },
+          success: function (response) {
+            let list = '';
+            const results = response.data;
+
+            if (results.length > 0) {
+              results.forEach(function (item) {
+                list += '<div class="item" data-id="' + item.id + '">' + item.text + '</div>';
+              });
+              $('#institution_suggestions').html(list).slideDown(150);
+            } else {
+              $('#institution_suggestions').html('<div class="item text-muted">Tidak ditemukan</div>').fadeIn();
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error('Error:', error);
+          }
+        });
+      } else {
+        $('#institution_suggestions').slideUp(150);
+      }
+    });
+
+    $('#fasyankes_code').on('keyup', function () {
       const base_url = "<?= base_url() ?>";
       const url = base_url + 'api/fasyankes_search';
       let query = $(this).val();
@@ -609,12 +600,12 @@
           data: {
             keyword: query
           },
-          success: function(response) {
+          success: function (response) {
             let list = '';
             const results = response.data;
 
             if (results.length > 0) {
-              results.forEach(function(item) {
+              results.forEach(function (item) {
                 list += '<div class="item" data-code="' + item.fasyankes_code + '">' + item.text + '</div>';
               });
               $('#suggestions').html(list).slideDown(150);
@@ -622,7 +613,7 @@
               $('#suggestions').html('<div class="item text-muted">Tidak ditemukan</div>').fadeIn();
             }
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             console.error('Error:', error);
           }
         });
@@ -631,11 +622,33 @@
       }
     });
 
-    $(document).on('click', '#suggestions .item', function() {
+    $(document).on('click', '#suggestions .item', function () {
       const code = $(this).data('code');
       $('#fasyankes_code').val(code);
-        FasyankesDetail(code);
+      FasyankesDetail(code);
       $('#suggestions').fadeOut();
+    });
+
+    
+    $(document).on('click', '#institution_suggestions .item', function () {
+      const id = $(this).data('id');
+      InstitutionDetail(id);
+      $('#institution_suggestions').fadeOut();
+    });
+
+
+    $('#segment1').on('click', function () {
+      var selected = $('input[name="fasyankes_mode"]:checked').val();
+      if (selected === 'fasyankes') {
+        $('#non_fasyankes_mode').hide();
+        $('#fasyankes_mode').show();
+      } else if (selected === 'non-fasyankes') {
+        $('#fasyankes_mode').hide();
+        $('#non_fasyankes_mode').show();
+      } else {
+        alert('Wajib ada yang dipilih');
+        return
+      }
     });
   </script>
 </body>

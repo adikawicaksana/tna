@@ -49,7 +49,8 @@ $routes->group('admin', function ($routes) {
 	$routes->get('question', 'Admin\Question::index', ['as' => 'question.index']);
 	$routes->get('question/create', 'Admin\Question::create', ['as' => 'question.create']);
 	$routes->post('question/store', 'Admin\Question::store');
-	$routes->get('question/(:any)', 'Admin\Question::show/$1');
+	$routes->post('question/deactivate/(:num)', 'Admin\Question::deactivate/$1', ['as' => 'question.deactivate']);
+	$routes->get('question/(:any)', 'Admin\Question::show/$1', ['as' => 'question.show']);
 
 	$routes->get('questionnaire', 'Admin\Questionnaire::index', ['as' => 'questionnaire.index']);
 	$routes->get('questionnaire/create', 'Admin\Questionnaire::create', ['as' => 'questionnaire.create']);

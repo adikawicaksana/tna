@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
-use App\Controllers\Admin\Question;
 use CodeIgniter\Model;
 
 class QuestionModel extends Model
 {
 	protected $table = 'question';
 	protected $primaryKey = 'question_id';
-	protected $allowedFields = ['question', 'question_description', 'answer_type', 'question_status'];
+	protected $allowedFields = [
+		'question',
+		'question_description',
+		'source_reference',
+		'answer_type',
+		'question_status'
+	];
 	protected $useTimestamps = true;
 	protected $useAutoIncrement = true;
 
@@ -35,6 +40,23 @@ class QuestionModel extends Model
 			->orderBy('question', 'ASC')
 			->findAll();
 		return array_column($data, 'question', 'question_id');
+	}
+
+	public static function isDeactivatable($id)
+	{
+		$model = new QuestionModel();
+		$model = $model->find($id);
+		$result = ($model['question_status'] == self::STAT_ACTIVE);
+
+		// Check if any questionnaire is active
+		$count = model(QuestionnaireDetailModel::class)
+			->join('questionnaire AS q', 'q.questionnaire_id = questionnaire_detail.questionnaire_id')
+			->where('question_id', $id)
+			->where('questionnaire_status', QuestionnaireModel::STAT_ACTIVE)
+			->countAllResults();
+		$result &= $count <= 0;
+
+		return $result;
 	}
 
 	public static function listAnswerType()

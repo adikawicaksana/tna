@@ -72,9 +72,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
       // Mobile
       if (multiStepsMobile) {
         multiStepsMobile.addEventListener('input', event => {
-          const cleanValue = event.target.value.replace(/\D/g, '');
+          let cleanValue = event.target.value.replace(/\D/g, '');
+            if (cleanValue.startsWith('0')) cleanValue = cleanValue.substring(1);
           multiStepsMobile.value = formatGeneral(cleanValue, {
-            blocks: [3, 3, 4],
+            blocks: [3, 4, 4, 4],
             delimiters: [' ', ' ']
           });
         });
@@ -278,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         // stepsValidationForm.submit()
         // or send the form data to server via an Ajax request
         // To make the demo simple, I just placed an alert
-        alert('Submitted..!!');
+        
       });
 
       stepsValidationNext.forEach(item => {

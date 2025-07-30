@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
       if (wizardCreateAppBtnSubmit) {
         wizardCreateAppBtnSubmit.addEventListener('click', event => {
-          alert('Submitted..!!');
+          
         });
       }
     }

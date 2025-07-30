@@ -107,6 +107,7 @@
             <p class="mb-6">di Kawah Candradimuka Insan Kesehatan Indonesia</p>
 
             <form id="formAuthentication" class="mb-6" action="./login" method="POST">
+              <?= csrf_field() ?>
               <div class="mb-6 form-control-validation">
                 <label for="email" class="form-label">Email</label>
                 <input
@@ -143,7 +144,7 @@
             </form>
 
             <p class="text-center">
-              <span>Belum punya akun Fasilitator?</span>
+              <span>Belum punya akun ?</span>
               <a href="./register">
                 <span>Buat Akun</span>
               </a>

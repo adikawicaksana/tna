@@ -6,9 +6,11 @@ use App\Models\UserModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use CodeIgniter\Controller;
+use CodeIgniter\API\ResponseTrait;
 
 class Auth extends BaseController
 {
+     use ResponseTrait;
     public function login()
     {
 
@@ -175,31 +177,4 @@ class Auth extends BaseController
         return redirect()->to(base_url())->with('success', 'Berhasil logout');
     }
 
-    public function register()
-    {
-        helper(['form']);
-        echo view('auth/register');
-    }
-
-    public function registerPost()
-    {
-        helper(['form']);
-        $rules = [
-            'username' => 'required|min_length[4]|is_unique[users.username]',
-            'password' => 'required|min_length[6]',
-            'password_confirm' => 'matches[password]'
-        ];
-
-        if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        $model = new UserModel();
-        $model->save([
-            'username' => $this->request->getPost('username'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
-        ]);
-
-        return redirect()->to(base_url('login'))->with('success', 'Registrasi berhasil, silakan login.');
-    }
 }

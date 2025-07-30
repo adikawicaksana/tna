@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     }
     if (wizardCheckoutBtnSubmit) {
       wizardCheckoutBtnSubmit.addEventListener('click', event => {
-        alert('Submitted..!!');
+        
       });
     }
   }

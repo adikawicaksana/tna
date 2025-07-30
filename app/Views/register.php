@@ -326,7 +326,7 @@
                     </div>
                     <div class="col-md-12">
                       <label class="form-label" for="user_password">Password</label>
-                      <input type="password" id="user_password" name="multiStepsArea" class="form-control" />
+                      <input type="password" id="user_password" name="user_password" class="form-control" />
                     </div>
                     <div class="col-sm-12 d-flex flex-column align-items-center">
                       <label class="form-label">Captcha</label>

@@ -30,6 +30,7 @@
     rel="stylesheet" />
 
   <link rel="stylesheet" href="<?= base_url('assets/vendor/fonts/iconify-icons.css') ?>" />
+  <link rel="stylesheet" href="<?= base_url('assets/vendor/fonts/fontawesome.css') ?>" />
 
   <!-- Core CSS -->
   <!-- build:css assets/vendor/css/theme.css  -->

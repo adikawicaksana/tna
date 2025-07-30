@@ -23,7 +23,7 @@ use App\Models\QuestionModel;
 				</tr>
 				<tr>
 					<th>Deskripsi</th>
-					<td><?= $data[0]['question_description'] ?></td>
+					<td><?= !empty($data[0]['question_description']) ? $data[0]['question_description'] : '-' ?></td>
 				</tr>
 				<tr>
 					<th>Status</th>
@@ -35,13 +35,15 @@ use App\Models\QuestionModel;
 						<?= $answer_type[$data[0]['answer_type']] ?>
 
 						<?= !empty($data[0]['source_reference']) ? "<br>{$data[0]['source_reference']}" : '' ?>
-						<?php foreach ($data as $key => $each): ?>
-							<br>
-							<b><?= chr(65 + $key) ?>. <?= $each['option_name'] ?></b>
-							<small class="ms-5 text-muted">
-								<?= !empty($each['option_description']) ? '<br>' . $each['option_description'] : '' ?>
-							</small>
-						<?php endforeach; ?>
+						<?php if (in_array($data[0]['answer_type'], QuestionModel::hasOption())):
+							foreach ($data as $key => $each): ?>
+								<br>
+								<b><?= chr(65 + $key) ?>. <?= $each['option_name'] ?></b>
+								<small class="ms-5 text-muted">
+									<?= !empty($each['option_description']) ? '<br>' . $each['option_description'] : '' ?>
+								</small>
+						<?php endforeach;
+						endif; ?>
 					</td>
 				</tr>
 			</table>

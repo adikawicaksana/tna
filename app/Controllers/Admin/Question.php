@@ -34,7 +34,7 @@ class Question extends BaseController
 	public function show($id)
 	{
 		$db = \Config\Database::connect();
-		$sql = "SELECT *
+		$sql = "SELECT q.*, o.option_name, o.option_description
 			FROM question q
 			LEFT JOIN question_option o ON (q.question_id = o.question_id)
 			WHERE q.question_id = $id";

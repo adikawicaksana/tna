@@ -177,7 +177,9 @@
                       <h5 class="card-title mb-1"><i class="icon-base ti tabler-building-hospital"></i> FASYANKES</h5>
                       <p class="card-text">
 
-                        Bagi Anda SDMK atau non-SDMK yang bertugas di Fasilitas Pelayanan Kesehatan (Rumah Sakit, Puskesmas, Klinik, Laboratorium, Apotek, Praktik Dokter, Praktik Bidan, Praktik Perawat, atau Balai Kesehatan).
+                        Bagi Anda SDMK atau non-SDMK yang bertugas di Fasilitas Pelayanan Kesehatan (Rumah Sakit,
+                        Puskesmas, Klinik, Laboratorium, Apotek, Praktik Dokter, Praktik Bidan, Praktik Perawat, atau
+                        Balai Kesehatan).
                       </p>
                     </div>
                   </div>
@@ -247,7 +249,8 @@
                         </div>
                         <div class="col-sm-12 form-password-toggle form-control-validation mt-2">
                           <label class="form-label" for="multiStepsConfirmPass">Alamat</label>
-                          <textarea id="fasyankes_address" name="fasyankes_address" class="form-control" readonly></textarea>
+                          <textarea id="fasyankes_address" name="fasyankes_address" class="form-control"
+                            readonly></textarea>
                         </div>
                       </div>
                     </div>
@@ -277,7 +280,8 @@
                               }
                             </style>
                             <!-- Dropdown suggestion -->
-                            <div id="institution_suggestions" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
+                            <div id="institution_suggestions"
+                              class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
                               style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
                             </div>
                           </div>
@@ -286,7 +290,8 @@
                       <div class="row mt-3">
                         <div class="col-sm-12 form-password-toggle form-control-validation mt-2">
                           <label class="form-label" for="multiStepsConfirmPass">Alamat Institusi</label>
-                          <textarea id="institution_address" name="institution_address" class="form-control" readonly></textarea>
+                          <textarea id="institution_address" name="institution_address" class="form-control"
+                            readonly></textarea>
                         </div>
                       </div>
                     </div>
@@ -321,8 +326,8 @@
                     </div>
                     <div class="col-sm-6">
                       <label class="form-label" for="email">E-mail</label>
-                      <input type="Email" id="email" name="user_email"
-                        class="form-control" placeholder="Masukan alamat email valid" />
+                      <input type="Email" id="email" name="user_email" class="form-control"
+                        placeholder="Masukan alamat email valid" />
                     </div>
                     <div class="col-md-12">
                       <label class="form-label" for="user_password">Password</label>
@@ -331,19 +336,16 @@
                     <div class="col-sm-12 d-flex flex-column align-items-center">
                       <label class="form-label">Captcha</label>
 
-                      <img id="captchaImg" src="<?= base_url('captcha') ?>"
-                        alt="captcha" style="border:1px solid #ccc;">
+                      <img id="captchaImg" src="<?= base_url('captcha') ?>" alt="captcha"
+                        style="border:1px solid #ccc;">
 
                       <a href="javascript:void(0);" id="reloadCaptcha"
-                        class="mt-1 text-primary text-decoration-underline"
-                        style="cursor:pointer;">
+                        class="mt-1 text-primary text-decoration-underline" style="cursor:pointer;">
                         Perbarui Captcha
                       </a>
 
-                      <input type="text" name="captcha"
-                        class="form-control mt-2 text-center"
-                        placeholder="Masukkan captcha"
-                        style="width: 180px;">
+                      <input type="text" name="captcha" class="form-control mt-2 text-center"
+                        placeholder="Masukkan captcha" style="width: 180px;">
                     </div>
 
 
@@ -353,7 +355,8 @@
                         <i class="icon-base ti tabler-arrow-left icon-xs me-sm-2 me-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Sebelumnya</span>
                       </button>
-                      <button type="submit" class="btn btn-success btn-next btn-submit" id="btnRegister">Register</button>
+                      <button type="submit" class="btn btn-success btn-next btn-submit"
+                        id="btnRegister">Register</button>
                     </div>
                   </div>
                   <!--/ Credit Card Details -->
@@ -368,22 +371,30 @@
   </div>
 
   <!-- Modal OTP -->
-  <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-3 shadow-lg">
         <div class="modal-header">
           <h5 class="modal-title" id="otpModalLabel">Masukkan Kode OTP</h5>
         </div>
         <div class="modal-body text-center">
-          <p class="mb-3">Kami telah mengirimkan kode OTP ke nomor <strong id="otpPhoneNumber"></strong>. melalui WhatsApp</p>
+          <p class="mb-3">Kami telah mengirimkan kode OTP ke nomor <strong id="otpPhoneNumber"></strong>. melalui
+            WhatsApp</p>
           <form id="otpForm">
             <div class="d-flex justify-content-center gap-2 mb-3">
-              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric" pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
-              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric" pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
-              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric" pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
-              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric" pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
-              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric" pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
-              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric" pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
+              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric"
+                pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
+              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric"
+                pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
+              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric"
+                pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
+              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric"
+                pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
+              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric"
+                pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
+              <input type="text" maxlength="1" class="form-control text-center otp-input" inputmode="numeric"
+                pattern="[0-9]*" style="width:45px;height:55px;font-size:1.5rem;">
             </div>
             <button type="submit" class="btn btn-primary w-100">Verifikasi OTP</button>
           </form>
@@ -460,7 +471,7 @@
       });
     };
 
-    $(document).ready(function() {
+    $(document).ready(function () {
       const base_url = "<?= base_url() ?>";
       const api_url = `${base_url}api`;
 
@@ -481,8 +492,8 @@
 
       const FasyankesDetail = code =>
         ajaxPost(`${api_url}/fasyankes_check`, {
-            fasyankes_code: code
-          },
+          fasyankes_code: code
+        },
           res => fillForm(res, {
             fasyankes_type: 'fasyankes_type',
             fasyankes_name: 'fasyankes_name',
@@ -492,8 +503,8 @@
 
       const InstitutionDetail = id =>
         ajaxPost(`${api_url}/institution_check`, {
-            id
-          },
+          id
+        },
           res => fillForm(res, {
             institution_name: 'institution_name',
             institution_address: 'institution_address'
@@ -505,7 +516,7 @@
 
       // === Search live ===
       const liveSearch = (selector, url, container, template) => {
-        $(selector).on('keyup', function() {
+        $(selector).on('keyup', function () {
           const q = $(this).val();
           if (q.length > 1) {
             ajaxPost(`${api_url}/${url}`, {
@@ -523,32 +534,48 @@
         item => `<div class="item" data-id="${item.id}">${item.text}</div>`);
 
       liveSearch('#fasyankes_code', 'fasyankes_search', '#suggestions',
-        item => `<div class="item" data-code="${item.fasyankes_code}">${item.text}</div>`);
+        item => `<div class="item" data-code="${item.fasyankes_code}">${item.fasyankes_code} - ${item.text}</div>`);
+
+      $('#fasyankes_code').on('keydown', function (e) {
+        if (e.key === "Enter" || e.which === 13) {
+          e.preventDefault();
+          FasyankesDetail($(this).val())
+        }
+      });
+
+      $('#institution_name').on('keydown', function (e) {
+        if (e.key === "Enter" || e.which === 13) {
+          e.preventDefault();
+        }
+      });
 
       // === Suggestion clicks ===
-      $(document).on('click', '#suggestions .item', function() {
+      $(document).on('click', '#suggestions .item', function () {
         const code = $(this).data('code');
         $('#fasyankes_code').val(code);
         FasyankesDetail(code);
         $('#suggestions').fadeOut();
       });
 
-      $(document).on('click', '#institution_suggestions .item', function() {
+      $(document).on('click', '#institution_suggestions .item', function () {
         InstitutionDetail($(this).data('id'));
         $('#institution_suggestions').fadeOut();
       });
 
       // === Segment toggle ===
-      $('#segment1').click(function() {
+      $('#segment1').click(function () {
         const selected = $('input[name="fasyankes_mode"]:checked').val();
         $('#fasyankes_mode, #non_fasyankes_mode').hide();
         if (selected === 'fasyankes') $('#fasyankes_mode').show();
         else if (selected === 'non-fasyankes') $('#non_fasyankes_mode').show();
         else showAlert('error', 'Wajib ada yang dipilih');
+        $('#segment2').prop('disabled', true);
+        $('#multiStepsForm').find('input:not([type="submit"]):input:not([type="radio"]):not([type="button"]):not([type="hidden"]), textarea').val('');
+
       });
 
       // === Register Submit ===
-      $('#btnRegister').click(function() {
+      $('#btnRegister').click(function () {
         const captcha = $('input[name="captcha"]').val();
 
         $.ajax({
@@ -558,8 +585,25 @@
           dataType: 'json',
           success: res => {
             if (res.code === 400) {
-              showAlert(res.type, res.message);
-              reloadCaptcha();
+              if (res.show_otp_modal) {
+                const otpModal = new bootstrap.Modal('#otpModal');
+
+                Swal.fire({
+                  text: res.message,
+                  icon: res.type,
+                  confirmButtonText: 'OK'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    $('#otpPhoneNumber').text(res.data.mobile);
+                    otpModal.show();
+                  }
+                });
+
+              } else {
+                showAlert(res.type, res.message);
+                reloadCaptcha();
+                $('input[name="captcha"]').val('');
+              }
             } else {
               const otpModal = new bootstrap.Modal('#otpModal');
               $('#otpPhoneNumber').text("+62xxxxxxx");
@@ -575,7 +619,7 @@
       const resendBtn = document.getElementById('resendOtpLink');
 
       otpInputs.forEach((input, idx) => {
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
           this.value = this.value.replace(/\D/g, '');
           if (this.value && idx < otpInputs.length - 1) otpInputs[idx + 1].focus();
         });
@@ -597,14 +641,14 @@
         if (otp.length < otpInputs.length) return showAlert('error', 'Silakan isi semua digit OTP');
 
         fetch(`${base_url}register/verifyOtp`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams({
-              otp
-            })
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: new URLSearchParams({
+            otp
           })
+        })
           .then(res => res.json())
           .then(data => {
             if (data.status) {
@@ -621,8 +665,8 @@
         resendBtn.disabled = true;
         resendBtn.textContent = "Mengirim ulang...";
         fetch(`${base_url}register/resendOtp`, {
-            method: "POST"
-          })
+          method: "POST"
+        })
           .then(res => res.json())
           .then(data => {
             showAlert(data.success ? 'success' : 'error', data.message);

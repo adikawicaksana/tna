@@ -15,6 +15,7 @@
 #--------------------------------------------------------------------
 
 # CI_ENVIRONMENT = production
+CI_ENVIRONMENT = development
 
 #--------------------------------------------------------------------
 # APP
@@ -37,6 +38,30 @@
 # database.default.DBDriver = MySQLi
 # database.default.DBPrefix =
 # database.default.port = 3306
+
+database.default.hostname = 36.95.219.218
+database.default.database = dev_tna
+database.default.username = murnajati
+database.default.password = murnaj@ti_2020#$
+database.default.DBDriver = Postgre
+database.default.port = 5432
+database.default.charset = UTF8
+
+JWT_SECRET= MurnajatiPortal@2025
+
+# WA
+notif.wa.apiKey = murnajati_garlat
+notif.wa.apiUrl.sendText = https://api-whatsapp.adikawicaksana.my.id/api/send-message
+notif.wa.apiUrl.sendMedia = https://api-whatsapp.adikawicaksana.my.id/api/send-media
+
+# Email (SMTP)
+notif.mail.host = smtp.gmail.com
+notif.mail.user = your@email.com
+notif.mail.pass = yourPassword
+notif.mail.port = 587
+notif.mail.fromName = "MyApp Support"
+
+
 
 # If you use MySQLi as tests, first update the values of Config\Database::$tests.
 # database.tests.hostname = localhost

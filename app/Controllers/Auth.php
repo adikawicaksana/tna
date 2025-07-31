@@ -14,13 +14,6 @@ class Auth extends BaseController
     public function login()
     {
 
-        // $userModel = new UserModel();
-        // $userModel->save([
-        //     'username' => 'admin',
-        //     'password' => password_hash('admin123', PASSWORD_DEFAULT)
-        // ]);
-
-
         $session = session();
 
         if ($session->get('logged_in') && $session->get('token')) {
@@ -51,71 +44,76 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $model = new UserModel();
-        $email = $this->request->getPost('email');
+        $model    = new UserModel();
+        $email    = $this->request->getPost('email');
         $password = $this->request->getPost('password');
-        $user = $model->where('email', $email)->first();
+        $user     = $model->where('email', $email)->first();
 
         if ($user && password_verify($password, $user['password'])) {
             $key = getenv('JWT_SECRET');
-            $payload = [
-                'sub' => $user['id'],
-                'email' => $user['email'],
-                'ip' => $this->request->getIPAddress(),
-                'ua' => $_SERVER['HTTP_USER_AGENT'],
-                'jti' => bin2hex(random_bytes(8)),
-                'iat' => time(),
-                'exp' => time() + 10 //15 menit
-            ];
+            $ip  = $this->request->getIPAddress();
+            $ua  = $_SERVER['HTTP_USER_AGENT'];
 
+            // Access Token
+            $payload = [
+                'sub'   => $user['id'],
+                'email' => $user['email'],
+                'ip'    => $ip,
+                'ua'    => $ua,
+                'jti'   => bin2hex(random_bytes(8)),
+                'iat'   => time(),
+                'exp'   => time() + (60 * 15) // 15 menit
+            ];
             $token = JWT::encode($payload, $key, 'HS256');
 
-            // Tambahkan refresh token
+            // Refresh Token
             $refreshPayload = [
                 'sub' => $user['id'],
                 'type' => 'refresh',
+                'ip'  => $ip,
+                'ua'  => $ua,
                 'jti' => bin2hex(random_bytes(8)),
-                'exp' => time() + (86400 * 7) // 7 hari
+                'iat' => time(),
+                'exp' => time() + (60 * 60 * 24 * 7) // 7 hari
             ];
-
             $refreshToken = JWT::encode($refreshPayload, $key, 'HS256');
 
             // Simpan ke database
             $model->update($user['id'], [
-                'refresh_token' => $refreshToken,
+                'refresh_token'        => $refreshToken,
                 'refresh_token_expire' => date('Y-m-d H:i:s', $refreshPayload['exp'])
             ]);
 
-            // Simpan ke session (opsional jika ingin pakai di web)
+            // Simpan ke session
             $session->set([
-                'token' => $token,
+                'token'         => $token,
                 'refresh_token' => $refreshToken,
-                'email' => $user['email'],
-                'user_id' => $user['id'],
-                'logged_in' => true
+                'email'         => $user['email'],
+                'user_id'       => $user['id'],
+                'logged_in'     => true
             ]);
 
             $response = service('response');
-            // Set cookie HttpOnly & Secure
             return $response
                 ->setCookie([
                     'name'     => 'refresh_token',
                     'value'    => $refreshToken,
-                    'expire'   => 60 * 60 * 24 * 7, // 7 hari
+                    'expire'   => 60 * 60 * 24 * 7,
                     'httponly' => true,
-                    'secure'   => false, // Ubah ke true jika pakai HTTPS
+                    'secure'   => false, // true jika HTTPS
                     'samesite' => 'Strict',
                 ])
                 ->redirect(base_url('dashboard'));
         }
 
-        return redirect()->to(base_url('login'))->with('error', '<strong>Oopss!</strong> e-mail atau password salah!');
+        return redirect()->to(base_url('login'))
+                         ->with('error', '<strong>Oopss!</strong> e-mail atau password salah!');
     }
 
     public function refreshWebToken()
     {
         $cookie = $this->request->getCookie('refresh_token');
-        $key = getenv('JWT_SECRET');
+        $key    = getenv('JWT_SECRET');
 
         if (!$cookie) {
             return $this->response->setJSON(['error' => 'No refresh token'])->setStatusCode(401);
@@ -127,18 +125,22 @@ class Auth extends BaseController
                 throw new \Exception('Invalid refresh token');
             }
 
+            // Validasi IP & UA
+            if ($decoded->ip !== $this->request->getIPAddress() || $decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
+                throw new \Exception('Device mismatch');
+            }
+
             // Buat access token baru
             $accessPayload = [
                 'sub' => $decoded->sub,
+                'ip'  => $this->request->getIPAddress(),
+                'ua'  => $_SERVER['HTTP_USER_AGENT'],
                 'jti' => bin2hex(random_bytes(8)),
-                'ip' => $this->request->getIPAddress(),
-                'ua' => $_SERVER['HTTP_USER_AGENT'],
                 'iat' => time(),
-                'exp' => time() + 900 // 15 menit
+                'exp' => time() + (60 * 15) // 15 menit
             ];
 
             $newToken = JWT::encode($accessPayload, $key, 'HS256');
-
             session()->set('token', $newToken);
 
             return $this->response->setJSON(['access_token' => $newToken]);

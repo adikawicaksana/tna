@@ -870,3 +870,35 @@
 <?= $this->endSection() ?>
 
 
+<?= $this->section('scripts') ?>
+    <!-- Page JS -->
+    <script src="<?= base_url('assets/js/dashboards-analytics.js') ?>"></script>
+    <script>
+    function refreshTokenHeartbeat() {
+      fetch('/refresh-token', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      .then(response => {
+        if (!response.ok) {
+          window.location.href = '/login';
+          return;
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data?.access_token) {
+          console.log('Token diperbarui otomatis');
+        }
+      })
+      .catch(() => {
+        window.location.href = '/login';
+      });
+    }
+
+    // Jalankan tiap 10 menit
+    setInterval(refreshTokenHeartbeat, 10 * 60 * 1000);
+    </script>
+<?= $this->endSection() ?>
+
+

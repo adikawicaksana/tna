@@ -243,11 +243,11 @@
                       </div>
 
                       <div class="row mt-3">
-                        <div class="col-sm-12 form-password-toggle form-control-validation">
+                        <div class="col-sm-12  form-control-validation">
                           <label class="form-label">Nama Fasyankes</label>
                           <input type="text" id="fasyankes_name" name="fasyankes_name" class="form-control" readonly />
                         </div>
-                        <div class="col-sm-12 form-password-toggle form-control-validation mt-2">
+                        <div class="col-sm-12  form-control-validation mt-2">
                           <label class="form-label" for="multiStepsConfirmPass">Alamat</label>
                           <textarea id="fasyankes_address" name="fasyankes_address" class="form-control"
                             readonly></textarea>
@@ -288,7 +288,7 @@
                         </div>
                       </div>
                       <div class="row mt-3">
-                        <div class="col-sm-12 form-password-toggle form-control-validation mt-2">
+                        <div class="col-sm-12  form-control-validation mt-2">
                           <label class="form-label" for="multiStepsConfirmPass">Alamat Institusi</label>
                           <textarea id="institution_address" name="institution_address" class="form-control"
                             readonly></textarea>

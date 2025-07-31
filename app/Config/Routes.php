@@ -11,7 +11,7 @@ $routes->post('/login', 'Auth::loginPost');
 $routes->post('/refresh-token', 'Auth::refreshWebToken');
 $routes->get('/captcha', 'Captcha::generate');
 $routes->get('/logout', 'Auth::logout');
-$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth:web,autologin']);
+$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'authweb']);
 
 
 
@@ -19,6 +19,9 @@ $routes->get('/register', 'Register::index');
 $routes->post('/register', 'Register::store');
 $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');
+
+
+$routes->get('/profile', 'Profile::index', ['filter' => 'auth:web,autologin']);
 
 $routes->group('api/v1', ['filter' => 'authjwt'], function ($routes) {
 	$routes->get('profile', 'Api\Profile::index');

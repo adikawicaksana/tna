@@ -29,7 +29,7 @@ class WebJwtAutoLoginFilter implements FilterInterface
                         'sub' => $decoded->sub,
                         'jti' => bin2hex(random_bytes(8)),
                         'iat' => time(),
-                        'exp' => time() + 900, // 15 menit
+                        'exp' => time() + 10, // 15 menit
                     ];
 
                     $newToken = JWT::encode($payload, getenv('JWT_SECRET'), 'HS256');

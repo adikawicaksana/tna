@@ -19,3 +19,10 @@
     <!-- Footer -->
     <?= view('layout/footer') ?>
     <!-- / Footer -->
+
+    <?= $this->renderSection('scripts') ?>
+
+    
+</body>
+
+</html>

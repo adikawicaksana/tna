@@ -47,10 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
             validators: {
               notEmpty: {
                 message: 'Please enter your password'
-              },
-              stringLength: {
-                min: 6,
-                message: 'Password must be more than 6 characters'
               }
             }
           },
@@ -62,10 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
               identical: {
                 compare: () => formAuthentication.querySelector('[name="password"]').value,
                 message: 'The password and its confirmation do not match'
-              },
-              stringLength: {
-                min: 6,
-                message: 'Password must be more than 6 characters'
               }
             }
           },

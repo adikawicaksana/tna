@@ -17,8 +17,8 @@
       phoneMask.addEventListener('input', event => {
         const cleanValue = event.target.value.replace(/\D/g, '');
         phoneMask.value = formatGeneral(cleanValue, {
-          blocks: [3, 3, 4],
-          delimiters: [' ', ' ']
+          blocks: [3, 4, 4, 4],
+            delimiters: [' ', ' ']
         });
       });
       registerCursorTracker({

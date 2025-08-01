@@ -65,7 +65,7 @@
                           ><i class="icon-base ti tabler-user-check icon-sm me-1_5"></i> Profile</a
                         >
                       </li>
-                      <li class="nav-item">
+                      <!-- <li class="nav-item">
                         <a class="nav-link" href="pages-profile-teams.html"
                           ><i class="icon-base ti tabler-users icon-sm me-1_5"></i> Teams</a
                         >
@@ -79,7 +79,7 @@
                         <a class="nav-link" href="pages-profile-connections.html"
                           ><i class="icon-base ti tabler-link icon-sm me-1_5"></i> Connections</a
                         >
-                      </li>
+                      </li> -->
                     </ul>
                   </div>
                 </div>
@@ -88,481 +88,57 @@
 
               <!-- User Profile Content -->
               <div class="row">
-                <div class="col-xl-4 col-lg-5 col-md-5">
-                  <!-- About User -->
-                  <div class="card mb-6">
+                 <!-- Basic Layout -->
+                
+                <div class="col-xl">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">                      
+                    </div>
                     <div class="card-body">
-                      <p class="card-text text-uppercase text-body-secondary small mb-0">About</p>
-                      <ul class="list-unstyled my-3 py-1">
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-user icon-lg"></i
-                          ><span class="fw-medium mx-2">Full Name:</span> <span>John Doe</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-check icon-lg"></i><span class="fw-medium mx-2">Status:</span>
-                          <span>Active</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-crown icon-lg"></i><span class="fw-medium mx-2">Role:</span>
-                          <span>Developer</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-flag icon-lg"></i><span class="fw-medium mx-2">Country:</span>
-                          <span>USA</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-2">
-                          <i class="icon-base ti tabler-language icon-lg"></i
-                          ><span class="fw-medium mx-2">Languages:</span> <span>English</span>
-                        </li>
-                      </ul>
-                      <p class="card-text text-uppercase text-body-secondary small mb-0">Contacts</p>
-                      <ul class="list-unstyled my-3 py-1">
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-phone-call icon-lg"></i
-                          ><span class="fw-medium mx-2">Contact:</span>
-                          <span>(123) 456-7890</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-messages icon-lg"></i
-                          ><span class="fw-medium mx-2">Skype:</span> <span>john.doe</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-mail icon-lg"></i><span class="fw-medium mx-2">Email:</span>
-                          <span>john.doe@example.com</span>
-                        </li>
-                      </ul>
-                      <p class="card-text text-uppercase text-body-secondary small mb-0">Teams</p>
-                      <ul class="list-unstyled mb-0 mt-3 pt-1">
-                        <li class="d-flex flex-wrap mb-4">
-                          <span class="fw-medium me-2">Backend Developer</span><span>(126 Members)</span>
-                        </li>
-                        <li class="d-flex flex-wrap">
-                          <span class="fw-medium me-2">React Developer</span><span>(98 Members)</span>
-                        </li>
-                      </ul>
+                      <form>
+                        <div class="mb-6">
+                          <label class="form-label" for="basic-default-fullname">Full Name</label>
+                          <input type="text" class="form-control" id="basic-default-fullname" placeholder="John Doe" />
+                        </div>
+                        <div class="mb-6">
+                          <label class="form-label" for="basic-default-company">Company</label>
+                          <input type="text" class="form-control" id="basic-default-company" placeholder="ACME Inc." />
+                        </div>
+                        <div class="mb-6">
+                          <label class="form-label" for="basic-default-email">Email</label>
+                          <div class="input-group input-group-merge">
+                            <input
+                              type="text"
+                              id="basic-default-email"
+                              class="form-control"
+                              placeholder="john.doe"
+                              aria-label="john.doe"
+                              aria-describedby="basic-default-email2" />
+                            <span class="input-group-text" id="basic-default-email2">@example.com</span>
+                          </div>
+                          <div class="form-text">You can use letters, numbers & periods</div>
+                        </div>
+                        <div class="mb-6">
+                          <label class="form-label" for="basic-default-phone">Phone No</label>
+                          <input
+                            type="text"
+                            id="basic-default-phone"
+                            class="form-control phone-mask"
+                            placeholder="658 799 8941" />
+                        </div>
+                        <div class="mb-6">
+                          <label class="form-label" for="basic-default-message">Message</label>
+                          <textarea
+                            id="basic-default-message"
+                            class="form-control"
+                            placeholder="Hi, Do you have a moment to talk Joe?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                      </form>
                     </div>
                   </div>
-                  <!--/ About User -->
-                  <!-- Profile Overview -->
-                  <div class="card mb-6">
-                    <div class="card-body">
-                      <p class="card-text text-uppercase text-body-secondary small">Overview</p>
-                      <ul class="list-unstyled mb-0">
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-check icon-lg"></i
-                          ><span class="fw-medium mx-2">Task Compiled:</span> <span>13.5k</span>
-                        </li>
-                        <li class="d-flex align-items-center mb-4">
-                          <i class="icon-base ti tabler-layout-grid icon-lg"></i
-                          ><span class="fw-medium mx-2">Projects Compiled:</span> <span>146</span>
-                        </li>
-                        <li class="d-flex align-items-center">
-                          <i class="icon-base ti tabler-users icon-lg"></i
-                          ><span class="fw-medium mx-2">Connections:</span> <span>897</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <!--/ Profile Overview -->
                 </div>
-                <div class="col-xl-8 col-lg-7 col-md-7">
-                  <!-- Activity Timeline -->
-                  <div class="card card-action mb-6">
-                    <div class="card-header align-items-center">
-                      <h5 class="card-action-title mb-0">
-                        <i class="icon-base ti tabler-chart-bar-popular icon-lg me-4"></i>Activity Timeline
-                      </h5>
-                      <div class="card-action-element">
-                        <div class="dropdown">
-                          <button
-                            type="button"
-                            class="btn dropdown-toggle hide-arrow p-0 text-body-secondary"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"></button>
-                          <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="javascript:void(0);">Share timeline</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">Suggest edits</a></li>
-                            <li>
-                              <hr class="dropdown-divider" />
-                            </li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">Report bug</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body pt-3">
-                      <ul class="timeline mb-0">
-                        <li class="timeline-item timeline-item-transparent">
-                          <span class="timeline-point timeline-point-primary"></span>
-                          <div class="timeline-event">
-                            <div class="timeline-header mb-3">
-                              <h6 class="mb-0">12 Invoices have been paid</h6>
-                              <small class="text-body-secondary">12 min ago</small>
-                            </div>
-                            <p class="mb-2">Invoices have been paid to the company</p>
-                            <div class="d-flex align-items-center mb-2">
-                              <div class="badge bg-lighter rounded d-flex align-items-center">
-                                <img src="../../assets//img/icons/misc/pdf.png" alt="img" width="15" class="me-2" />
-                                <span class="h6 mb-0 text-body">invoices.pdf</span>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="timeline-item timeline-item-transparent">
-                          <span class="timeline-point timeline-point-success"></span>
-                          <div class="timeline-event">
-                            <div class="timeline-header mb-3">
-                              <h6 class="mb-0">Client Meeting</h6>
-                              <small class="text-body-secondary">45 min ago</small>
-                            </div>
-                            <p class="mb-2">Project meeting with john @10:15am</p>
-                            <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
-                              <div class="d-flex flex-wrap align-items-center mb-50">
-                                <div class="avatar avatar-sm me-2">
-                                  <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                  <p class="mb-0 small fw-medium">Lester McCarthy (Client)</p>
-                                  <small>CEO of Pixinvent</small>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="timeline-item timeline-item-transparent">
-                          <span class="timeline-point timeline-point-info"></span>
-                          <div class="timeline-event">
-                            <div class="timeline-header mb-3">
-                              <h6 class="mb-0">Create a new project for client</h6>
-                              <small class="text-body-secondary">2 Day Ago</small>
-                            </div>
-                            <p class="mb-2">6 team members in a project</p>
-                            <ul class="list-group list-group-flush">
-                              <li
-                                class="list-group-item d-flex justify-content-between align-items-center flex-wrap border-top-0 p-0">
-                                <div class="d-flex flex-wrap align-items-center">
-                                  <ul class="list-unstyled users-list d-flex align-items-center avatar-group m-0 me-2">
-                                    <li
-                                      data-bs-toggle="tooltip"
-                                      data-popup="tooltip-custom"
-                                      data-bs-placement="top"
-                                      title="Vinnie Mostowy"
-                                      class="avatar pull-up">
-                                      <img class="rounded-circle" src="../../assets/img/avatars/1.png" alt="Avatar" />
-                                    </li>
-                                    <li
-                                      data-bs-toggle="tooltip"
-                                      data-popup="tooltip-custom"
-                                      data-bs-placement="top"
-                                      title="Allen Rieske"
-                                      class="avatar pull-up">
-                                      <img class="rounded-circle" src="../../assets/img/avatars/4.png" alt="Avatar" />
-                                    </li>
-                                    <li
-                                      data-bs-toggle="tooltip"
-                                      data-popup="tooltip-custom"
-                                      data-bs-placement="top"
-                                      title="Julee Rossignol"
-                                      class="avatar pull-up">
-                                      <img class="rounded-circle" src="../../assets/img/avatars/2.png" alt="Avatar" />
-                                    </li>
-                                    <li class="avatar">
-                                      <span
-                                        class="avatar-initial rounded-circle pull-up"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="bottom"
-                                        title="3 more"
-                                        >+3</span
-                                      >
-                                    </li>
-                                  </ul>
-                                </div>
-                              </li>
-                            </ul>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <!--/ Activity Timeline -->
-                  <div class="row">
-                    <!-- Connections -->
-                    <div class="col-lg-12 col-xl-6">
-                      <div class="card card-action mb-6">
-                        <div class="card-header align-items-center">
-                          <h5 class="card-action-title mb-0">Connections</h5>
-                          <div class="card-action-element">
-                            <div class="dropdown">
-                              <button
-                                type="button"
-                                class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 text-body-secondary"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="icon-base ti tabler-dots-vertical icon-md text-body-secondary"></i>
-                              </button>
-                              <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="javascript:void(0);">Share connections</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Suggest edits</a></li>
-                                <li>
-                                  <hr class="dropdown-divider" />
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Report bug</a></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="card-body">
-                          <ul class="list-unstyled mb-0">
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Cecilia Payne</h6>
-                                    <small>45 Connections</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <button class="btn btn-label-primary btn-icon">
-                                    <i class="icon-base ti tabler-user-check icon-22px"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Curtis Fletcher</h6>
-                                    <small>1.32k Connections</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <button class="btn btn-primary btn-icon">
-                                    <i class="icon-base ti tabler-user-x icon-22px"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img src="../../assets/img/avatars/10.png" alt="Avatar" class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Alice Stone</h6>
-                                    <small>125 Connections</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <button class="btn btn-primary btn-icon">
-                                    <i class="icon-base ti tabler-user-x icon-22px"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img src="../../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Darrell Barnes</h6>
-                                    <small>456 Connections</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <button class="btn btn-label-primary btn-icon">
-                                    <i class="icon-base ti tabler-user-check icon-22px"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-
-                            <li class="mb-6">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Eugenia Moore</h6>
-                                    <small>1.2k Connections</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <button class="btn btn-label-primary btn-icon">
-                                    <i class="icon-base ti tabler-user-check icon-22px"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="text-center">
-                              <a href="javascript:;">View all connections</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <!--/ Connections -->
-                    <!-- Teams -->
-                    <div class="col-lg-12 col-xl-6">
-                      <div class="card card-action mb-6">
-                        <div class="card-header align-items-center">
-                          <h5 class="card-action-title mb-0">Teams</h5>
-                          <div class="card-action-element">
-                            <div class="dropdown">
-                              <button
-                                type="button"
-                                class="btn btn-icon btn-text-secondary dropdown-toggle hide-arrow p-0"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="icon-base ti tabler-dots-vertical icon-md text-body-secondary"></i>
-                              </button>
-                              <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="javascript:void(0);">Share teams</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Suggest edits</a></li>
-                                <li>
-                                  <hr class="dropdown-divider" />
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Report bug</a></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="card-body">
-                          <ul class="list-unstyled mb-0">
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img
-                                      src="../../assets/img/icons/brands/react-label.png"
-                                      alt="Avatar"
-                                      class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">React Developers</h6>
-                                    <small>72 Members</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <a href="javascript:;"><span class="badge bg-label-danger">Developer</span></a>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img
-                                      src="../../assets/img/icons/brands/support-label.png"
-                                      alt="Avatar"
-                                      class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Support Team</h6>
-                                    <small>122 Members</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <a href="javascript:;"><span class="badge bg-label-primary">Support</span></a>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img
-                                      src="../../assets/img/icons/brands/figma-label.png"
-                                      alt="Avatar"
-                                      class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">UI Designers</h6>
-                                    <small>7 Members</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <a href="javascript:;"><span class="badge bg-label-info">Designer</span></a>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-4">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img
-                                      src="../../assets/img/icons/brands/vue-label.png"
-                                      alt="Avatar"
-                                      class="rounded-circle" />
-                                  </div>
-                                  <div class="me-2">
-                                    <h6 class="mb-0">Vue.js Developers</h6>
-                                    <small>289 Members</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <a href="javascript:;"><span class="badge bg-label-danger">Developer</span></a>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="mb-6">
-                              <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center">
-                                  <div class="avatar me-2">
-                                    <img
-                                      src="../../assets/img/icons/brands/twitter-label.png"
-                                      alt="Avatar"
-                                      class="rounded-circle" />
-                                  </div>
-                                  <div class="me-w">
-                                    <h6 class="mb-0">Digital Marketing</h6>
-                                    <small>24 Members</small>
-                                  </div>
-                                </div>
-                                <div class="ms-auto">
-                                  <a href="javascript:;"><span class="badge bg-label-secondary">Marketing</span></a>
-                                </div>
-                              </div>
-                            </li>
-                            <li class="text-center">
-                              <a href="javascript:;">View all teams</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <!--/ Teams -->
-                  </div>
-                  <!-- Projects table -->
-                  <div class="card mb-6">
-                    <div class="mb-4">
-                      <table class="table datatable-project">
-                        <thead class="border-top">
-                          <tr>
-                            <th></th>
-                            <th></th>
-                            <th>Project</th>
-                            <th>Leader</th>
-                            <th>Team</th>
-                            <th class="w-px-200">Progress</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                      </table>
-                    </div>
-                  </div>
-                  <!--/ Projects table -->
-                </div>
+                
               </div>
               <!--/ User Profile Content -->
             </div>
@@ -572,6 +148,7 @@
 <?= $this->section('scripts') ?>
     <!-- Page JS -->
     <script src="<?= base_url('assets/js/app-user-view-account.js') ?>"></script>
+    <script src="<?= base_url('assets/js/form-layouts.js') ?>"></script>
     <script>
     <?php if(session()->getFlashdata('warning_profile')): ?>
         Swal.fire({
@@ -581,5 +158,193 @@
             confirmButtonText: 'OK'
         });
     <?php endif; ?>
-    </script>
+    
+    
+    $(document).ready(function () {
+    const base_url = "<?= base_url() ?>";
+    const api_url  = base_url + "api";
+
+    // === Utility Functions ===
+
+    const reloadCaptcha = () => {
+        $('#captchaImg').attr('src', `${base_url}captcha?t=${Date.now()}`);
+    };
+
+    const showAlert = (type, message) => {
+        Swal.fire({ text: message, icon: type });
+    };
+
+    const ajaxPost = (url, data, successCb, errorCb) => {
+        $.ajax({
+            url,
+            method: 'POST',
+            data,
+            dataType: 'json',
+            success: successCb,
+            error: (xhr, status, error) => {
+                console.error('Error:', error);
+                if (errorCb) errorCb(xhr);
+            }
+        });
+    };
+
+    const renderSuggestions = (container, results, template, emptyText) => {
+        if (results.length > 0) {
+            $(container).html(results.map(template).join('')).slideDown(150);
+        } else {
+            $(container).html(`<div class="item text-muted">${emptyText}</div>`).fadeIn();
+        }
+    };
+
+    // === Captcha ===
+    $('#reloadCaptcha').on('click', reloadCaptcha);
+
+    // === Detail Handlers ===
+    const FasyankesDetail = (code) => {
+        ajaxPost(`${api_url}/fasyankes_check`, { fasyankes_code: code }, (response) => {
+            const result = response.data;
+            if (response.code === 200) {
+                $('#fasyankes_type').val(result.fasyankes_type.toUpperCase());
+                $('#fasyankes_name').val(result.fasyankes_name);
+                $('#fasyankes_address').val(result.fasyankes_address);
+                $('#segment2').prop('disabled', false);
+            } else {
+                $('#fasyankes_type, #fasyankes_name, #fasyankes_address').val("");
+                $('#segment2').prop('disabled', true);
+            }
+            showAlert(response.type, response.message);
+        });
+    };
+
+    const InstitutionDetail = (id) => {
+        ajaxPost(`${api_url}/institution_check`, { id }, (response) => {
+            const result = response.data;
+            if (response.code === 200) {
+                $('#institution_name').val(result.institution_name);
+                $('#institution_address').val(result.institution_address);
+                $('#segment2').prop('disabled', false);
+            } else {
+                $('#institution_name, #institution_address').val("");
+                $('#segment2').prop('disabled', true);
+            }
+            showAlert(response.type, response.message);
+        });
+    };
+
+    // === Input Events ===
+    $('#fasyankes_code').on('keypress', e => {
+        if (e.which === 13) {
+            e.preventDefault();
+            FasyankesDetail($(e.target).val());
+        }
+    });
+
+    $('#institution_name').on('keypress', e => {
+        if (e.which === 13) e.preventDefault();
+    });
+
+    // Institution live search
+    $('#institution_name').on('keyup', function () {
+        const query = $(this).val();
+        if (query.length > 1) {
+            ajaxPost(`${api_url}/institution_search`, { keyword: query }, (response) => {
+                renderSuggestions('#institution_suggestions', response.data,
+                    item => `<div class="item" data-id="${item.id}">${item.text}</div>`,
+                    'Tidak ditemukan'
+                );
+            });
+        } else {
+            $('#institution_suggestions').slideUp(150);
+        }
+    });
+
+    // Fasyankes live search
+    $('#fasyankes_code').on('keyup', function () {
+        const query = $(this).val();
+        if (query.length > 1) {
+            ajaxPost(`${api_url}/fasyankes_search`, { keyword: query }, (response) => {
+                renderSuggestions('#suggestions', response.data,
+                    item => `<div class="item" data-code="${item.fasyankes_code}">${item.text}</div>`,
+                    'Tidak ditemukan'
+                );
+            });
+        } else {
+            $('#suggestions').slideUp(150);
+        }
+    });
+
+    // Suggestions click
+    $(document).on('click', '#suggestions .item', function () {
+        const code = $(this).data('code');
+        $('#fasyankes_code').val(code);
+        FasyankesDetail(code);
+        $('#suggestions').fadeOut();
+    });
+
+    $(document).on('click', '#institution_suggestions .item', function () {
+        InstitutionDetail($(this).data('id'));
+        $('#institution_suggestions').fadeOut();
+    });
+
+    // Segment Toggle
+    $('#segment1').on('click', function () {
+        const selected = $('input[name="fasyankes_mode"]:checked').val();
+        if (selected === 'fasyankes') {
+            $('#non_fasyankes_mode').hide();
+            $('#fasyankes_mode').show();
+        } else if (selected === 'non-fasyankes') {
+            $('#fasyankes_mode').hide();
+            $('#non_fasyankes_mode').show();
+        } else {
+            alert('Wajib ada yang dipilih');
+        }
+    });
+
+    // === Select2 Dropdowns ===
+    const select2Config = (url, extraDataFn) => ({
+        placeholder: '-- Pilih --',
+        allowClear: true,
+        width: '100%',
+        ajax: {
+            url: `${api_url}/${url}`,
+            dataType: 'json',
+            delay: 250,
+            data: params => ({
+                search: params.term,
+                ...(extraDataFn ? extraDataFn() : {})
+            }),
+            processResults: data => ({ results: data })
+        }
+    });
+
+    $('#provinsi').select2(select2Config('provinsi'));
+    $('#kabupaten').select2(select2Config('kabupaten', () => ({ prov_id: $('#provinsi').val() })));
+    $('#kecamatan').select2(select2Config('kecamatan', () => ({ kab_id: $('#kabupaten').val() })));
+    $('#kelurahan').select2(select2Config('kelurahan', () => ({ kec_id: $('#kecamatan').val() })));
+
+    // === Form Submit ===
+    $('#btnRegister').on('click', function () {
+        const captcha = $('input[name="captcha"]').val();
+        if (!captcha) {
+            showAlert('error', 'Captcha wajib diisi.');
+            return;
+        }
+
+        $.ajax({
+            url: $('#multiStepsForm').attr('action'),
+            method: $('#multiStepsForm').attr('method'),
+            data: $('#multiStepsForm').serialize(),
+            dataType: 'json',
+            success: (response) => {
+                if (response.code === 400) {
+                    showAlert(response.type, response.message);
+                    reloadCaptcha();
+                }
+            },
+            error: (xhr) => console.error(xhr.responseText)
+        });
+    });
+});
+
+  </script>
 <?= $this->endSection() ?>

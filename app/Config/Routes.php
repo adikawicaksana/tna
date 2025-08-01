@@ -12,7 +12,7 @@ $routes->post('/refresh-token', 'Auth::refreshWebToken');
 $routes->get('/captcha', 'Captcha::generate');
 $routes->get('/logout', 'Auth::logout');
 
-$routes->get('/register', 'Register::index');
+$routes->get('/register', 'Register::index', ['filter' => 'redirectIfAuth']);
 $routes->post('/register', 'Register::store');
 $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');

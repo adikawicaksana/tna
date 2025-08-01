@@ -71,3 +71,5 @@
 
 <script src="<?= base_url('assets/js/main.js') ?>"></script>
 
+
+<?= $this->renderSection('scripts') ?>

@@ -1,5 +1,13 @@
 <?= $this->extend('layout/main') ?>
 
+
+<?= $this->section('css') ?>
+    
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="<?= base_url('assets/vendor/css/pages/cards-advance.css') ?>" />
+    
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 
             <!-- Content -->

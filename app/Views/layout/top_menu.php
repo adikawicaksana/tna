@@ -483,7 +483,7 @@
                       <div class="dropdown-divider my-1 mx-n2"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="pages-profile-user.html">
+                      <a class="dropdown-item" href="./profile">
                         <i class="icon-base ti tabler-user me-3 icon-md"></i
                         ><span class="align-middle">My Profile</span>
                       </a>

@@ -6,7 +6,7 @@
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="<?= base_url() ?>" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <span class="text-primary">
                   <img src="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" height="40">
@@ -26,7 +26,7 @@
           <ul class="menu-inner py-1">
             <!-- Dashboards -->
             <li class="menu-item active open">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <a href="<?= base_url() ?>" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-smart-home"></i>
                 <div data-i18n="Dashboards">Dashboards</div>
                 <div class="badge text-bg-danger rounded-pill ms-auto">5</div>

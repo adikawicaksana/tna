@@ -36,8 +36,9 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'authjwt'       => \App\Filters\JwtAuthFilter::class,
         'authweb'       => \App\Filters\JwtWebFilter::class,
-        'auth'          => \App\Filters\AuthFilter::class,
         'autologin'     => \App\Filters\WebJwtAutoLoginFilter::class,
+        'checkprofile'  => \App\Filters\CheckUserProfileFilter::class,
+        'redirectIfAuth' => \App\Filters\RedirectIfAuthenticated::class,
     ];
 
     /**

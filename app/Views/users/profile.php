@@ -1,5 +1,10 @@
 <?= $this->extend('layout/main') ?>
 
+<?= $this->section('css') ?>
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="<?= base_url('assets/vendor/css/pages/page-profile.css') ?>" />
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 
 <!-- Content -->
@@ -567,4 +572,14 @@
 <?= $this->section('scripts') ?>
     <!-- Page JS -->
     <script src="<?= base_url('assets/js/app-user-view-account.js') ?>"></script>
+    <script>
+    <?php if(session()->getFlashdata('warning_profile')): ?>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan',
+            text: '<?= session()->getFlashdata('warning_profile') ?>',
+            confirmButtonText: 'OK'
+        });
+    <?php endif; ?>
+    </script>
 <?= $this->endSection() ?>

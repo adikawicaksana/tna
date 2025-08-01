@@ -3,7 +3,7 @@
     <!-- Header -->
     <?= view('layout/header') ?>
     <!-- /Header -->
-
+   
     <!-- Side Menu -->
     <?= view('layout/side_menu') ?>
     <!-- / Side Menu -->
@@ -20,7 +20,6 @@
     <?= view('layout/footer') ?>
     <!-- / Footer -->
 
-    <?= $this->renderSection('scripts') ?>
 
     
 </body>

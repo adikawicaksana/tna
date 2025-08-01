@@ -5,15 +5,12 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
-$routes->get('/login', 'Auth::login');
+$routes->get('/', 'Home::index', ['filter' => 'redirectIfAuth']);
+$routes->get('/login', 'Auth::login', ['filter' => 'redirectIfAuth']);
 $routes->post('/login', 'Auth::loginPost');
 $routes->post('/refresh-token', 'Auth::refreshWebToken');
 $routes->get('/captcha', 'Captcha::generate');
 $routes->get('/logout', 'Auth::logout');
-$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'authweb']);
-
-
 
 $routes->get('/register', 'Register::index');
 $routes->post('/register', 'Register::store');
@@ -21,7 +18,11 @@ $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 
-$routes->get('/profile', 'Profile::index', ['filter' => 'auth:web,autologin']);
+$routes->group('', ['filter' => 'checkprofile'], function($routes) {    
+	$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'authweb:checkprofile,autologin']);
+	$routes->get('/profile', 'Profile::index', ['filter' => 'authweb:checkprofile,autologin']);
+});
+
 
 $routes->group('api/v1', ['filter' => 'authjwt'], function ($routes) {
 	$routes->get('profile', 'Api\Profile::index');
@@ -34,16 +35,10 @@ $routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
 $routes->post('api/institution_check', 'Api\General::postInstitutionCheck');
 $routes->post('api/institution_search', 'Api\General::postInstitutionSearch');
 
-
-    // $routes->get('api/provinsi', 'Api\Area::provinsi');
-    // $routes->get('api/kabupaten/(:any)', 'Api\Area::kabupaten/$1');
-    // $routes->get('api/kecamatan/(:any)', 'Api\Area::kecamatan/$1');
-    // $routes->get('api/kelurahan/(:any)', 'Api\Area::kelurahan/$1');
-	
-	$routes->get('api/provinsi', 'Api\Area::provinsi');
-    $routes->get('api/kabupaten', 'Api\Area::kabupaten');
-    $routes->get('api/kecamatan', 'Api\Area::kecamatan');
-    $routes->get('api/kelurahan', 'Api\Area::kelurahan');
+$routes->get('api/provinsi', 'Api\Area::provinsi');
+$routes->get('api/kabupaten', 'Api\Area::kabupaten');
+$routes->get('api/kecamatan', 'Api\Area::kecamatan');
+$routes->get('api/kelurahan', 'Api\Area::kelurahan');
 
 
 $routes->post('api/v1/token/refresh', 'Api\Auth::refreshToken');

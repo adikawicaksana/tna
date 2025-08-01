@@ -14,20 +14,20 @@ class Auth extends BaseController
     public function login()
     {
 
-        $session = session();
+        // $session = session();
 
-        if ($session->get('logged_in') && $session->get('token')) {
-            try {
-                $decoded = JWT::decode($session->get('token'), new Key(getenv('JWT_SECRET'), 'HS256'));
+        // if ($session->get('logged_in') && $session->get('token')) {
+        //     try {
+        //         $decoded = JWT::decode($session->get('token'), new Key(getenv('JWT_SECRET'), 'HS256'));
 
-                // Jika token masih valid, langsung redirect
-                return redirect()->to(base_url('dashboard'));
-            } catch (\Exception $e) {
-                // Token tidak valid, hapus dan lanjut ke tampilan login
-                $session->remove('token');
-                $session->remove('logged_in');
-            }
-        }
+        //         // Jika token masih valid, langsung redirect
+        //         return redirect()->to(base_url('dashboard'));
+        //     } catch (\Exception $e) {
+        //         // Token tidak valid, hapus dan lanjut ke tampilan login
+        //         $session->remove('token');
+        //         $session->remove('logged_in');
+        //     }
+        // }
 
         return view('auth/login');
     }

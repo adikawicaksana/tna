@@ -37,6 +37,7 @@ class QuestionModel extends Model
 	{
 		$model = new QuestionModel();
 		$data = $model->select('question_id, question')
+			->where(['question_status' => QuestionModel::STAT_ACTIVE])
 			->orderBy('question', 'ASC')
 			->findAll();
 		return array_column($data, 'question', 'question_id');

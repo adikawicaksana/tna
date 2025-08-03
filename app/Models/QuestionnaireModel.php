@@ -11,8 +11,9 @@ class QuestionnaireModel extends Model
 	protected $allowedFields = ['questionnaire_id', 'questionnaire_type', 'questionnaire_status'];
 	protected $useTimestamps = true;
 
-	const TYPE_INSTITUTION = 1;
+	const TYPE_FASYANKES = 1;
 	const TYPE_INDIVIDUAL = 2;
+	const TYPE_NON_FASYANKES = 3;
 
 	const STAT_INACTIVE = 0;
 	const STAT_ACTIVE = 1;
@@ -20,8 +21,9 @@ class QuestionnaireModel extends Model
 	public static function listType()
 	{
 		return [
-			self::TYPE_INSTITUTION => 'Institusi',
+			self::TYPE_FASYANKES => 'Fasyankes',
 			self::TYPE_INDIVIDUAL => 'Individu',
+			self::TYPE_NON_FASYANKES => 'Non-Fasyankes',
 		];
 	}
 

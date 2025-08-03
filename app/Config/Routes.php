@@ -18,9 +18,15 @@ $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 
-$routes->group('', ['filter' => 'checkprofile'], function($routes) {    
-	$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'authweb:checkprofile,autologin']);
-	$routes->get('/profile', 'Profile::index', ['filter' => 'authweb:checkprofile,autologin']);
+$routes->group('', ['filter' => 'checkprofile'], function ($routes) {
+	$routes->get('/dashboard', 'Dashboard::index', [
+		'filter' => 'authweb:checkprofile,autologin',
+		'as' => 'dashboard',
+	]);
+	$routes->get('/profile', 'Profile::index', [
+		'filter' => 'authweb:checkprofile,autologin',
+		'as' => 'profile',
+	]);
 });
 
 

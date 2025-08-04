@@ -58,6 +58,6 @@ $routes->group('admin', function ($routes) {
 
 	$routes->get('questionnaire', 'Admin\Questionnaire::index', ['as' => 'questionnaire.index']);
 	$routes->get('questionnaire/create', 'Admin\Questionnaire::create', ['as' => 'questionnaire.create']);
-	$routes->post('questionnaire/store', 'Admin\Questionnaire::store');
+	$routes->post('questionnaire/store', 'Admin\Questionnaire::store', ['as' => 'questionnaire.store']);
 	$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1');
 });

@@ -8,7 +8,7 @@ class QuestionnaireModel extends Model
 {
 	protected $table = 'questionnaire';
 	protected $primaryKey = 'questionnaire_id';
-	protected $allowedFields = ['questionnaire_id', 'questionnaire_type', 'questionnaire_status'];
+	protected $allowedFields = ['questionnaire_type', 'questionnaire_status'];
 	protected $useTimestamps = true;
 
 	const TYPE_FASYANKES = 1;
@@ -17,6 +17,16 @@ class QuestionnaireModel extends Model
 
 	const STAT_INACTIVE = 0;
 	const STAT_ACTIVE = 1;
+
+	public static function hasActive($type)
+	{
+		$model = new QuestionnaireModel();
+		$result = $model->where('questionnaire_type', $type)
+			->where('questionnaire_status', self::STAT_ACTIVE)
+			->countAllResults();
+
+		return $result > 0;
+	}
 
 	public static function listType()
 	{

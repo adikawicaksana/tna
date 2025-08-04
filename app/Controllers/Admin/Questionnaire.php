@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\QuestionModel;
 use App\Models\QuestionnaireDetailModel;
 use App\Models\QuestionnaireModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class Questionnaire extends BaseController
 {
@@ -32,7 +33,25 @@ class Questionnaire extends BaseController
 
 	public function show($id)
 	{
-		return view('admin/questionnaire/show', ['id' => $id]);
+		$db = \Config\Database::connect();
+		$sql = "SELECT *
+			FROM questionnaire h
+				INNER JOIN questionnaire_detail d ON (h.questionnaire_id = d.questionnaire_id)
+				INNER JOIN question q ON (d.question_id = q.question_id)
+			WHERE h.questionnaire_id = $id";
+		$data = $db->query($sql)->getResultArray();
+
+		if (empty($data)) {
+			throw PageNotFoundException::forPageNotFound('Data tidak ditemukan');
+		}
+
+		return view('admin/questionnaire/show', [
+			'data' => $data,
+			'questionnaire_type' => $this->model::listType(),
+			'questionnaire_status' => $this->model::listStatus(),
+			'has_active' => $this->model::hasActive($data[0]['questionnaire_type']),
+			'title' => 'Detail Kuesioner',
+		]);
 	}
 
 	public function create()

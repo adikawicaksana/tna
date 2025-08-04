@@ -85,11 +85,11 @@ class Questionnaire extends BaseController
 			$id = $this->model->getInsertID();
 			$data = [];
 			$detail = new QuestionnaireDetailModel();
-			foreach ($post['question_id'] as $key => $each) {
-				if (empty($key)) continue;	// Skip if empty
+			foreach ($post['question_id'] as $each) {
+				if (empty($each)) continue;	// Skip if empty
 				$data[] = [
 					'questionnaire_id' => $id,
-					'question_id' => $key,
+					'question_id' => $each,
 				];
 			}
 			if (empty($data)) throw new \Exception('Pertanyaan tidak boleh kosong!');

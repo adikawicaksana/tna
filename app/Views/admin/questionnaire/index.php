@@ -1,5 +1,9 @@
-<?= $this->extend('layout/main') ?>
+<?php
 
+use App\Helpers\CommonHelper;
+?>
+
+<?= $this->extend('layout/main') ?>
 <?= $this->section('content'); ?>
 <div class="container">
 	<h1><?= $title ?></h1>
@@ -30,7 +34,7 @@
 				<?php foreach ($data as $key => $each): ?>
 					<tr>
 						<td class="text-center"><?= $key + 1 ?></td>
-						<td><?= $each['created_at'] ?></td>
+						<td><?= CommonHelper::formatDate($each['created_at']) ?></td>
 						<td><?= $type[$each['questionnaire_type']] ?></td>
 						<td><?= $status[$each['questionnaire_status']] ?></td>
 						<td>

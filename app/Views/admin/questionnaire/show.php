@@ -1,5 +1,9 @@
-<?= $this->extend('layout/main') ?>
+<?php
 
+use App\Helpers\CommonHelper;
+?>
+
+<?= $this->extend('layout/main') ?>
 <?= $this->section('content'); ?>
 <div class="container">
 	<h1><?= $title ?></h1>
@@ -20,7 +24,7 @@
 			<table class="table table-sm table-responsive table-bordered table-hover w-100 align-top">
 				<tr>
 					<th width="20%">Tanggal</th>
-					<td><?= $data[0]['created_at'] ?></td>
+					<td><?= CommonHelper::formatDate($data[0]['created_at']) ?></td>
 				</tr>
 				<tr>
 					<th>Tipe</th>

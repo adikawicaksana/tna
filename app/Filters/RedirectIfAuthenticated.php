@@ -18,7 +18,7 @@ class RedirectIfAuthenticated implements FilterInterface
             try {
                 $decoded = JWT::decode(
                     $session->get('token'),
-                    new Key(getenv('JWT_SECRET'), 'HS256')
+                    new Key(env('JWT_SECRET'), 'HS256')
                 );
 
                 // Kalau token valid, cek URL yang dibuka

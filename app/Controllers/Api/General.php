@@ -8,14 +8,6 @@ use App\Models\InstitutionModel;
 
 class General extends ResourceController
 {
-    // public function index()
-    // {
-    //     return $this->respond([
-    //         'message' => 'API Accessed Successfully',
-    //         'user' => 'from JWT'
-    //     ]);
-    // }
-
     public function postFasyankesCheck(){
         $fasyankesCode = $this->request->getPost('fasyankes_code');
 
@@ -69,7 +61,6 @@ class General extends ResourceController
             $data = [];
             foreach ($results as $row) {
                 $data[] = [
-                    'id' => $row['id'],
                     'fasyankes_code' => $row['fasyankes_code'],
                     'text' => $row['fasyankes_name']
                 ];

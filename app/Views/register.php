@@ -261,6 +261,7 @@
                       <div class="row">
                         <div class="col-sm-12">
                           <label class="form-label">Nama Instansi</label>
+                          <input type="hidden" name="institution_id" id="institution_id" class="form-control" autocomplete="off" />
                           <div class="position-relative">
                             <input type="text" name="institution_name" id="institution_name" class="form-control"
                               placeholder="Cth.: UPT Murnajati" autocomplete="off" />
@@ -315,6 +316,12 @@
                   <div class="row g-6">
 
 
+
+                    <div class="col-sm-12">
+                      <label class="form-label" for="fullname">Nama Lengkap (tanpa gelar)</label>
+                        <input type="text" id="fullname" name="user_fullname"
+                          class="form-control " placeholder="Masukan nama lengkap tanpa gelar" />                      
+                    </div>
 
                     <div class="col-sm-6">
                       <label class="form-label" for="MobileNumber">Nomor Telepon</label>
@@ -506,6 +513,7 @@
           id
         },
           res => fillForm(res, {
+            institution_id: 'id',
             institution_name: 'institution_name',
             institution_address: 'institution_address'
           })

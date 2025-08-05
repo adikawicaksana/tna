@@ -18,7 +18,7 @@ class WebJwtAutoLoginFilter implements FilterInterface
             $cookie = $request->getCookie('refresh_token');
             if ($cookie) {
                 try {
-                    $decoded = JWT::decode($cookie, new Key(getenv('JWT_SECRET'), 'HS256'));
+                    $decoded = JWT::decode($cookie, new Key(env('JWT_SECRET'), 'HS256'));
 
                     if ($decoded->type !== 'refresh') {
                         throw new \Exception('Invalid token type');
@@ -32,7 +32,7 @@ class WebJwtAutoLoginFilter implements FilterInterface
                         'exp' => time() + 10, // 15 menit
                     ];
 
-                    $newToken = JWT::encode($payload, getenv('JWT_SECRET'), 'HS256');
+                    $newToken = JWT::encode($payload, env('JWT_SECRET'), 'HS256');
 
                     $session->set([
                         'token' => $newToken,

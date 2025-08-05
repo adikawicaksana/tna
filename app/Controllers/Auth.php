@@ -18,7 +18,7 @@ class Auth extends BaseController
 
         // if ($session->get('logged_in') && $session->get('token')) {
         //     try {
-        //         $decoded = JWT::decode($session->get('token'), new Key(getenv('JWT_SECRET'), 'HS256'));
+        //         $decoded = JWT::decode($session->get('token'), new Key(env('JWT_SECRET'), 'HS256'));
 
         //         // Jika token masih valid, langsung redirect
         //         return redirect()->to(base_url('dashboard'));
@@ -50,7 +50,7 @@ class Auth extends BaseController
         $user     = $model->where('email', $email)->first();
 
         if ($user && password_verify($password, $user['password'])) {
-            $key = getenv('JWT_SECRET');
+            $key = env('JWT_SECRET');
             $ip  = $this->request->getIPAddress();
             $ua  = $_SERVER['HTTP_USER_AGENT'];
 
@@ -113,7 +113,7 @@ class Auth extends BaseController
     public function refreshWebToken()
     {
         $cookie = $this->request->getCookie('refresh_token');
-        $key    = getenv('JWT_SECRET');
+        $key    = env('JWT_SECRET');
 
         if (!$cookie) {
             return $this->response->setJSON(['error' => 'No refresh token'])->setStatusCode(401);
@@ -156,7 +156,7 @@ class Auth extends BaseController
 
         if ($token) {
             try {
-                $decoded = JWT::decode($token, new \Firebase\JWT\Key(getenv('JWT_SECRET'), 'HS256'));
+                $decoded = JWT::decode($token, new \Firebase\JWT\Key(env('JWT_SECRET'), 'HS256'));
 
                 $jti = $decoded->jti ?? null;
                 if ($jti) {

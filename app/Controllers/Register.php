@@ -31,6 +31,7 @@ class Register extends BaseController
 
         $email    = strtolower(trim($request->getPost('user_email')));
         $password = $request->getPost('user_password');
+        $fullname = $request->getPost('user_fullname');
         $mobile   = "62" . preg_replace('/\D/', '', $request->getPost('user_mobilenumber'));
         $captcha  = strtoupper(trim($request->getPost('captcha')));
 
@@ -114,6 +115,7 @@ class Register extends BaseController
         ]);
 
         $detailModel->insert([ 
+            'fullname'   => $fullname,
             'email'   => $email,
             'mobile'  => $mobile
         ]);

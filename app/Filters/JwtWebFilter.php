@@ -16,7 +16,7 @@ class JwtWebFilter implements FilterInterface
     {
         $session = session();
         $token   = $session->get('token');
-        $key     = getenv('JWT_SECRET');
+        $key     =  env('JWT_SECRET');
 
         if (!$token) {
             return redirect()->to(base_url('login'))->with('error', 'Silakan login dulu.');

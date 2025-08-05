@@ -18,15 +18,17 @@ $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 
-$routes->group('', ['filter' => 'checkprofile'], function ($routes) {
-	$routes->get('/dashboard', 'Dashboard::index', [
-		'filter' => 'authweb:checkprofile,autologin',
-		'as' => 'dashboard',
-	]);
-	$routes->get('/profile', 'Profile::index', [
-		'filter' => 'authweb:checkprofile,autologin',
-		'as' => 'profile',
-	]);
+$routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
+    $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
+    $routes->get('/profile', 'Profile::index', ['as' => 'profile']);
+});
+
+
+$routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
+    $routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes', ['as' => 'profile']);
+	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
+	$routes->post('/profile/fasyankes/delete/(:num)', 'Profile::deleteUserFasyankes/$1');
+
 });
 
 

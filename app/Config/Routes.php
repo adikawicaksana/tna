@@ -63,3 +63,7 @@ $routes->group('admin', function ($routes) {
 	$routes->post('questionnaire/activate/(:num)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
 	$routes->post('questionnaire/deactivate/(:num)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
 });
+
+$routes->get('survey', 'Survey::index', ['as' => 'survey.index']);
+$routes->get('survey/create/(:num)', 'Survey::create/$1', ['as' => 'survey.create']);
+$routes->post('survey/store', 'Survey::store', ['as' => 'survey.store']);

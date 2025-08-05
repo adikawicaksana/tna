@@ -18,6 +18,20 @@ class QuestionnaireModel extends Model
 	const STAT_INACTIVE = 0;
 	const STAT_ACTIVE = 1;
 
+	public static function getData($condition = [])
+	{
+		// Fetch question list
+		$db = \Config\Database::connect();
+		$builder = $db->table('questionnaire h');
+		$builder->select('*')
+			->join('questionnaire_detail d', 'h.questionnaire_id = d.questionnaire_id', 'inner')
+			->join('question q', 'd.question_id = q.question_id', 'inner');
+		// ->join('question_option o', 'q.question_id = o.question_id', 'left');
+		if (!empty($condition)) $builder->where($condition);
+
+		return $builder->get()->getResultArray();
+	}
+
 	public static function hasActive($type)
 	{
 		$model = new QuestionnaireModel();

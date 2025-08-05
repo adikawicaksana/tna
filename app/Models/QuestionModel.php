@@ -11,7 +11,7 @@ class QuestionModel extends Model
 	protected $allowedFields = [
 		'question',
 		'question_description',
-		'source_reference',
+		'source_reference',		// Format: modelName::function(params)
 		'answer_type',
 		'question_status'
 	];

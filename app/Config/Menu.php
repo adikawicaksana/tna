@@ -26,7 +26,7 @@ class Menu
             ],
             [
                 'label' => 'Master',
-                'icon'  => 'ti tabler-layout-sidebar',
+                'icon'  => 'ti tabler-database-cog',
                 'active' => 'master',
                 'children' => [
                     [
@@ -40,6 +40,12 @@ class Menu
                         'active' => 'questionnaire.',
                     ],
                 ]
+            ],
+            [
+                'label' => 'Survei',
+                'icon'  => 'ti tabler-clipboard-text',
+                'url' => route_to('survey.index'),
+                'active' => 'survey.',
             ],
         ];
     }

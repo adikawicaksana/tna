@@ -12,8 +12,9 @@ class QuestionnaireModel extends Model
 	protected $useTimestamps = true;
 
 	const TYPE_FASYANKES = 1;
-	const TYPE_INDIVIDUAL = 2;
-	const TYPE_NON_FASYANKES = 3;
+	const TYPE_INDIVIDUAL_FASYANKES = 2;
+	const TYPE_INSTITUTE = 3;
+	const TYPE_INDIVIDUAL_INSTITUTE = 4;
 
 	const STAT_INACTIVE = 0;
 	const STAT_ACTIVE = 1;
@@ -46,8 +47,9 @@ class QuestionnaireModel extends Model
 	{
 		return [
 			self::TYPE_FASYANKES => 'Fasyankes',
-			self::TYPE_INDIVIDUAL => 'Individu',
-			self::TYPE_NON_FASYANKES => 'Non-Fasyankes',
+			self::TYPE_INDIVIDUAL_FASYANKES => 'Individu Fasyankes',
+			self::TYPE_INSTITUTE => 'Instansi',
+			self::TYPE_INDIVIDUAL_INSTITUTE => 'Individu Instansi',
 		];
 	}
 

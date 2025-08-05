@@ -66,10 +66,15 @@
 <script src="<?= base_url('assets/vendor/libs/apex-charts/apexcharts.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/libs/swiper/swiper.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') ?>"></script>
+<script src="<?= base_url('assets/vendor/libs/select2/select2.js') ?>"></script>
+<script src="<?= base_url('assets/vendor/libs/bootstrap-select/bootstrap-select.js') ?>"></script>
 
 <!-- Main JS -->
 
 <script src="<?= base_url('assets/js/main.js') ?>"></script>
 
+
+<!-- Page JS -->
+<script src="<?= base_url('assets/js/forms-selects.js') ?>"></script>
 
 <?= $this->renderSection('scripts') ?>

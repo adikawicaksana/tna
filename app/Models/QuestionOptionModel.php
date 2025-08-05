@@ -14,4 +14,12 @@ class QuestionOptionModel extends Model
 		'question_id' => 'required',
 		'option_name' => 'required',
 	];
+
+	public static function getData($question_id)
+	{
+		$result = (new QuestionOptionModel())
+			->whereIn('question_id', $question_id)
+			->findAll();
+		return $result;
+	}
 }

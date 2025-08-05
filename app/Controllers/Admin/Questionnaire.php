@@ -34,12 +34,12 @@ class Questionnaire extends BaseController
 	public function show($id)
 	{
 		$db = \Config\Database::connect();
-		$sql = "SELECT *
-			FROM questionnaire h
-				INNER JOIN questionnaire_detail d ON (h.questionnaire_id = d.questionnaire_id)
-				INNER JOIN question q ON (d.question_id = q.question_id)
-			WHERE h.questionnaire_id = $id";
-		$data = $db->query($sql)->getResultArray();
+		$data = $db->table('questionnaire h')
+			->join('questionnaire_detail d', 'h.questionnaire_id = d.questionnaire_id')
+			->join('question q', 'd.question_id = q.question_id')
+			->where('h.questionnaire_id', $id)
+			->get()
+			->getResultArray();
 
 		if (empty($data)) {
 			throw PageNotFoundException::forPageNotFound('Data tidak ditemukan');
@@ -105,11 +105,5 @@ class Questionnaire extends BaseController
 			// dd($e->getMessage());
 			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data ');
 		}
-	}
-
-	public function update($id)
-	{
-		$data = $this->model->findOne($id);
-		return view('admin/questionnaire/form', $data);
 	}
 }

@@ -29,6 +29,11 @@ $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:num)', 'Profile::deleteUserFasyankes/$1');
 
+    $routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
+	$routes->get('/profile/nonfasyankes/data', 'Profile::getUserNonFasyankes');
+	$routes->post('/profile/nonfasyankes/delete/(:num)', 'Profile::deleteUserNonFasyankes/$1');
+
+
 });
 
 

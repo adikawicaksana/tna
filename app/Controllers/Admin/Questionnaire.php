@@ -42,7 +42,7 @@ class Questionnaire extends BaseController
 			->getResultArray();
 
 		if (empty($data)) {
-			throw PageNotFoundException::forPageNotFound('Data tidak ditemukan');
+			new PageNotFoundException('Data tidak ditemukan');
 		}
 
 		return view('admin/questionnaire/show', [
@@ -105,5 +105,51 @@ class Questionnaire extends BaseController
 			// dd($e->getMessage());
 			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data ');
 		}
+	}
+
+	public function activate($id)
+	{
+		if ($this->request->getMethod() !== 'POST') {
+			return redirect()->back()->with('error', 'Method tidak diizinkan');
+		}
+
+		$model = $this->findModel($id);
+		if (!$this->model->isActivable($model)) {
+			return redirect()->back()->with('error', 'Data tidak dapat diaktifkan.');
+		}
+
+		if (!$this->model->update($id, ['questionnaire_status' => QuestionModel::STAT_ACTIVE])) {
+			return redirect()->back()
+				->with('error', 'Gagal mengaktifkan data <br>' . json_encode($this->model->errors()));
+		}
+		return redirect()->back()->with('success', 'Data berhasil diaktifkan');
+	}
+
+	public function deactivate($id)
+	{
+		if ($this->request->getMethod() !== 'POST') {
+			return redirect()->back()->with('error', 'Method tidak diizinkan');
+		}
+
+		$model = $this->findModel($id);
+		if (!$this->model->isDeactivatable($model)) {
+			return redirect()->back()->with('error', 'Data tidak dapat dinonaktifkan.');
+		}
+
+		if (!$this->model->update($id, ['questionnaire_status' => QuestionModel::STAT_INACTIVE])) {
+			return redirect()->back()
+				->with('error', 'Gagal menonaktifkan data <br>' . json_encode($this->model->errors()));
+		}
+		return redirect()->back()->with('success', 'Data berhasil dinonaktifkan');
+	}
+
+	public function findModel($id)
+	{
+		$model = $this->model->find($id);
+		if (!$model) {
+			new PageNotFoundException('Data tidak ditemukan');
+		}
+
+		return $model;
 	}
 }

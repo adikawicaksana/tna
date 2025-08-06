@@ -43,6 +43,19 @@ class QuestionnaireModel extends Model
 		return $result > 0;
 	}
 
+	public function isActivable($model)
+	{
+		$result = ($model['questionnaire_status'] == self::STAT_INACTIVE);
+		$result &= !self::hasActive($model['questionnaire_type']);
+		return $result;
+	}
+
+	public function isDeactivatable($model)
+	{
+		$result = ($model['questionnaire_status'] == self::STAT_ACTIVE);
+		return $result;
+	}
+
 	public static function listType()
 	{
 		return [

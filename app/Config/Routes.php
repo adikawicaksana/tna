@@ -19,18 +19,15 @@ $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 
 $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
-    $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
-    $routes->get('/profile', 'Profile::index', ['as' => 'profile']);
+	$routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
+	$routes->get('/profile', 'Profile::index', ['as' => 'profile']);
 });
 
 
 $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
-    $routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes', ['as' => 'profile']);
+	$routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes', ['as' => 'profile']);
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:num)', 'Profile::deleteUserFasyankes/$1');
-    $routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
-	$routes->get('/profile/nonfasyankes/data', 'Profile::getUserNonFasyankes');
-	$routes->post('/profile/nonfasyankes/delete/(:num)', 'Profile::deleteUserNonFasyankes/$1');
 
 });
 
@@ -64,9 +61,9 @@ $routes->group('admin', function ($routes) {
 	$routes->get('questionnaire', 'Admin\Questionnaire::index', ['as' => 'questionnaire.index']);
 	$routes->get('questionnaire/create', 'Admin\Questionnaire::create', ['as' => 'questionnaire.create']);
 	$routes->post('questionnaire/store', 'Admin\Questionnaire::store', ['as' => 'questionnaire.store']);
-	$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1', ['as' => 'questionnaire.show']);
 	$routes->post('questionnaire/activate/(:num)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
 	$routes->post('questionnaire/deactivate/(:num)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
+	$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1', ['as' => 'questionnaire.show']);
 });
 
 $routes->get('survey', 'Survey::index', ['as' => 'survey.index']);

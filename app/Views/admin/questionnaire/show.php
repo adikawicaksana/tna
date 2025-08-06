@@ -11,16 +11,32 @@ use App\Helpers\CommonHelper;
 		<div class="card-header">
 			<h5><?= $title ?></h5>
 			<?php if (!$has_active): ?>
-				<a href="<?= url_to('questionnaire.activate', $data[0]['questionnaire_id']) ?>" class="btn btn-sm btn-outline-primary">
-					<span class="me-2"><i class="fas fa-check"></i></span> Aktifkan
-				</a>
+				<form action="<?= url_to('questionnaire.activate', $data[0]['questionnaire_id']) ?>" method="post" style="display: inline;">
+					<?= csrf_field() ?>
+					<button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm('Yakin ingin mengaktifkan data?')">
+						<span class="me-2"><i class="fas fa-check"></i></span> Aktifkan
+					</button>
+				</form>
 			<?php else: ?>
-				<a href="<?= url_to('questionnaire.deactivate', $data[0]['questionnaire_id']) ?>" class="btn btn-sm btn-outline-danger">
-					<span class="me-2"><i class="fas fa-ban"></i></span> Nonaktifkan
-				</a>
+				<form action="<?= url_to('questionnaire.deactivate', $data[0]['questionnaire_id']) ?>" method="post" style="display: inline;">
+					<?= csrf_field() ?>
+					<button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menonaktifkan data?')">
+						<span class="me-2"><i class="fas fa-ban"></i></span> Nonaktifkan
+					</button>
+				</form>
 			<?php endif; ?>
 		</div>
 		<div class="card-body">
+			<?php if (session()->getFlashdata('error')): ?>
+				<div class="alert alert-danger">
+					<?= session()->getFlashdata('error') ?>
+				</div>
+			<?php elseif (session()->getFlashdata('success')): ?>
+				<div class="alert alert-success">
+					<?= session()->getFlashdata('success') ?>
+				</div>
+			<?php endif; ?>
+
 			<table class="table table-sm table-responsive table-bordered table-hover w-100 align-top">
 				<tr>
 					<th width="20%">Tanggal</th>

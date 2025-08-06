@@ -34,15 +34,15 @@ class Questionnaire extends BaseController
 	public function show($id)
 	{
 		$db = \Config\Database::connect();
-		$sql = "SELECT *
-			FROM questionnaire h
-				INNER JOIN questionnaire_detail d ON (h.questionnaire_id = d.questionnaire_id)
-				INNER JOIN question q ON (d.question_id = q.question_id)
-			WHERE h.questionnaire_id = $id";
-		$data = $db->query($sql)->getResultArray();
+		$data = $db->table('questionnaire h')
+			->join('questionnaire_detail d', 'h.questionnaire_id = d.questionnaire_id')
+			->join('question q', 'd.question_id = q.question_id')
+			->where('h.questionnaire_id', $id)
+			->get()
+			->getResultArray();
 
 		if (empty($data)) {
-			throw PageNotFoundException::forPageNotFound('Data tidak ditemukan');
+			new PageNotFoundException('Data tidak ditemukan');
 		}
 
 		return view('admin/questionnaire/show', [
@@ -107,9 +107,49 @@ class Questionnaire extends BaseController
 		}
 	}
 
-	public function update($id)
+	public function activate($id)
 	{
-		$data = $this->model->findOne($id);
-		return view('admin/questionnaire/form', $data);
+		if ($this->request->getMethod() !== 'POST') {
+			return redirect()->back()->with('error', 'Method tidak diizinkan');
+		}
+
+		$model = $this->findModel($id);
+		if (!$this->model->isActivable($model)) {
+			return redirect()->back()->with('error', 'Data tidak dapat diaktifkan.');
+		}
+
+		if (!$this->model->update($id, ['questionnaire_status' => QuestionModel::STAT_ACTIVE])) {
+			return redirect()->back()
+				->with('error', 'Gagal mengaktifkan data <br>' . json_encode($this->model->errors()));
+		}
+		return redirect()->back()->with('success', 'Data berhasil diaktifkan');
+	}
+
+	public function deactivate($id)
+	{
+		if ($this->request->getMethod() !== 'POST') {
+			return redirect()->back()->with('error', 'Method tidak diizinkan');
+		}
+
+		$model = $this->findModel($id);
+		if (!$this->model->isDeactivatable($model)) {
+			return redirect()->back()->with('error', 'Data tidak dapat dinonaktifkan.');
+		}
+
+		if (!$this->model->update($id, ['questionnaire_status' => QuestionModel::STAT_INACTIVE])) {
+			return redirect()->back()
+				->with('error', 'Gagal menonaktifkan data <br>' . json_encode($this->model->errors()));
+		}
+		return redirect()->back()->with('success', 'Data berhasil dinonaktifkan');
+	}
+
+	public function findModel($id)
+	{
+		$model = $this->model->find($id);
+		if (!$model) {
+			new PageNotFoundException('Data tidak ditemukan');
+		}
+
+		return $model;
 	}
 }

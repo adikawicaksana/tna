@@ -260,10 +260,10 @@
                     <div id="non_fasyankes_mode">
                       <div class="row">
                         <div class="col-sm-12">
-                          <label class="form-label">Nama Instansi</label>
-                          <input type="hidden" name="institution_id" id="institution_id" class="form-control" autocomplete="off" />
+                          <label class="form-label">Nama Instansi Non Fasyankes</label>
+                          <input type="hidden" name="nonfasyankes_id" id="nonfasyankes_id" class="form-control" autocomplete="off" />
                           <div class="position-relative">
-                            <input type="text" name="institution_name" id="institution_name" class="form-control"
+                            <input type="text" name="nonfasyankes_name" id="nonfasyankes_name" class="form-control"
                               placeholder="Cth.: UPT Murnajati" autocomplete="off" />
                             <style>
                               .autocomplete-overlay .item {
@@ -281,7 +281,7 @@
                               }
                             </style>
                             <!-- Dropdown suggestion -->
-                            <div id="institution_suggestions"
+                            <div id="nonfasyankes_suggestions"
                               class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
                               style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
                             </div>
@@ -290,8 +290,8 @@
                       </div>
                       <div class="row mt-3">
                         <div class="col-sm-12  form-control-validation mt-2">
-                          <label class="form-label" for="multiStepsConfirmPass">Alamat Institusi</label>
-                          <textarea id="institution_address" name="institution_address" class="form-control"
+                          <label class="form-label" for="multiStepsConfirmPass">Alamat Instansi Non Fasyankes</label>
+                          <textarea id="nonfasyankes_address" name="nonfasyankes_address" class="form-control"
                             readonly></textarea>
                         </div>
                       </div>
@@ -508,14 +508,14 @@
           })
         );
 
-      const InstitutionDetail = id =>
-        ajaxPost(`${api_url}/institution_check`, {
+      const NonFasyankesDetail = id =>
+        ajaxPost(`${api_url}/nonfasyankes_check`, {
           id
         },
           res => fillForm(res, {
-            institution_id: 'id',
-            institution_name: 'institution_name',
-            institution_address: 'institution_address'
+            nonfasyankes_id: 'id',
+            nonfasyankes_name: 'nonfasyankes_name',
+            nonfasyankes_address: 'nonfasyankes_address'
           })
         );
 
@@ -538,7 +538,7 @@
         });
       };
 
-      liveSearch('#institution_name', 'institution_search', '#institution_suggestions',
+      liveSearch('#nonfasyankes_name', 'nonfasyankes_search', '#nonfasyankes_suggestions',
         item => `<div class="item" data-id="${item.id}">${item.text}</div>`);
 
       liveSearch('#fasyankes_code', 'fasyankes_search', '#suggestions',
@@ -551,7 +551,7 @@
         }
       });
 
-      $('#institution_name').on('keydown', function (e) {
+      $('#nonfasyankes_name').on('keydown', function (e) {
         if (e.key === "Enter" || e.which === 13) {
           e.preventDefault();
         }
@@ -562,12 +562,12 @@
         const code = $(this).data('code');
         $('#fasyankes_code').val(code);
         FasyankesDetail(code);
-        $('#suggestions').fadeOut();
+         $('#suggestions').fadeOut();
       });
-
-      $(document).on('click', '#institution_suggestions .item', function () {
-        InstitutionDetail($(this).data('id'));
-        $('#institution_suggestions').fadeOut();
+      
+    $(document).on('click', '#nonfasyankes_suggestions .item', function () {
+        NonFasyankesDetail($(this).data('id'));
+        $('#nonfasyankes_suggestions').fadeOut();
       });
 
       // === Segment toggle ===

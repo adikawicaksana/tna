@@ -4,11 +4,11 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UsersFasyankesModel extends Model
+class UsersNonFasyankesModel extends Model
 {
-    protected $table      = 'users_fasyankes';
+    protected $table      = 'users_nonfasyankes';
     protected $primaryKey = 'id'; 
-    protected $allowedFields = ['id','email','fasyankes_code','status']; 
+    protected $allowedFields = ['id','email','nonfasyankes_id','status']; 
 
     // Tidak perlu timestamps kalau tidak ada
     // public $useTimestamps = false;

@@ -28,6 +28,9 @@ $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
     $routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes', ['as' => 'profile']);
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:num)', 'Profile::deleteUserFasyankes/$1');
+    $routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
+	$routes->get('/profile/nonfasyankes/data', 'Profile::getUserNonFasyankes');
+	$routes->post('/profile/nonfasyankes/delete/(:num)', 'Profile::deleteUserNonFasyankes/$1');
 
 });
 
@@ -40,8 +43,8 @@ $routes->post('api/v1/logout', 'Api\Auth::logout');
 
 $routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
 $routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
-$routes->post('api/institution_check', 'Api\General::postInstitutionCheck');
-$routes->post('api/institution_search', 'Api\General::postInstitutionSearch');
+$routes->post('api/nonfasyankes_check', 'Api\General::postNonFasyankesCheck');
+$routes->post('api/nonfasyankes_search', 'Api\General::postNonFasyankesSearch');
 
 $routes->get('api/provinsi', 'Api\Area::provinsi');
 $routes->get('api/kabupaten', 'Api\Area::kabupaten');

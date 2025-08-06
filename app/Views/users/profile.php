@@ -203,7 +203,7 @@
               <th>No</th>
               <th>Fasyankes</th>
               <th>Alamat</th>
-              <th>Aksi</th>
+              <th></th>
             </tr>
           </thead>
         </table>
@@ -223,9 +223,9 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Institusi</th>
+              <th>Non Fasyankes</th>
               <th>Alamat</th>
-              <th>Aksi</th>
+              <th></th>
             </tr>
           </thead>
         </table>
@@ -298,11 +298,11 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Nama Institusi</label>            
+            <label class="form-label">Nama Institusi Non Fasyankes</label>            
             <div class="position-relative">
-              <input type="hidden" name="institution_id" id="institution_id" class="form-control"
+              <input type="hidden" name="nonfasyankes_id" id="nonfasyankes_id" class="form-control"
                 autocomplete="off" />
-              <input type="text" name="institution_name" id="institution_name" class="form-control"
+              <input type="text" name="nonfasyankes_name" id="nonfasyankes_name" class="form-control"
                 placeholder="Cth.: UPT Murnajati" autocomplete="off" />
               <style>
                 .autocomplete-overlay .item {
@@ -320,7 +320,7 @@
                 }
               </style>
               <!-- Dropdown suggestion -->
-              <div id="institution_suggestions"
+              <div id="nonfasyankes_suggestions"
                 class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
                 style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
               </div>
@@ -328,7 +328,7 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Alamat</label>
-            <textarea name="institution_address" id="institution_address" class="form-control" readonly></textarea>
+            <textarea name="nonfasyankes_address" id="nonfasyankes_address" class="form-control" readonly></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -408,11 +408,11 @@
     });
   };
 
-  const InstitutionDetail = (id) => {
-    loadDetail('institution_check', { id }, (r) => {
-      $('#institution_id').val(r.id || "");
-      $('#institution_name').val(r.institution_name || "");
-      $('#institution_address').val(r.institution_address || "");
+  const NonFasyankesDetail = (id) => {
+    loadDetail('nonfasyankes_check', { id }, (r) => {
+      $('#nonfasyankes_id').val(r.id || "");
+      $('#nonfasyankes_name').val(r.nonfasyankes_name || "");
+      $('#nonfasyankes_address').val(r.nonfasyankes_address || "");
     });
   };
 
@@ -439,19 +439,21 @@
     }
   });
 
-  $('#institution_name').on('keypress', e => e.which === 13 && e.preventDefault());
+  // $('#nonfasyankes_name').on('keypress', e => e.which === 13 && e.preventDefault());
+  $('#nonfasyankes_name').on('keypress', e => { if (e.which === 13) e.preventDefault(); });
 
-  $('#institution_name').on('keyup', function () {
+
+  $('#nonfasyankes_name').on('keyup', function () {
     const query = $(this).val();
     if (query.length > 1) {
-      ajaxRequest(`${api_url}/institution_search`, 'POST', { keyword: query }, (response) => {
-        renderSuggestions('#institution_suggestions', response.data,
+      ajaxRequest(`${api_url}/nonfasyankes_search`, 'POST', { keyword: query }, (response) => {
+        renderSuggestions('#nonfasyankes_suggestions', response.data,
           item => `<div class="item" data-id="${item.id}">${item.text}</div>`,
           'Tidak ditemukan'
         );
       });
     } else {
-      $('#institution_suggestions').slideUp(150);
+      $('#nonfasyankes_suggestions').slideUp(150);
     }
   });
 
@@ -476,9 +478,9 @@
     $('#suggestions').fadeOut();
   });
 
-  $(document).on('click', '#institution_suggestions .item', function () {
-    InstitutionDetail($(this).data('id'));
-    $('#institution_suggestions').fadeOut();
+  $(document).on('click', '#nonfasyankes_suggestions .item', function () {
+    NonFasyankesDetail($(this).data('id'));
+    $('#nonfasyankes_suggestions').fadeOut();
   });
 
   // === Select2 Dropdowns ===
@@ -526,7 +528,7 @@
     });
   });
 
-  // === Load DataTables ===
+  // === Load Data Fasyankes ===
   const loadFasyankes = () => {
     $('.datatables-fasyankes').DataTable({
       processing: true,
@@ -578,6 +580,77 @@
     });
 
   loadFasyankes();
+
+
+   $('#formNonFasyankes').on('submit', function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: base_url + 'profile/nonfasyankes',
+      method: 'POST',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: (res) => {
+        $('#modalNonFasyankes').modal('hide');
+        Swal.fire(res.success ? 'Berhasil' : 'Gagal', res.message, res.success ? 'success' : 'error');
+        if (res.success) $('.datatables-non-fasyankes').DataTable().ajax.reload();
+      },
+       error: () => Swal.fire('Error', 'Terjadi kesalahan pada server.', 'error')
+    });
+  });
+  
+  // === Load Data Fasyankes ===
+  const loadNonFasyankes = () => {
+    $('.datatables-non-fasyankes').DataTable({
+      processing: true,
+      serverSide: false,
+      ajax: {
+        url: base_url + "profile/nonfasyankes/data",
+        type: "GET",
+        dataSrc: "data",
+        xhrFields: { withCredentials: true }
+      },
+      columns: [
+        { data: "no" },
+        { data: "non_fasyankes" },
+        { data: "alamat" },
+        { data: "aksi" }
+      ]
+    });
+  };
+
+      $(document).on('click', '.delete-non-fasyankes', function() {
+        let id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Yakin?',
+            text: "Data non fasyankes ini akan dinonaktifkan",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, nonaktifkan!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: base_url + 'profile/nonfasyankes/delete/' + id,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(res) {
+                      console.log(res);
+                        if (res.success) {
+                            $('.datatables-non-fasyankes').DataTable().ajax.reload();
+                            Swal.fire('Berhasil', res.message, 'success');
+                        } else {
+                            Swal.fire('Gagal', res.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Error', xhr.responseText, 'error');
+                    }
+                });
+            }
+        });
+    });
+
+  loadNonFasyankes();
 });
 
 

@@ -4,7 +4,7 @@ namespace App\Controllers\Api;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\FasyankesModel;
-use App\Models\InstitutionModel;
+use App\Models\NonFasyankesModel;
 
 class General extends ResourceController
 {
@@ -87,11 +87,11 @@ class General extends ResourceController
         }
 
         
-    public function postInstitutionCheck(){
-        $institutionId = $this->request->getPost('id');
+    public function postNonFasyankesCheck(){
+        $fasyankesId = $this->request->getPost('id');
 
         // Validasi jika kosong
-        if (empty($institutionId)) {
+        if (empty($fasyankesId)) {
             return $this->response->setJSON([
                 'status'    => false,
                 'code'      => 400,
@@ -101,24 +101,24 @@ class General extends ResourceController
         }
 
         // Validasi format (hanya huruf dan angka)
-        if (!ctype_digit($institutionId)) {
+        if (!ctype_digit($fasyankesId)) {
             return $this->response->setJSON([
                 'status'    => false,
                 'code'      => 400,
                 'type'      => 'warning',
-                'message'   => 'Format ID Institusi tidak valid, hanya angka yang diperbolehkan.'
+                'message'   => 'Format ID Non Fasyankes tidak valid, hanya angka yang diperbolehkan.'
             ])->setStatusCode(200);
         }
 
-        $model = new InstitutionModel();
-        $data = $model->where('id', $institutionId)->first();
+        $model = new NonFasyankesModel();
+        $data = $model->where('id', $fasyankesId)->first();
 
         if ($data) {
             return $this->response->setJSON([
                 'status'    => true,
                 'code'      => 200,                
                 'type'      => 'success',
-                'message'   => 'Data Institusi ditemukan',
+                'message'   => 'Data Non Fasyankes ditemukan',
                 'data'      => $data
             ]);
         } else {
@@ -126,23 +126,23 @@ class General extends ResourceController
                 'status'    => false,
                 'type'      => 'warning',
                 'code'      => 204, // Data tidak ditemukan (no content secara logika)
-                'message'   => 'ID Institusi tidak ditemukan'
+                'message'   => 'ID Non Fasyankes tidak ditemukan'
             ])->setStatusCode(200);
         }
     }
 
     
-     public function postInstitutionSearch()
+     public function postNonFasyankesSearch()
         {
             $keyword = $this->request->getPost('keyword');
-            $models = new InstitutionModel();
+            $models = new NonFasyankesModel();
             $results = $models->search($keyword);
 
             $data = [];
             foreach ($results as $row) {
                 $data[] = [
                     'id' => $row['id'],
-                    'text' => $row['institution_name']
+                    'text' => $row['nonfasyankes_name']
                 ];
             }
 
@@ -151,7 +151,7 @@ class General extends ResourceController
                     'status'    => false,
                     'code'      => 204,
                     'type'      => 'error',
-                    'message'   => 'Data Institusi tidak ditemukan',
+                    'message'   => 'Data Non Fasyankes tidak ditemukan',
                     'data'      => []
                 ]);
             }
@@ -161,7 +161,7 @@ class General extends ResourceController
                     'status'    => true,
                     'code'      => 200,                
                     'type'      => 'success',
-                    'message'   => 'Data Institusi ditemukan ',
+                    'message'   => 'Data Non Fasyankes ditemukan ',
                     'data'      => $data
                 ]);
         }

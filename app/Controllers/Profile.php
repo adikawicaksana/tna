@@ -3,16 +3,19 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\UsersFasyankesModel;
+use App\Models\UsersNonFasyankesModel;
 use App\Services\NotificationService;
 
 class Profile extends BaseController
 {
     
     protected $usersFasyankesModel;
+    protected $usersNonFasyankesModel;
 
     public function __construct()
     {
         $this->usersFasyankesModel = new UsersFasyankesModel();
+        $this->usersNonFasyankesModel = new UsersNonFasyankesModel();
     }
     
     public function index()
@@ -152,6 +155,113 @@ class Profile extends BaseController
 
         } catch (\Throwable $e) {
             log_message('error', 'Gagal menghapus fasyankes');
+            return $this->response->setStatusCode(500)
+                ->setJSON(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function storeUserNonFasyankes()
+    {
+        $session = session();
+        $nonfasyankes_id = $this->request->getPost('nonfasyankes_id');
+        $email = $session->get('email');
+
+        if (empty($nonfasyankes_id)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Nama Non Fasyankes wajib diisi.'
+            ]);
+        }
+
+        try {
+            $existing = $this->usersNonFasyankesModel
+                ->where('email', $email)
+                ->where('nonfasyankes_id', $nonfasyankes_id)
+                ->where('status','true')
+                ->first();
+
+            if ($existing) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Data non fasyankes sudah pernah ditambahkan.'
+                ]);
+            }
+
+            // Jika belum ada, simpan baru
+            $this->usersNonFasyankesModel->insert([
+                'email'          => $email,
+                'nonfasyankes_id' => $nonfasyankes_id
+            ]);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Data Non fasyankes berhasil disimpan.'
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Gagal menyimpan data'
+            ]);
+        }
+    }
+
+    public function getUserNonFasyankes()
+    {
+        try {
+            $session = session();
+            $email = $session->get('email');
+
+            $usersNonFasyankesModel = new \App\Models\UsersNonFasyankesModel();
+            $fasyankes = $usersNonFasyankesModel
+                ->select('*, users_nonfasyankes.id as id_users_nonfasyankes')
+                ->join('master_nonfasyankes', 'master_nonfasyankes.id = users_nonfasyankes.nonfasyankes_id', 'left')
+                ->where('users_nonfasyankes.status','true')
+                ->where('users_nonfasyankes.email', $email)
+                ->findAll();
+
+            $data = [];
+            $no = 1;
+            foreach ($fasyankes as $row) {
+                $data[] = [
+                    'no'       => $no++,
+                    'non_fasyankes'=> $row['nonfasyankes_name'],
+                    'alamat'   => $row['nonfasyankes_address'],
+                    'aksi'     => '<button class="btn btn-danger btn-sm delete-fasyankes" data-id="'.$row['id_users_nonfasyankes'].'"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+                ];
+            }
+
+            return $this->response->setJSON(['data' => $data]);
+        } catch (\Throwable $e) {
+            log_message('error', 'Error getUserFasyankes: '.$e->getMessage());
+            return $this->response->setStatusCode(500)
+                ->setJSON(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteUserNonFasyankes($id = null)
+    {
+        try {
+            if (!$id) {
+                return $this->response->setStatusCode(400)
+                    ->setJSON(['error' => 'ID wajib diisi']);
+            }
+
+            $usersNonFasyankesModel = new \App\Models\UsersNonFasyankesModel();
+
+            $updated = $usersNonFasyankesModel->update($id, ['status' => 'false']);
+
+            if ($updated) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Non Fasyankes berhasil dihapus'
+                ]);
+            } else {
+                return $this->response->setStatusCode(400)
+                    ->setJSON(['success' => false, 'message' => 'Gagal menghapus non fasyankes']);
+            }
+
+        } catch (\Throwable $e) {
+            log_message('error', 'Gagal menghapus non fasyankes');
             return $this->response->setStatusCode(500)
                 ->setJSON(['error' => $e->getMessage()]);
         }

@@ -29,6 +29,7 @@ class Register extends BaseController
         $request = $this->request;
         $session = session();
 
+        $mode     = $request->getPost('fasyankes_mode');
         $email    = strtolower(trim($request->getPost('user_email')));
         $password = $request->getPost('user_password');
         $fullname = $request->getPost('user_fullname');
@@ -36,6 +37,7 @@ class Register extends BaseController
         $captcha  = strtoupper(trim($request->getPost('captcha')));
 
         $rules = [
+            'user_fullname'     => 'Masukan Nama lengkap Anda (tanpa gelar).',
             'user_mobilenumber' => 'Masukan Nomor Handphone.',
             'user_email'        => 'Email tidak boleh kosong.',
             'user_password'     => 'Password tidak boleh kosong.'

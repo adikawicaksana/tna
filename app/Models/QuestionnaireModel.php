@@ -61,8 +61,8 @@ class QuestionnaireModel extends Model
 		return [
 			self::TYPE_FASYANKES => 'Fasyankes',
 			self::TYPE_INDIVIDUAL_FASYANKES => 'Individu Fasyankes',
-			self::TYPE_INSTITUTE => 'Instansi',
-			self::TYPE_INDIVIDUAL_INSTITUTE => 'Individu Instansi',
+			self::TYPE_INSTITUTE => 'Non Fasyankes',
+			self::TYPE_INDIVIDUAL_INSTITUTE => 'Individu Non Fasyankes',
 		];
 	}
 

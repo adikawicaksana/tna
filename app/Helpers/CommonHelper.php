@@ -30,6 +30,7 @@ class CommonHelper
 					$result .= "<div class='form-check form-check-primary'>
 						<input name='$name' class='form-check-input' type='radio' value='{$each['question_id']}' />
 						<label class='form-check-label'>{$each['option_name']}</label>
+						<label>{$each['option_description']}</label>
 					</div>";
 				}
 				break;

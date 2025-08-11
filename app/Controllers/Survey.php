@@ -34,7 +34,7 @@ class Survey extends BaseController
 		return view('survey/show', ['id' => $id]);
 	}
 
-	public function create($type = QuestionnaireModel::TYPE_INDIVIDUAL)
+	public function create($type)
 	{
 		$question = QuestionnaireModel::getData([
 			'questionnaire_type' => $type,

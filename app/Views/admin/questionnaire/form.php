@@ -6,7 +6,7 @@ $oldQuestion = old('question_id') ?? [];
 <?= $this->section('content'); ?>
 <div class="container">
 	<h1><?= $title ?></h1>
-	<div class="card w-75">
+	<div class="card">
 		<div class="card-header">
 			<h5><?= $title ?></h5>
 		</div>

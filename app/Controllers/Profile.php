@@ -4,85 +4,61 @@ use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\UsersFasyankesModel;
 use App\Models\UsersNonFasyankesModel;
+use App\Models\ReferenceDataModel;
 use App\Services\NotificationService;
 
 class Profile extends BaseController
 {
     
+	protected $userModel;
+    protected $userData = null;
     protected $usersFasyankesModel;
     protected $usersNonFasyankesModel;
 
     public function __construct()
     {
+		$this->userModel = new UserModel();
         $this->usersFasyankesModel = new UsersFasyankesModel();
         $this->usersNonFasyankesModel = new UsersNonFasyankesModel();
     }
     
+	protected function getUserData()
+    {
+        if ($this->userData === null) {
+            $email = session()->get('email');
+            if (!$email) {
+                return null;
+            }
+
+            $this->userData = $this->userModel
+                ->select('users.*, users_detail.*, master_area_provinces.name as users_provinsi, master_area_regencies.name as users_kabkota, master_area_districts.name as users_kecamatan, master_area_villages.name as users_kelurahan')
+                ->join('users_detail', 'users.email = users_detail.email', 'left')
+                ->join('master_area_provinces', 'master_area_provinces.id = users_detail.users_provinces', 'left')
+                ->join('master_area_regencies', 'master_area_regencies.id = users_detail.users_regencies', 'left')
+                ->join('master_area_districts', 'master_area_districts.id = users_detail.users_districts', 'left')
+                ->join('master_area_villages', 'master_area_villages.id = users_detail.users_villages', 'left')
+                ->where('users.email', $email)
+                ->first();
+        }
+
+        return $this->userData;
+    }
+    
     public function index()
     {  
-        $session = session();
-        $email = $session->get('email'); 
 
-        $userModel = new UserModel();
+        $userData = $this->getUserData();
 
-        $data = $userModel->select('users.*, users_detail.*, master_area_provinces.name as users_provinsi, master_area_regencies.name as users_kabkota, master_area_districts.name as users_kecamatan, master_area_villages.name as users_kelurahan')
-            ->join('users_detail', 'users.email = users_detail.email', 'left')            
-            ->join('master_area_provinces', 'master_area_provinces.id = users_detail.users_provinces', 'left')
-            ->join('master_area_regencies', 'master_area_regencies.id = users_detail.users_regencies', 'left')
-            ->join('master_area_districts', 'master_area_districts.id = users_detail.users_districts', 'left')
-            ->join('master_area_villages', 'master_area_villages.id = users_detail.users_villages', 'left')
-            ->where('users.email', $email)
-            ->first();
-
-            if (!empty($data['mobile']) && substr($data['mobile'], 0, 2) === '62') {
-                $data['mobile'] = substr($data['mobile'], 2); 
+            if (!empty($userData['mobile']) && substr($userData['mobile'], 0, 2) === '62') {
+                $userData['mobile'] = substr($userData['mobile'], 2); 
             }
-            
-            $jenjangPendidikan = [
-                'tk'       => 'Taman Kanak-kanak (TK)',
-                'sd'       => 'Sekolah Dasar (SD)',
-                'smp'      => 'Sekolah Menengah Pertama (SMP)',
-                'sma-smk'  => 'Sekolah Menengah Atas / SMK (SMA/SMK)',
-                'd1'       => 'Diploma 1 (D1)',
-                'd2'       => 'Diploma 2 (D2)',
-                'd3'       => 'Diploma 3 (D3)',
-                'd4'       => 'Diploma 4 (D4)',
-                's1'       => 'Sarjana (S1)',
-                's2'       => 'Magister (S2)',
-                's3'       => 'Doktor (S3)',
-            ];
 
-            $jurusanProfesi = [
-                // Tenaga Medis
-                'dokter-umum'           => 'Dokter Umum',
-                'dokter-spesialis'      => 'Dokter Spesialis',
-                'dokter-gigi'           => 'Dokter Gigi',
-                'dokter-gigi-spesialis' => 'Dokter Gigi Spesialis',
-                'bidan'                 => 'Bidan',
-                'perawat'               => 'Perawat',
-                'perawat-gigi'          => 'Perawat Gigi',
-
-                // Tenaga Kesehatan Lain
-                'farmasi'               => 'Apoteker (Farmasi)',
-                'asisten-apoteker'      => 'Tenaga Teknis Kefarmasian',
-                'analis-kesehatan'      => 'Analis Kesehatan / Teknologi Laboratorium Medis',
-                'sanitarian'            => 'Sanitarian (Kesehatan Lingkungan)',
-                'gizi'                  => 'Ahli Gizi / Nutrisionis',
-                'radiografer'           => 'Radiografer',
-                'fisioterapis'          => 'Fisioterapis',
-                'terapis-okupasi'       => 'Terapis Okupasi',
-                'terapis-wicara'        => 'Terapis Wicara',
-                'rekam-medis'           => 'Perekam Medis dan Informasi Kesehatan',
-                'psikolog-klinis'       => 'Psikolog Klinis',
-                'skm'                   => 'Sarjana Kesehatan Masyarakat (SKM)',
-
-                // Lainnya
-                'lainnya'               => 'Lainnya'
-            ];
+            $refModel = new ReferenceDataModel();
+            $jenjangPendidikan = $refModel->getJenjangPendidikan();
+            $jurusanProfesi = $refModel->getJurusanProfesi();           
 
 
-        // default
-        return view('users/profile', ['title' => 'Profile','data'  => $data, 'jenjangPendidikan' => $jenjangPendidikan, 'jurusanProfesi' => $jurusanProfesi]);
+        return view('users/profile', ['title' => 'Profile','userData'=> $userData, 'data'  => $userData, 'jenjangPendidikan' => $jenjangPendidikan, 'jurusanProfesi' => $jurusanProfesi]);
     }
 
     public function putDetail()

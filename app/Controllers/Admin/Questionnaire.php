@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\UserModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionnaireDetailModel;
 use App\Models\QuestionnaireModel;
@@ -10,12 +11,36 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 
 class Questionnaire extends BaseController
 {
+    protected $userData = null;
 	protected $model;
 
 	public function __construct()
 	{
+		$this->userModel = new UserModel();
 		$this->model = new QuestionnaireModel();
 	}
+	
+	protected function getUserData()
+    {
+        if ($this->userData === null) {
+            $email = session()->get('email');
+            if (!$email) {
+                return null;
+            }
+
+            $this->userData = $this->userModel
+                ->select('users.*, users_detail.*, master_area_provinces.name as users_provinsi, master_area_regencies.name as users_kabkota, master_area_districts.name as users_kecamatan, master_area_villages.name as users_kelurahan')
+                ->join('users_detail', 'users.email = users_detail.email', 'left')
+                ->join('master_area_provinces', 'master_area_provinces.id = users_detail.users_provinces', 'left')
+                ->join('master_area_regencies', 'master_area_regencies.id = users_detail.users_regencies', 'left')
+                ->join('master_area_districts', 'master_area_districts.id = users_detail.users_districts', 'left')
+                ->join('master_area_villages', 'master_area_villages.id = users_detail.users_villages', 'left')
+                ->where('users.email', $email)
+                ->first();
+        }
+
+        return $this->userData;
+    }
 
 	public function index()
 	{
@@ -24,6 +49,7 @@ class Questionnaire extends BaseController
 			->orderBy('created_at', 'DESC')
 			->findAll();
 		return view('admin/questionnaire/index', [
+			'userData'=> $this->getUserData(),
 			'data' => $data,
 			'type' => $this->model::listType(),
 			'status' => $this->model::listStatus(),
@@ -46,6 +72,7 @@ class Questionnaire extends BaseController
 		}
 
 		return view('admin/questionnaire/show', [
+			'userData'=> $this->getUserData(),
 			'data' => $data,
 			'questionnaire_type' => $this->model::listType(),
 			'questionnaire_status' => $this->model::listStatus(),
@@ -57,6 +84,7 @@ class Questionnaire extends BaseController
 	public function create()
 	{
 		return view('admin/questionnaire/form', [
+			'userData'=> $this->getUserData(),
 			'type' => $this->model::listType(),
 			'question' => QuestionModel::getDropdownList(),
 			'title' => 'Tambah Kuesioner',

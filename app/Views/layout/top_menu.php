@@ -465,7 +465,7 @@
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                      <a class="dropdown-item mt-0" href="pages-account-settings-account.html">
+                      <a class="dropdown-item mt-0" href="<?= base_url('profile') ?>">
                         <div class="d-flex align-items-center">
                           <div class="flex-shrink-0 me-2">
                             <div class="avatar avatar-online">
@@ -474,7 +474,7 @@
                           </div>
                           <div class="flex-grow-1">
                             <h6 class="mb-0"><?= session()->get('username') ?></h6>
-                            <small class="text-body-secondary">Admin</small>
+                            <small class="text-body-secondary"><?= esc($userData['fullname']) ?></small>
                           </div>
                         </div>
                       </a>
@@ -488,38 +488,7 @@
                         ><span class="align-middle">My Profile</span>
                       </a>
                     </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-account-settings-account.html">
-                        <i class="icon-base ti tabler-settings me-3 icon-md"></i
-                        ><span class="align-middle">Settings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-account-settings-billing.html">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 icon-base ti tabler-file-dollar me-3 icon-md"></i
-                          ><span class="flex-grow-1 align-middle">Billing</span>
-                          <span class="flex-shrink-0 badge bg-danger d-flex align-items-center justify-content-center"
-                            >4</span
-                          >
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider my-1 mx-n2"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-pricing.html">
-                        <i class="icon-base ti tabler-currency-dollar me-3 icon-md"></i
-                        ><span class="align-middle">Pricing</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-faq.html">
-                        <i class="icon-base ti tabler-question-mark me-3 icon-md"></i
-                        ><span class="align-middle">FAQ</span>
-                      </a>
-                    </li>
+                    
                     <li>
                       <div class="d-grid px-2 pt-2 pb-1">
                         <a class="btn btn-sm btn-danger d-flex" href="./logout">

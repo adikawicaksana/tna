@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\UserModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionOptionModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
@@ -10,12 +11,36 @@ use Exception;
 
 class Question extends BaseController
 {
+    protected $userData = null;
 	protected $model;
 
 	public function __construct()
 	{
+		$this->userModel = new UserModel();
 		$this->model = new QuestionModel();
 	}
+
+	protected function getUserData()
+    {
+        if ($this->userData === null) {
+            $email = session()->get('email');
+            if (!$email) {
+                return null;
+            }
+
+            $this->userData = $this->userModel
+                ->select('users.*, users_detail.*, master_area_provinces.name as users_provinsi, master_area_regencies.name as users_kabkota, master_area_districts.name as users_kecamatan, master_area_villages.name as users_kelurahan')
+                ->join('users_detail', 'users.email = users_detail.email', 'left')
+                ->join('master_area_provinces', 'master_area_provinces.id = users_detail.users_provinces', 'left')
+                ->join('master_area_regencies', 'master_area_regencies.id = users_detail.users_regencies', 'left')
+                ->join('master_area_districts', 'master_area_districts.id = users_detail.users_districts', 'left')
+                ->join('master_area_villages', 'master_area_villages.id = users_detail.users_villages', 'left')
+                ->where('users.email', $email)
+                ->first();
+        }
+
+        return $this->userData;
+    }
 
 	public function index()
 	{
@@ -24,6 +49,7 @@ class Question extends BaseController
 		// die;
 		$data = $this->model->findAll();
 		return view('admin/question/index', [
+			'userData'=> $this->getUserData(),
 			'data' => $data,
 			'answer_type' => $this->model::listAnswerType(),
 			'status' => $this->model::listStatus(),

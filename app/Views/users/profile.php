@@ -3,7 +3,6 @@
 <?= $this->section('css') ?>
     <!-- Page CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/vendor/css/pages/page-profile.css') ?>" />
-  <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/select2/select2.css') ?>" />
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
@@ -37,9 +36,6 @@
                               </li>
                             </ul>
                           </div>
-                          <a href="javascript:void(0)" class="btn btn-primary mb-1">
-                            <i class="icon-base ti tabler-user-check icon-xs me-2"></i>Connected
-                          </a>
                         </div>
                       </div>
                     </div>
@@ -47,7 +43,7 @@
                 </div>
               </div>
               <!--/ Header -->
-              
+
               <!-- User Profile Content -->
                <div class="row">
   <!-- Basic Layout -->
@@ -163,7 +159,10 @@
             </div>
           </div>  
 
+          <div class="text-end">
+          <!-- isi form -->
           <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
         </form>
       </div>
     </div>
@@ -335,7 +334,6 @@
     <!-- Page JS -->
     <script src="<?= base_url('assets/js/pages-auth-multisteps.js') ?>"></script>
     <script src="<?= base_url('assets/js/app-user-view-account.js') ?>"></script>
-    <script src="<?= base_url('assets/vendor/libs/select2/select2.js') ?>"></script>
     <script>
     <?php if(session()->getFlashdata('warning_profile')): ?>
         Swal.fire({

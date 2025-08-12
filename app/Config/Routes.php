@@ -19,7 +19,8 @@ $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 
 $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
-	$routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
+	// $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
+	$routes->get('dashboard', 'Survey::index', ['as' => 'dashboard']);
 	$routes->get('/profile', 'Profile::index', ['as' => 'profile']);
 });
 

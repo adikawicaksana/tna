@@ -9,5 +9,4 @@ class UserModel extends Model
     protected $primaryKey = 'email';
     protected $allowedFields = ['email', 'password', 'refresh_token', 'refresh_token_expire','status'];
     protected $useTimestamps = true;
-    protected $createdField  = 'created_at';
 }

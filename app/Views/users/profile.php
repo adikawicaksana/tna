@@ -28,20 +28,12 @@
                         <div
                           class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-5 flex-md-row flex-column gap-4">
                           <div class="user-profile-info">
-                            <h4 class="mb-2 mt-lg-6">John Doe</h4>
+                            <h4 class="mb-2 mt-lg-6"><?= esc($data['front_title']) ?> <?= esc($data['fullname']) ?>, <?= esc($data['back_title']) ?></h4>
                             <ul
-                              class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4 my-2">
-                              <li class="list-inline-item d-flex gap-2 align-items-center">
-                                <i class="icon-base ti tabler-palette icon-lg"></i
-                                ><span class="fw-medium">UX Designer</span>
-                              </li>
+                              class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4 my-2">                              
                               <li class="list-inline-item d-flex gap-2 align-items-center">
                                 <i class="icon-base ti tabler-map-pin icon-lg"></i
-                                ><span class="fw-medium">Vatican City</span>
-                              </li>
-                              <li class="list-inline-item d-flex gap-2 align-items-center">
-                                <i class="icon-base ti tabler-calendar icon-lg"></i
-                                ><span class="fw-medium"> Joined April 2021</span>
+                                ><span class="fw-medium"><?= esc($data['address']) ?>, <?= esc($data['users_kelurahan']) ?>, <?= esc($data['users_kecamatan']) ?>, <?= esc($data['users_kabkota']) ?>, <?= esc($data['users_provinsi']) ?></span>
                               </li>
                             </ul>
                           </div>
@@ -55,37 +47,7 @@
                 </div>
               </div>
               <!--/ Header -->
-
-              <!-- Navbar pills -->
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="nav-align-top">
-                    <ul class="nav nav-pills flex-column flex-sm-row mb-6 gap-sm-0 gap-2">
-                      <li class="nav-item">
-                        <a class="nav-link active" href="javascript:void(0);"
-                          ><i class="icon-base ti tabler-user-check icon-sm me-1_5"></i> Biodata</a
-                        >
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="?p=fasyankes">
-                          <i class="icon-base ti tabler-building-hospital icon-sm me-1_5"></i> Fasyankes</a>
-                      </li>
-                      <!--<li class="nav-item">
-                        <a class="nav-link" href="pages-profile-projects.html"
-                          ><i class="icon-base ti tabler-layout-grid icon-sm me-1_5"></i> Projects</a
-                        >
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="pages-profile-connections.html"
-                          ><i class="icon-base ti tabler-link icon-sm me-1_5"></i> Connections</a
-                        >
-                      </li> -->
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <!--/ Navbar pills -->
-
+              
               <!-- User Profile Content -->
                <div class="row">
   <!-- Basic Layout -->
@@ -94,7 +56,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">                      
       </div>
       <div class="card-body">
-        <form>
+        <form action="<?= base_url('profile') ?>" method="POST">
           <div class="row">
             <div class="col-md-6 mb-6">
               <label class="form-label" for="basic-default-nip">NIP</label>
@@ -123,14 +85,11 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <!-- <label class="form-label" for="basic-default-mobile-number">Nomor Telepon</label>
-              <input type="text" name="user_mobile_number" class="form-control" id="basic-default-mobile-number" /> -->
-
               <label class="form-label" for="MobileNumber">Nomor Telepon</label>
                       <div class="input-group">
                         <span class="input-group-text">(+62)</span>
                         <input type="text" id="MobileNumber" name="user_mobilenumber"
-                          class="form-control multi-steps-mobile phone-mask" placeholder="81 234 xxx xxx" value="<?= esc($data['mobile']) ?>"/>
+                          class="form-control multi-steps-mobile" placeholder="81 234 xxx xxx" value="<?= esc($data['mobile']) ?>"/>
                       </div>
             </div>
             <div class="col-md-6 mb-6">
@@ -147,31 +106,60 @@
           <div class="row">
             <div class="col-md-6 mb-6">
               <label class="form-label" for="Provinsi">Provinsi</label>
-              <select name="user_provinces" id="provinsi" class="form-control"></select>
+              <select name="user_provinces" id="provinsi" class="form-control">
+                <? if($data['users_provinces']){ ?><option value="<?= esc($data['users_provinces']) ?>" selected><?= esc($data['users_provinsi']) ?></option><? } ?>
+              </select>
             </div>
             <div class="col-md-6 mb-6">
               <label class="form-label" for="Kabupaten">Kabupaten / Kota</label>
-              <select name="user_regencies" id="kabupaten" class="form-select"></select>
+              <select name="user_regencies" id="kabupaten" class="form-select">
+                <? if($data['users_regencies']){ ?><option value="<?= esc($data['users_regencies']) ?>" selected><?= esc($data['users_kabkota']) ?></option><? } ?>
+              </select>
             </div>
           </div>
           <div class="row">
               <div class="col-md-6 mb-6">
                 <label class="form-label" for="Kecamatan">Kecamatan</label>
-                <select name="user_districts" id="kecamatan" class="form-control"></select>
+                <select name="user_districts" id="kecamatan" class="form-control">
+                <? if($data['users_districts']){ ?><option value="<?= esc($data['users_districts']) ?>" selected><?= esc($data['users_kecamatan']) ?></option><? } ?>
+              </select>
               </div>
               <div class="col-md-6 mb-6">
                 <label class="form-label" for="Kelurahan">Kelurahan / Desa</label>
-                <select name="user_villages" id="kelurahan" class="form-select"></select>
+                <select name="user_villages" id="kelurahan" class="form-select">
+                <? if($data['users_villages']){ ?><option value="<?= esc($data['users_villages']) ?>" selected><?= esc($data['users_kelurahan']) ?></option><? } ?>
+              </select>
               </div>
           </div>    
           <div class="row">
             <div class="col-md-6 mb-6">
               <label class="form-label" for="basic-default-jenjang">Pendidikan Terkahir</label>
-              <input type="text" name="user_jenjang" class="form-control" id="basic-default-jenjang" value="<?= esc($data['nip']) ?>"/>
+                <select id="jenjangPendidikan" name="user_jenjang_pendidikan" class="form-select select2">
+                   <option value=""></option>
+                    <?php foreach ($jenjangPendidikan as $key => $label): ?>
+                        <option value="<?= esc($key) ?>" 
+                            <?= isset($data['jenjang_pendidikan']) && $data['jenjang_pendidikan'] === $key ? 'selected' : '' ?>>
+                            <?= esc($label) ?>
+                        </option>
+                        <?php endforeach; ?>
+                </select>
             </div>
             <div class="col-md-6 mb-6">
               <label class="form-label" for="basic-default-nik">Jurusan / Profesi</label>
-              <input type="text" name="user_nik" class="form-control" id="basic-default-nik" value="<?= esc($data['nik']) ?>"/>
+              <select id="jurusanProfesi" name="user_jurusan_profesi" class="form-select select2">
+               <option value=""></option>
+                    <?php foreach ($jurusanProfesi as $key => $label): ?>
+                        <option value="<?= esc($key) ?>" 
+                            <?= isset($data['jurusan_profesi']) && $data['jurusan_profesi'] === $key ? 'selected' : '' ?>>
+                            <?= esc($label) ?>
+                        </option>
+                        <?php endforeach; ?>
+              </select>
+                <div id="jurusanManualWrapper" class="mb-3" style="display:none;">
+                  <br>
+                  <label for="jurusanManual" class="form-label">Masukkan Jurusan / Profesi</label>
+                  <input type="text" id="jurusanManual" name="jurusan_profesi_manual" class="form-control" placeholder="Ketik jurusan/profesi">
+                </div>
             </div>
           </div>  
 
@@ -356,9 +344,51 @@
             text: '<?= session()->getFlashdata('warning_profile') ?>',
             confirmButtonText: 'OK'
         });
+    <?php endif; 
+    
+    if (session()->has('update_profil')): 
+        $notif = session('update_profil'); ?>
+         Swal.fire({
+            icon: '<?= esc($notif['type']) ?>',
+            text: ' <?= esc($notif['message']) ?>',
+            confirmButtonText: 'OK'
+        });
+
     <?php endif; ?>
     
     $(document).ready(function () {
+
+      function formatMobile(input) {
+          let v = input.value.replace(/\D/g, ''); 
+          v = v.replace(/^(0|62)/, '');
+            input.value = v.replace(
+                /^(\d{0,2})(\d{0,3})(\d{0,4})(\d{0,4}).*/,
+                (_, a, b, c, d) => [a, b, c, d].filter(Boolean).join(' ')
+            );
+      }
+
+      $('#MobileNumber').on('input', function () {
+          formatMobile(this);
+      });
+
+      formatMobile(document.getElementById('MobileNumber'));
+
+    $('.select2').select2({
+      placeholder: '-- Pilih --',
+      allowClear: true,
+      width: '100%' 
+    });
+
+    $('#jurusanProfesi').on('change', function() {
+      if ($(this).val() === 'lainnya') {
+        $('#jurusanManualWrapper').show();
+        $('#jurusanManual').attr('required', true);
+      } else {
+        $('#jurusanManualWrapper').hide();
+        $('#jurusanManual').removeAttr('required').val('');
+      }
+    });
+
   const base_url = "<?= base_url() ?>";
   const api_url  = base_url + "api";
 

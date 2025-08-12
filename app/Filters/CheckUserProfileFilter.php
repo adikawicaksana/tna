@@ -35,7 +35,7 @@ class CheckUserProfileFilter implements FilterInterface
                 'address',
                 'users_provinces',
                 'users_regencies',
-                'users_districs',
+                'users_districts',
                 'users_villages',
             ];
 

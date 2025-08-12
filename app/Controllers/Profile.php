@@ -25,8 +25,12 @@ class Profile extends BaseController
 
         $userModel = new UserModel();
 
-        $data = $userModel->select('users.*, users_detail.*')
-            ->join('users_detail', 'users.email = users_detail.email', 'left')
+        $data = $userModel->select('users.*, users_detail.*, master_area_provinces.name as users_provinsi, master_area_regencies.name as users_kabkota, master_area_districts.name as users_kecamatan, master_area_villages.name as users_kelurahan')
+            ->join('users_detail', 'users.email = users_detail.email', 'left')            
+            ->join('master_area_provinces', 'master_area_provinces.id = users_detail.users_provinces', 'left')
+            ->join('master_area_regencies', 'master_area_regencies.id = users_detail.users_regencies', 'left')
+            ->join('master_area_districts', 'master_area_districts.id = users_detail.users_districts', 'left')
+            ->join('master_area_villages', 'master_area_villages.id = users_detail.users_villages', 'left')
             ->where('users.email', $email)
             ->first();
 
@@ -34,23 +38,80 @@ class Profile extends BaseController
                 $data['mobile'] = substr($data['mobile'], 2); 
             }
             
+            $jenjangPendidikan = [
+                'tk'       => 'Taman Kanak-kanak (TK)',
+                'sd'       => 'Sekolah Dasar (SD)',
+                'smp'      => 'Sekolah Menengah Pertama (SMP)',
+                'sma-smk'  => 'Sekolah Menengah Atas / SMK (SMA/SMK)',
+                'd1'       => 'Diploma 1 (D1)',
+                'd2'       => 'Diploma 2 (D2)',
+                'd3'       => 'Diploma 3 (D3)',
+                'd4'       => 'Diploma 4 (D4)',
+                's1'       => 'Sarjana (S1)',
+                's2'       => 'Magister (S2)',
+                's3'       => 'Doktor (S3)',
+            ];
 
-        $p = $this->request->getGet('p');
+            $jurusanProfesi = [
+                // Tenaga Medis
+                'dokter-umum'           => 'Dokter Umum',
+                'dokter-spesialis'      => 'Dokter Spesialis',
+                'dokter-gigi'           => 'Dokter Gigi',
+                'dokter-gigi-spesialis' => 'Dokter Gigi Spesialis',
+                'bidan'                 => 'Bidan',
+                'perawat'               => 'Perawat',
+                'perawat-gigi'          => 'Perawat Gigi',
 
-        $views = [
-            'fasyankes' => ['users/fasyankes', 'Fasyankes'],
-            'alamat'     => ['users/address', 'Alamat'],
-        ];
+                // Tenaga Kesehatan Lain
+                'farmasi'               => 'Apoteker (Farmasi)',
+                'asisten-apoteker'      => 'Tenaga Teknis Kefarmasian',
+                'analis-kesehatan'      => 'Analis Kesehatan / Teknologi Laboratorium Medis',
+                'sanitarian'            => 'Sanitarian (Kesehatan Lingkungan)',
+                'gizi'                  => 'Ahli Gizi / Nutrisionis',
+                'radiografer'           => 'Radiografer',
+                'fisioterapis'          => 'Fisioterapis',
+                'terapis-okupasi'       => 'Terapis Okupasi',
+                'terapis-wicara'        => 'Terapis Wicara',
+                'rekam-medis'           => 'Perekam Medis dan Informasi Kesehatan',
+                'psikolog-klinis'       => 'Psikolog Klinis',
+                'skm'                   => 'Sarjana Kesehatan Masyarakat (SKM)',
 
-        if ($p && isset($views[$p])) {
-            return view($views[$p][0], [
-                'title' => $views[$p][1],
-                'data'  => $data
-            ]);
-        }
+                // Lainnya
+                'lainnya'               => 'Lainnya'
+            ];
+
 
         // default
-        return view('users/profile', ['title' => 'Profile','data'  => $data]);
+        return view('users/profile', ['title' => 'Profile','data'  => $data, 'jenjangPendidikan' => $jenjangPendidikan, 'jurusanProfesi' => $jurusanProfesi]);
+    }
+
+    public function putDetail()
+    {
+        $userDetailModel = new UserDetailModel();
+        $session = session();
+
+        $data = [
+            'email' => $this->request->getPost('user_email'),
+            'nik'   => $this->request->getPost('user_nik'),
+            'nip'   => $this->request->getPost('user_nip'),
+            'front_title' => $this->request->getPost('user_front_title'),
+            'fullname' => $this->request->getPost('user_fullname'),
+            'back_title' => $this->request->getPost('user_back_title'),
+            'mobile' => "62" . preg_replace('/\D/', '', $this->request->getPost('user_mobilenumber')),
+            'address' => $this->request->getPost('user_address'),
+            'users_provinces' => $this->request->getPost('user_provinces'),
+            'users_regencies' => $this->request->getPost('user_regencies'),
+            'users_districts' => $this->request->getPost('user_districts'),
+            'users_villages' => $this->request->getPost('user_villages'),
+            'jenjang_pendidikan' => $this->request->getPost('user_jenjang_pendidikan'),
+            'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
+        ];
+
+        if ($userDetailModel->update($session->get('email'), $data)) {
+           return redirect()->back()->with('update_profil', ['type' => 'success','message' => 'Profil berhasil diperbarui']);
+        } else {
+           return redirect()->back()->with('update_profil', ['type' => 'error','message' => 'Gagal memperbarui profil']);
+        }
     }
 
     public function storeUserFasyankes()
@@ -70,14 +131,26 @@ class Profile extends BaseController
             $existing = $this->usersFasyankesModel
                 ->where('email', $email)
                 ->where('fasyankes_code', $fasyankes_code)
-                ->where('status','true')
                 ->first();
 
             if ($existing) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Data fasyankes sudah pernah ditambahkan.'
-                ]);
+                
+                if($existing['status']=='true'){                    
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Data fasyankes sudah pernah ditambahkan.'
+                    ]);
+                }else{
+                    
+                $updated = $this->usersFasyankesModel->update($existing['id'], ['status' => 'true']);
+
+                    return $this->response->setJSON([
+                        'success' => true,
+                        'message' => 'Data fasyankes berhasil disimpan.'
+                    ]);
+
+                }
+
             }
 
             // Jika belum ada, simpan baru
@@ -177,15 +250,23 @@ class Profile extends BaseController
             $existing = $this->usersNonFasyankesModel
                 ->where('email', $email)
                 ->where('nonfasyankes_id', $nonfasyankes_id)
-                ->where('status','true')
                 ->first();
+                
+                if($existing['status']=='true'){                    
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Data Non Fasyankes sudah pernah ditambahkan.'
+                    ]);
+                }else{
+                    
+                $updated = $this->usersNonFasyankesModel->update($existing['id'], ['status' => 'true']);
 
-            if ($existing) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Data non fasyankes sudah pernah ditambahkan.'
-                ]);
-            }
+                    return $this->response->setJSON([
+                        'success' => true,
+                        'message' => 'Data Non Fasyankes berhasil disimpan.'
+                    ]);
+
+                }
 
             // Jika belum ada, simpan baru
             $this->usersNonFasyankesModel->insert([
@@ -226,7 +307,7 @@ class Profile extends BaseController
                     'no'       => $no++,
                     'non_fasyankes'=> $row['nonfasyankes_name'],
                     'alamat'   => $row['nonfasyankes_address'],
-                    'aksi'     => '<button class="btn btn-danger btn-sm delete-fasyankes" data-id="'.$row['id_users_nonfasyankes'].'"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+                    'aksi'     => '<button class="btn btn-danger btn-sm delete-non-fasyankes" data-id="'.$row['id_users_nonfasyankes'].'"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
                 ];
             }
 

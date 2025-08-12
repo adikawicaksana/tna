@@ -25,6 +25,9 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 
 
 $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
+	
+	$routes->post('/profile', 'Profile::putDetail' );
+
 	$routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes', ['as' => 'profile']);
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:num)', 'Profile::deleteUserFasyankes/$1');

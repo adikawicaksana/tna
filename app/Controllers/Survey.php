@@ -3,52 +3,29 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\UserDetailModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionnaireModel;
 use App\Models\QuestionOptionModel;
 use App\Models\SurveyModel;
 use App\Models\UsersFasyankesModel;
 use App\Models\UsersNonFasyankesModel;
-use App\Models\UserModel;
 use Exception;
 
 class Survey extends BaseController
 {
 	protected $model;
-	protected $userModel;
-    protected $userData = null;
+    protected $userDetailModel;
 	protected $usersFasyankesModel;
     protected $usersNonFasyankesModel;
 
 	public function __construct()
 	{
+        $this->userDetailModel = new UserDetailModel();
 		$this->model = new SurveyModel();
-		$this->userModel = new UserModel();
 		$this->usersFasyankesModel = new UsersFasyankesModel();
         $this->usersNonFasyankesModel = new UsersNonFasyankesModel();
 	}
-
-	protected function getUserData()
-    {
-        if ($this->userData === null) {
-            $email = session()->get('email');
-            if (!$email) {
-                return null;
-            }
-
-            $this->userData = $this->userModel
-                ->select('users.*, users_detail.*, master_area_provinces.name as users_provinsi, master_area_regencies.name as users_kabkota, master_area_districts.name as users_kecamatan, master_area_villages.name as users_kelurahan')
-                ->join('users_detail', 'users.email = users_detail.email', 'left')
-                ->join('master_area_provinces', 'master_area_provinces.id = users_detail.users_provinces', 'left')
-                ->join('master_area_regencies', 'master_area_regencies.id = users_detail.users_regencies', 'left')
-                ->join('master_area_districts', 'master_area_districts.id = users_detail.users_districts', 'left')
-                ->join('master_area_villages', 'master_area_villages.id = users_detail.users_villages', 'left')
-                ->where('users.email', $email)
-                ->first();
-        }
-
-        return $this->userData;
-    }
 
 	public function index()
 	{ 
@@ -56,7 +33,7 @@ class Survey extends BaseController
 			->findAll();
 			
 		return view('survey/index', [
-			'userData' => $this->getUserData(),
+			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'data' => $data,
 			'questionnaire_type' => QuestionnaireModel::listType(),
 			'title' => 'Daftar Survei',
@@ -155,7 +132,7 @@ class Survey extends BaseController
 
 
 		return view('survey/form', [
-			'userData' => $this->getUserData(),
+			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'question' => $question,
 			'option' => $option,
 			'title' => 'Formulir Survei',

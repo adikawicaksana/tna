@@ -27,17 +27,14 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 
 $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
 	
-	$routes->post('/profile', 'Profile::putDetail' );
-
-	$routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes', ['as' => 'profile']);
+	$routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes');
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:num)', 'Profile::deleteUserFasyankes/$1');
-
     $routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
 	$routes->get('/profile/nonfasyankes/data', 'Profile::getUserNonFasyankes');
-	$routes->post('/profile/nonfasyankes/delete/(:num)', 'Profile::deleteUserNonFasyankes/$1');
+	$routes->post('/profile/nonfasyankes/delete/(:num)', 'Profile::deleteUserNonFasyankes/$1');	
 
-
+	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile'] );
 });
 
 

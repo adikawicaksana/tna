@@ -227,21 +227,19 @@ class Profile extends BaseController
                 ->where('email', $email)
                 ->where('nonfasyankes_id', $nonfasyankes_id)
                 ->first();
-                
-                if($existing['status']=='true'){                    
-                    return $this->response->setJSON([
-                        'success' => false,
-                        'message' => 'Data Non Fasyankes sudah pernah ditambahkan.'
-                    ]);
-                }else{
-                    
-                $updated = $this->usersNonFasyankesModel->update($existing['id'], ['status' => 'true']);
+                 if ($existing) {
+                    if ($existing['status'] === 'true') {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Data Non Fasyankes sudah pernah ditambahkan.'
+                        ]);
+                    }
 
+                    $this->usersNonFasyankesModel->update($existing['id'], ['status' => 'true']);
                     return $this->response->setJSON([
                         'success' => true,
                         'message' => 'Data Non Fasyankes berhasil disimpan.'
                     ]);
-
                 }
 
             // Jika belum ada, simpan baru
@@ -257,7 +255,7 @@ class Profile extends BaseController
         } catch (\Exception $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Gagal menyimpan data'
+                'message' => 'Gagal menyimpan data'.$e
             ]);
         }
     }

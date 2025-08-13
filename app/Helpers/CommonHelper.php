@@ -20,10 +20,10 @@ class CommonHelper
 		$result = '';
 		switch ($type) {
 			case QuestionModel::TYPE_SHORT:
-				$result .= "<input type='text' class='form-control' name='$name'>";
+				$result .= "<input type='text' class='form-control field-input' name='$name'>";
 				break;
 			case QuestionModel::TYPE_TEXT:
-				$result .= "<textarea class='form-control' name='$name'></textarea>";
+				$result .= "<textarea class='form-control field-input' name='$name'></textarea>";
 				break;
 			case QuestionModel::TYPE_MULTIPLE_CHOICE:
 				foreach ($source as $each) {
@@ -35,14 +35,14 @@ class CommonHelper
 				}
 				break;
 			case QuestionModel::TYPE_MULTI_SELECT:
-				$result .= "<select class='select2 form-select' multiple>";
+				$result .= "<select class='select2 form-select field-select' multiple>";
 				foreach ($source as $each) {
 					$result .= "<option value='{$each['question_id']}'>{$each['option_name']}</option>";
 				}
 				$result .= "</select>";
 				break;
 			case QuestionModel::TYPE_DROPDOWN:
-				$result .= "<select class='form-select' name='$name'>";
+				$result .= "<select class='form-select field-select' name='$name'>";
 				foreach ($source as $each) {
 					$result .= "<option value='{$each['question_id']}'>{$each['option_name']}</option>";
 				}

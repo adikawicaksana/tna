@@ -12,18 +12,18 @@ use App\Helpers\CommonHelper;
 		<div class="col-sm-8">
 			<select id="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" name="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" class="form-select select2">
 			<?php foreach ($fasyankes_nonfasyankes['options'] as $key => $label): ?>
-				<option value="<?= esc($key) ?>" 
+				<option value="<?= esc($key) ?>"
 					>
 					<?= esc($label) ?>
 				</option>
 				<?php endforeach; ?>
 			</select>
-		</div>			
+		</div>
 	</div>
 	<?php foreach ($question as $each): ?>
 		<div class="row mb-3">
 			<div class="col-sm-4">
-				<label for="question" class="col-form-label">
+				<label for="question" class="col-form-label text-wrap">
 					<?= $each['question'] ?>
 				</label>
 
@@ -41,7 +41,7 @@ use App\Helpers\CommonHelper;
 	<div class="row mb-3">
 		<div class="col-sm-8 offset-sm-4">
 			<div class="form-check">
-				<input class="form-check-input" type="checkbox" name="verification" id="verification">
+				<input class="form-check-input" type="checkbox" name="verification" id="verification" disabled>
 				<label class="form-check-label">
 					Saya menyatakan bahwa data yang saya input adalah benar
 				</label>
@@ -54,10 +54,51 @@ use App\Helpers\CommonHelper;
 
 <?= $this->section('scripts') ?>
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
 	$('#verification').change(function() {
 		$('#btn-submit').prop('disabled', !this.checked);
 	})
-});
+
+	$(document).on('change', '.field-input, .field-select, input[type="radio"]', checkInputs);
+
+	function checkInputs() {
+		let allFilled = true;
+
+		// Check input field
+		$('.field-input').each(function() {
+			if ($(this).val() === "") {
+				allFilled = false;
+				return false;
+			}
+		});
+
+		// Check select field
+		$('.field-select').each(function() {
+			if ($(this).val() === "") {
+				allFilled = false;
+				return false;
+			}
+		});
+
+		// Check radio button
+		$('.form-group input[type="radio"]:checked').each(function() {
+			if ($(this).val() === "") {
+				allFilled = false;
+				return false;
+			}
+		});
+
+		// Check textarea
+		$('.field-textarea').each(function() {
+			if ($(this).val().trim() === "") {
+				allFilled = false;
+				return false;
+			}
+		})
+
+		// Activate verification checkbox
+		$('#verification').prop('disabled', !allFilled);
+	}
+})
 </script>
 <?= $this->endSection() ?>

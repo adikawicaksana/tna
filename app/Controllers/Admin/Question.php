@@ -74,8 +74,8 @@ class Question extends BaseController
 			// Insert into Question Table
 			$has_option = in_array($post['answer_type'], QuestionModel::hasOption());
 			$data = [
-				'question' => $post['question'],
-				'question_description' => $post['question_description'],
+				'question' => trim($post['question']),
+				'question_description' => trim($post['question_description']),
 				'answer_type' => $post['answer_type'],
 				'question_status' => $this->model::STAT_ACTIVE,
 				'source_reference' => ($has_option && !empty($post['source_reference'])) ?
@@ -95,7 +95,7 @@ class Question extends BaseController
 					$data[] = [
 						'question_id' => $id,
 						'option_name' => trim($each),
-						'option_description' => $description[$key],
+						'option_description' => trim($description[$key]),
 					];
 				}
 				if (empty($data)) throw new \Exception('Pilihan jawaban tidak boleh kosong!');

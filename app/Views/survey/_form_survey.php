@@ -6,6 +6,52 @@ use App\Helpers\CommonHelper;
 <form action="<?= route_to('survey.store') ?>" method="post">
 	<?= csrf_field() ?>
 	<div class="row mb-3">
+	<div class="card-datatable table-responsive pt-0">
+        <table class="table datatables-uraian-tugas">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Uraian Tugas</th>
+              <th>Pelatihan</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Edukasi pasien/keluarga, promosi kesehatan</td>
+              <td>Pelatihan Komunikasi efektif.</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Melaksanakan skrining risiko infeksi pada pasien dan lingkungan kerja sesuai prosedur PPI di FKTP.</td>
+              <td>Pelatihan Pencegahan dan Pengendalian Infeksi (PPI) bagi Tenaga Kesehatan di Fasilitas Kesehatan Tingkat Pertama (FKTP)</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Melaksanakan pelayanan ANC terstandar pada ibu hamil sesuai pedoman Kemenkes, termasuk pemeriksaan fisik, laboratorium dasar, dan penilaian faktor risiko.</td>
+              <td>Pelatihan Pelayanan Antenatal Care, Persalinan, Nifas Dan Skrining Hipotiroid Kongenital (ANC SHK) Bagi Bidan di FKTP</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Memberikan konseling pra dan pasca tes untuk mendukung informed consent dan pemahaman pasien.</td>
+              <td>Pelatihan Pencegahan Penularan HIV, Sifilis dan Hepatitis B dari Ibu Ke Anak (Menuju Triple Eliminasi)</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Melaksanakan konseling menyusui pada ibu hamil, ibu nifas, dan ibu menyusui dengan teknik komunikasi efektif sesuai pedoman Kemenkes.</td>
+              <td>Pelatihan Konseling Menyusui (KON-ASI)</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div><br><br>
+	<div class="row mb-3">
 		<div class="col-sm-4">
 			<label class="col-form-label" for="basic-default-<?= esc($fasyankes_nonfasyankes['selectName']) ?>"><?= esc($fasyankes_nonfasyankes['label']) ?></label>
 		</div>

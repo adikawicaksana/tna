@@ -172,8 +172,9 @@
               <!--/ User Profile Content -->
             </div>
 
-             <div class="container-xxl flex-grow-1 container-p-y">
-              <!-- DataTable with Buttons --><div class="card p-3">
+  <div class="container-xxl flex-grow-1 container-p-y">
+  <!-- DataTable with Buttons -->
+    <div class="card p-3">
   <div class="row">
     <!-- Fasyankes -->
     <div class="col-md-6 mb-6">
@@ -215,6 +216,65 @@
               <th></th>
             </tr>
           </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<div class="card p-3">
+  <div class="row">
+    <!-- Uraian Tugas dan Pelatihan -->
+    <div class="col-md-12 mb-6">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5>Uraian Tugas & Pelatihan</h5>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalUraianTugas">
+          <i class="icon-base ti tabler-plus icon-sm me-1_5"></i></button>
+      </div>
+      <div class="card-datatable table-responsive pt-0">
+        <table class="table datatables-uraian-tugas">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Uraian Tugas</th>
+              <th>Pelatihan</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Edukasi pasien/keluarga, promosi kesehatan</td>
+              <td>Pelatihan Komunikasi efektif.</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Melaksanakan skrining risiko infeksi pada pasien dan lingkungan kerja sesuai prosedur PPI di FKTP.</td>
+              <td>Pelatihan Pencegahan dan Pengendalian Infeksi (PPI) bagi Tenaga Kesehatan di Fasilitas Kesehatan Tingkat Pertama (FKTP)</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Melaksanakan pelayanan ANC terstandar pada ibu hamil sesuai pedoman Kemenkes, termasuk pemeriksaan fisik, laboratorium dasar, dan penilaian faktor risiko.</td>
+              <td>Pelatihan Pelayanan Antenatal Care, Persalinan, Nifas Dan Skrining Hipotiroid Kongenital (ANC SHK) Bagi Bidan di FKTP</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Memberikan konseling pra dan pasca tes untuk mendukung informed consent dan pemahaman pasien.</td>
+              <td>Pelatihan Pencegahan Penularan HIV, Sifilis dan Hepatitis B dari Ibu Ke Anak (Menuju Triple Eliminasi)</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Melaksanakan konseling menyusui pada ibu hamil, ibu nifas, dan ibu menyusui dengan teknik komunikasi efektif sesuai pedoman Kemenkes.</td>
+              <td>Pelatihan Konseling Menyusui (KON-ASI)</td>
+              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -325,7 +385,62 @@
     </div>
   </div>
 </div>
-             
+
+
+
+<!-- Modal Tambah Uraian Tugas -->
+<div class="modal fade" id="modalUraianTugas" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form id="formNonFasyankes">
+        <div class="modal-header">
+          <h5 class="modal-title">Tambah Data Uraian Tugas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Uraian Tugas</label>                         
+            <textarea name="user_uraiantugas" id="user_uraiantugas" class="form-control" ></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Pelatihan yang Tersedia (SIAKPEL)</label>
+            <select name="user_pelatihan" id="user_pelatihan" class="form-control">
+                <option value="">-- Pilih Pelatihan --</option>
+                <option value="ppi_fktp">Pelatihan Pencegahan dan Pengendalian Infeksi (PPI) bagi Tenaga Kesehatan di Fasilitas Kesehatan Tingkat Pertama (FKTP)</option>
+                <option value="anc_shk_fktp">Pelatihan Pelayanan Antenatal Care, Persalinan, Nifas dan Skrining Hipotiroid Kongenital (ANC SHK) Bagi Bidan di FKTP</option>
+                <option value="triple_eliminasi">Pelatihan Pencegahan Penularan HIV, Sifilis dan Hepatitis B dari Ibu ke Anak (Menuju Triple Eliminasi)</option>
+                <option value="kon_asi">Pelatihan Konseling Menyusui (KON-ASI)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label d-block">Sudah Mengikuti?</label>
+                <div class="form-check form-check-inline mt-4">
+                  <input
+                    class="form-check-input form-check-success"
+                    type="radio"
+                    name="inlineRadioOptions"
+                    id="inlineRadio1"
+                    value="option1" />
+                  <label class="form-check-label" for="inlineRadio1">Sudah</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="inlineRadioOptions"
+                    id="inlineRadio2"
+                    value="option2" />
+                  <label class="form-check-label" for="inlineRadio2">Belum</label>
+                </div>                
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Tambah</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
               <!--/ DataTable with Buttons -->
             <!-- / Content -->
 <?= $this->endSection() ?>

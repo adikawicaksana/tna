@@ -348,7 +348,7 @@ class Profile extends BaseController
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Data berhasil disimpan (mode Add Only).'
+            'message' => 'Data berhasil disimpan.'
         ]);
     }
 

@@ -239,7 +239,7 @@
             <tr>
               <th>No</th>
               <th>Uraian Tugas</th>
-              <th>Jumlah Pengembangan</th>
+              <th>Pengembangan Kompetensi</th>
             </tr>
           </thead>
         </table>
@@ -803,136 +803,110 @@
           });
       });
 
-    let tableJobdesc;
+   let tableJobdesc;
 
-    function initJobdescTable() {
-      tableJobdesc = $('#tableUraianTugas').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-          url: '/profile/listjobdesc-competence',
-          type: 'GET'
-        },
-        columns: [
-          { data: 'no' },
-          { data: 'job_description' },
-          { data: 'jumlah_kompetensi', className: 'text-center', width: '80px' }
-        ]
-      });
+function initJobdescTable() {
+  tableJobdesc = $('#tableUraianTugas').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: {
+      url: '/profile/listjobdesc-competence',
+      type: 'GET'
+    },
+    columns: [
+      { data: 'no', width: '50px', className: 'text-center' },
+      { data: 'job_description' },
+      { 
+        data: 'kompetensi', 
+      render: function(data, type, row) {
+  let html = '<ul class="mb-0">'; // bullet akan muncul
+  data.forEach(function(item) {
+    html += `<li class="mb-2">
+               <div class="d-flex justify-content-between align-items-center">
+                 <span class="me-2">${item.nama_pelatihan}</span>
+                 <div class="btn-group btn-group-sm" role="group">
+                   <button type="button"
+                           class="btn rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
+                           data-id="${item.id}" 
+                           data-status="${item.status}">
+                     ${item.status == '1' ? 'Sudah' : 'Belum'}
+                   </button>
+                   <button type="button"
+                           class="btn rounded-pill btn-danger delete-competence ms-1"
+                           data-id="${item.id}">
+                     <i class="icon-base ti tabler-trash icon-sm"></i>
+                   </button>
+                 </div>
+               </div>
+             </li>`;
+  });
+  html += '</ul>';
+  return html;
+}
 
-    $('#tableUraianTugas tbody').on('mouseenter', 'tr td:nth-child(1), tr td:nth-child(2)', function() {
-        $(this).css('cursor', 'pointer');
-    });
 
-      $('#tableUraianTugas tbody').on('click', 'tr td:nth-child(1), tr td:nth-child(2)', function () {
-        let row = tableJobdesc.row(this);
-        if (row.child.isShown()) {
-          row.child.hide();
-          $(this).removeClass('shown');
-        } else {
-          row.child(format(row.data())).show();
-          $(this).addClass('shown');
-        }
-      });
+      }
+    ],
+    order: [[0, 'asc']],
+    autoWidth: false
+  });
+
+  // cursor pointer hanya pada kolom No
+  $('#tableUraianTugas tbody').on('mouseenter', 'tr td:nth-child(1)', function() {
+    $(this).css('cursor', 'pointer');
+  });
+}
+
+// Event klik tombol toggle status
+$(document).on('click', '.toggle-status', function(e) {
+  e.stopPropagation();
+  let id = $(this).data('id');
+  let status = $(this).data('status');
+  let newStatus = status == '1' ? '0' : '1';
+
+  $.ajax({
+    url: '/profile/update-status-competence',
+    type: 'POST',
+    data: { id: id, status: newStatus },
+    success: function(res) {
+      if (res.success) {
+        tableJobdesc.ajax.reload(null, false); // reload tanpa reset paging
+      } else {
+        alert('Gagal update status');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('Error AJAX:', error, xhr.responseText);
+      alert('Terjadi kesalahan server');
     }
-
-    function format(d) {
-      let html = '<table class="table table-sm">';
-      html += '<tr><th>Kompetensi</th><th>Status</th></tr>';
-      d.kompetensi.forEach(function (item) {
-        html += `<tr>
-                  <td>${item.nama_pelatihan}</td>
-                  <td>
-                    <button type="button"
-                            class="btn btn-sm rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
-                            data-id="${item.id}" 
-                            data-status="${item.status}">
-                      ${item.status == '1' ? 'Sudah' : 'Belum'}
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm rounded-pill btn-danger delete-competence"
-                            data-id="${item.id}">
-                      <i class="icon-base ti tabler-trash icon-sm"></i>
-                    </button>
-                  </td>
-                </tr>`;
-      });
-      html += '</table>';
-      return html;
-    }
-
-    $(document).on('click', '.toggle-status', function (e) {
-      e.stopPropagation(); 
-      let id = $(this).data('id');
-      let status = $(this).data('status');
-      let newStatus = status == '1' ? '0' : '1';
-
-    
-      let openRows = [];
-      tableJobdesc.rows('.shown').every(function () {
-        openRows.push(this.data().id);
-      });
-
-      $.ajax({
-        url: '/profile/update-status-competence',
-        type: 'POST',
-        data: { id: id, status: newStatus },
-        success: function (res) {
-          if (res.success) {
-            tableJobdesc.ajax.reload(function () {
-              tableJobdesc.rows().every(function () {
-                if (openRows.includes(this.data().id)) {
-                  $(this.node()).trigger('click'); 
-                }
-              });
-            }, false);
-          } else {
-            alert('Gagal update status');
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          alert('Terjadi kesalahan server');
-        }
-      });
-    });
-
-    $(document).on('click', '.delete-competence', function (e) {
-    e.stopPropagation(); 
-
-    if (!confirm('Apakah Anda yakin ingin menghapus kompetensi ini?')) return;
-
-    let id = $(this).data('id');
-
-  
-    let openRows = [];
-    tableJobdesc.rows('.shown').every(function () {
-        openRows.push(this.data().id);
-    });
-
-    $.ajax({
-        url: '/profile/delete-competence',
-        type: 'POST',
-        data: { id: id },
-        success: function (res) {
-            if (res.success) {
-                tableJobdesc.ajax.reload(function () {
-                    tableJobdesc.rows().every(function () {
-                        if (openRows.includes(this.data().id)) {
-                            $(this.node()).trigger('click'); 
-                        }
-                    });
-                }, false);
-            } else {
-                alert(res.message || 'Gagal menghapus kompetensi');
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error AJAX:", error, xhr.responseText);
-            alert('Terjadi kesalahan server');
-        }
-    });
+  });
 });
+
+// Event klik tombol hapus competence
+$(document).on('click', '.delete-competence', function(e) {
+  e.stopPropagation();
+  if (!confirm('Apakah Anda yakin ingin menghapus kompetensi ini?')) return;
+
+  let id = $(this).data('id');
+
+  $.ajax({
+    url: '/profile/delete-competence',
+    type: 'POST',
+    data: { id: id },
+    success: function(res) {
+      if (res.success) {
+        tableJobdesc.ajax.reload(null, false); // reload tanpa reset paging
+      } else {
+        alert(res.message || 'Gagal menghapus kompetensi');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('Error AJAX:', error, xhr.responseText);
+      alert('Terjadi kesalahan server');
+    }
+  });
+});
+
 
   </script>
 <?= $this->endSection() ?>

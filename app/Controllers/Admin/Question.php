@@ -11,26 +11,77 @@ use Exception;
 
 class Question extends BaseController
 {
-    protected $userDetailModel;
+	protected $userDetailModel;
 	protected $model;
 
 	public function __construct()
 	{
-        $this->userDetailModel = new UserDetailModel();
+		$this->userDetailModel = new UserDetailModel();
 		$this->model = new QuestionModel();
 	}
 
 	public function index()
 	{
-		// $db = \Config\Database::connect();
-		// echo $db->getVersion();
-		// die;
-		$data = $this->model->findAll();
+		$answer_type = $this->model::listAnswerType();
+		$status = $this->model::listStatus();
+
+		if ($this->request->isAJAX()) {
+			$request = $this->request->getGet();
+			$draw = (int) $request['draw'];
+			$start = (int) $request['start'];
+			$length = (int) $request['length'];
+			$search = $request['search']['value'];
+
+			$builder = $this->model->builder();
+			$builder = $builder->select('question_id, question, question_description, answer_type, question_status');
+			// Filtering
+			if (!empty($search)) {
+				$builder->groupStart()
+					->like('question', $search)
+					->orLike('question_description', $search)
+					->groupEnd();
+			}
+			// Sorting
+			$columns = ['question', 'question_description', 'question_status']; // allow sorting
+			if (isset($request['order'][0])) {
+				$columnIndex = $request['order'][0]['column'];
+				$columnName = $request['columns'][$columnIndex]['data'];
+				$columnSortOrder = $request['order'][0]['dir'];
+
+				if (in_array($columnName, $columns)) {
+					$builder->orderBy("$columnName", "$columnSortOrder");
+				}
+			}
+			// Count total
+			$builderClone = clone $builder;
+			$totalRecords = $this->model->countAll();
+			$totalFiltered = $builder->countAllResults(false);
+			// Pagination
+			$builderClone->limit($length, $start);
+			$data = $builderClone->get()->getResultArray();
+			// Set data
+			$rows = [];
+			foreach ($data as $index => $each) {
+				$rows[] = [
+					'no' => $start + $index + 1,
+					'question' => $each['question'],
+					'question_description' => !empty($each['question_description']) ? $each['question_description'] : '-',
+					'answer_type' => $answer_type()[$each['answer_type']],
+					'question_status' => $status()[$each['question_status']],
+					'action' => view('admin/question/_action_buttons', ['id' => $each['question_id']])
+				];
+			}
+
+			return $this->response->setJSON([
+				'draw' => intval($draw),
+				'recordsTotal' => $totalRecords,
+				'recordsFiltered' => $totalFiltered,
+				'data' => $rows,
+			]);
+		}
+
 		return view('admin/question/index', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'data' => $data,
-			'answer_type' => $this->model::listAnswerType(),
-			'status' => $this->model::listStatus(),
 			'title' => 'Daftar Pertanyaan',
 		]);
 	}

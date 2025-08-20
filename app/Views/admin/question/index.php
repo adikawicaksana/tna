@@ -23,41 +23,43 @@
 				</div>
 			<?php endif; ?>
 
-			<table class="table table-sm table-responsive table-bordered table-hover w-100">
-				<tr>
-					<th class="text-center">No</th>
-					<th>Pertanyaan</th>
-					<th>Deskripsi</th>
-					<th>Tipe Jawaban</th>
-					<th>Status</th>
-					<th>Action</th>
-				</tr>
-				<?php foreach ($data as $key => $each): ?>
+			<table id="dataTable" class="table table-sm table-responsive table-bordered table-hover w-100">
+				<thead>
 					<tr>
-						<td class="text-center"><?= $key + 1 ?></td>
-						<td><?= $each['question'] ?></td>
-						<td><?= !empty($each['question_description']) ? $each['question_description'] : '-' ?></td>
-						<td><?= $answer_type[$each['answer_type']] ?></td>
-						<td><?= $status[$each['question_status']] ?></td>
-						<td class="d-flex gap-1">
-							<a href="<?= route_to('question.show', $each['question_id']) ?>"
-								class="btn btn-outline-info btn-sm p-2">
-								<i class="fas fa-eye"></i>
-							</a>
-							<?php if (QuestionModel::isDeactivatable($each['question_id'])): ?>
-								<form action="<?= route_to('question.deactivate', $each['question_id']) ?>" method="post"
-									onsubmit="return confirm('Apakah Anda yakin akan menonaktifkan data ini?');">
-									<?= csrf_field() ?>
-									<button type="submit" class="btn btn-outline-danger btn-sm p-2">
-										<i class="fas fa-ban"></i>
-									</button>
-								</form>
-							<?php endif; ?>
-						</td>
+						<th class="text-center">No</th>
+						<th>Pertanyaan</th>
+						<th>Deskripsi</th>
+						<th>Tipe Jawaban</th>
+						<th>Status</th>
+						<th>Action</th>
 					</tr>
-				<?php endforeach; ?>
+				</thead>
 			</table>
 		</div>
 	</div>
 </div>
+<script>
+	$(document).ready(function () {
+		$('#dataTable').DataTable({
+			processing: true,
+			serverSide: true,
+			ajax: {
+				url: "<?= current_url() ?>",
+				type: "GET"
+			},
+			columns: [
+				{ data: "no", name: "no", orderable: false, searchable: false },
+				{ data: "question", name: "question" },
+				{ data: "question_description", name: "question_description" },
+				{ data: "answer_type", name: "answer_type", orderable:false, searchable: false },
+				{ data: "question_status", name: "question_status", searchable: false },
+				{ data: "action", name: "action", orderable: false, searchable: false }
+			],
+			columnDefs: [{
+				targets: [0],
+				className: 'text-center',
+			}],
+		});
+	});
+</script>
 <?= $this->endSection(); ?>

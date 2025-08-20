@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Helpers\CommonHelper;
 use App\Models\UserDetailModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionnaireDetailModel;
@@ -19,18 +20,60 @@ class Questionnaire extends BaseController
 		$this->userDetailModel = new UserDetailModel();
 		$this->model = new QuestionnaireModel();
 	}
-	
+
 	public function index()
 	{
-		$data = $this->model
-			->orderBy('questionnaire_status', 'DESC')
-			->orderBy('created_at', 'DESC')
-			->findAll();
+		$type = $this->model::listType();
+		$status = $this->model::listStatus();
+
+		if ($this->request->isAJAX()) {
+			$request = $this->request->getGet();
+			$draw = (int) $request['draw'];
+			$start = (int) $request['start'];
+			$length = (int) $request['length'];
+
+			$builder = $this->model->builder();
+			$builder = $builder->select('questionnaire_id, created_at, questionnaire_type, questionnaire_status');
+			// Sorting
+			$columns = ['created_at', 'questionnaire_type', 'questionnaire_status']; // allow sorting
+			if (isset($request['order'][0])) {
+				$columnIndex = $request['order'][0]['column'];
+				$columnName = $request['columns'][$columnIndex]['data'];
+				$columnSortOrder = $request['order'][0]['dir'];
+
+				if (in_array($columnName, $columns)) {
+					$builder->orderBy("$columnName", "$columnSortOrder");
+				}
+			}
+			// Count total
+			$builderClone = clone $builder;
+			$totalRecords = $this->model->countAll();
+			$totalFiltered = $builder->countAllResults(false);
+			// Pagination
+			$builderClone->limit($length, $start);
+			$data = $builderClone->get()->getResultArray();
+			// Set data
+			$rows = [];
+			foreach ($data as $index => $each) {
+				$rows[] = [
+					'no' => $start + $index + 1,
+					'created_at' => CommonHelper::formatDate($each['created_at']),
+					'questionnaire_type' => $type[$each['questionnaire_type']],
+					'questionnaire_status' => $status[$each['questionnaire_status']],
+					'action' => '<a href="'. route_to("questionnaire.show", $each['questionnaire_id']) .'" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+				];
+			}
+
+			return $this->response->setJSON([
+				'draw' => intval($draw),
+				'recordsTotal' => $totalRecords,
+				'recordsFiltered' => $totalFiltered,
+				'data' => $rows,
+			]);
+		}
+
 		return view('admin/questionnaire/index', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'data' => $data,
-			'type' => $this->model::listType(),
-			'status' => $this->model::listStatus(),
 			'title' => 'Daftar Kuesioner',
 		]);
 	}

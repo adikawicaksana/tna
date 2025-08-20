@@ -28,9 +28,9 @@ class CheckUserProfileFilter implements FilterInterface
             $requiredFields = [
                 'nik',
                 'nip',
-                'front_title',
+                // 'front_title',
                 'fullname',
-                'back_title',
+                // 'back_title',
                 'mobile',
                 'address',
                 'users_provinces',

@@ -1,8 +1,3 @@
-<?php
-
-use App\Helpers\CommonHelper;
-?>
-
 <?= $this->extend('layout/main') ?>
 <?= $this->section('content'); ?>
 <div class="container">
@@ -23,30 +18,43 @@ use App\Helpers\CommonHelper;
 				</div>
 			<?php endif; ?>
 
-			<table class="table table-responsive table-bordered table-hover w-100">
-				<tr>
-					<th class="text-center">No</th>
-					<th>Tanggal</th>
-					<th>Tipe</th>
-					<th>Status</th>
-					<th>Action</th>
-				</tr>
-				<?php foreach ($data as $key => $each): ?>
+			<table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
+				<thead>
 					<tr>
-						<td class="text-center"><?= $key + 1 ?></td>
-						<td><?= CommonHelper::formatDate($each['created_at']) ?></td>
-						<td><?= $type[$each['questionnaire_type']] ?></td>
-						<td><?= $status[$each['questionnaire_status']] ?></td>
-						<td>
-							<a href="<?= route_to('questionnaire.show', $each['questionnaire_id']) ?>"
-								class="btn btn-outline-info btn-sm p-2">
-								<i class="fas fa-eye"></i>
-							</a>
-						</td>
+						<th class="text-center">No</th>
+						<th>Tanggal</th>
+						<th>Tipe</th>
+						<th>Status</th>
+						<th>Action</th>
 					</tr>
-				<?php endforeach; ?>
+				</thead>
 			</table>
 		</div>
 	</div>
 </div>
+
+<script>
+	$(document).ready(function () {
+		$('#dataTable').DataTable({
+			processing: true,
+			serverSide: true,
+			searching: false,
+			ajax: {
+				url: "<?= current_url() ?>",
+				type: "GET"
+			},
+			columns: [
+				{ data: "no", name: "no", orderable: false, searchable: false },
+				{ data: "created_at", name: "created_at" },
+				{ data: "questionnaire_type", name: "questionnaire_type" },
+				{ data: "questionnaire_status", name: "questionnaire_status", searchable: false },
+				{ data: "action", name: "action", orderable: false, searchable: false }
+			],
+			columnDefs: [{
+				targets: [0],
+				className: 'text-center',
+			}],
+		});
+	});
+</script>
 <?= $this->endSection(); ?>

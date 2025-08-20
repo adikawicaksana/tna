@@ -7,6 +7,8 @@ use App\Models\UserDetailModel;
 use App\Models\UsersFasyankesModel;
 use App\Models\UsersNonFasyankesModel;
 use App\Models\ReferenceDataModel;
+use App\Models\UsersJobdescModel;
+use App\Models\UsersCompetenceModel;
 use App\Services\NotificationService;
 
 class Profile extends BaseController
@@ -299,4 +301,164 @@ class Profile extends BaseController
                 ->setJSON(['error' => $e->getMessage()]);
         }
     }
+
+    public function storeJobdescCompetence()
+    {
+        $session = session();
+
+        $email = $session->get('email');
+        $jobdescModel     = new UsersJobdescModel();
+        $competenceModel  = new UsersCompetenceModel();
+
+        $jobDescription = $this->request->getPost('user_uraiantugas');
+        $trainings      = $this->request->getPost('user_pelatihan'); // array multiple
+
+        // Cek apakah email + jobdesc sudah ada
+        $jobdesc = $jobdescModel
+            ->where('email', $email)
+            ->where('job_description', $jobDescription)
+            ->first();
+
+        if (!$jobdesc) {
+            // Insert baru ke users_jobdesc
+            $idUsersJobdesc = $jobdescModel->insert([
+                'email'          => $email,
+                'job_description'=> $jobDescription
+            ], true); // true → return insert id
+        } else {
+            $idUsersJobdesc = $jobdesc['id'];
+        }
+
+        // Simpan kompetensi (Add Only → tanpa hapus data lama)
+        if (is_array($trainings)) {
+            foreach ($trainings as $trainingId) {
+                $exists = $competenceModel
+                    ->where('id_users_jobdesc', $idUsersJobdesc)
+                    ->where('id_training', $trainingId)
+                    ->first();
+
+                if (!$exists) {
+                    $competenceModel->insert([
+                        'id_users_jobdesc' => $idUsersJobdesc,
+                        'id_training'              => $trainingId
+                    ]);
+                }
+            }
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Data berhasil disimpan (mode Add Only).'
+        ]);
+    }
+
+    public function listJobDescCompetence()
+    {
+        $request = service('request');
+        $draw   = $request->getVar('draw');
+        $start  = $request->getVar('start');
+        $length = $request->getVar('length');
+        $search = $request->getVar('search')['value'];
+
+        $jobdescModel    = new UsersJobdescModel();
+        $competenceModel = new UsersCompetenceModel();
+
+        // Total semua data jobdesc
+        $totalRecords = $jobdescModel->countAll();
+
+        // Query dasar
+        $builder = $jobdescModel;
+
+        // Kalau ada filter search
+        if (!empty($search)) {
+            $builder = $builder->like('job_description', $search, 'both', null, true);
+        }
+
+        // Ambil data
+        $jobdescs = $builder->findAll($length, $start);
+
+        // Hitung total setelah filter
+        if (!empty($search)) {
+            $totalFiltered = $jobdescModel
+                ->like('job_description', $search, 'both', null, true)
+                ->countAllResults(false); // false = jangan reset builder
+        } else {
+            $totalFiltered = $totalRecords;
+        }
+        $no=1;
+        $data = [];
+        foreach ($jobdescs as $jd) {
+            $kompetensi = $competenceModel
+                ->select('users_competence.id, master_training.nama_pelatihan, users_competence.status')
+                ->join('master_training', 'master_training.id = users_competence.id_training')
+                ->where('id_users_jobdesc', $jd['id'])
+                ->findAll();
+
+            $data[] = [
+                'no'                => $no++,
+                'id'                => $jd['id'],
+                'job_description'   => $jd['job_description'],
+                'jumlah_kompetensi' => count($kompetensi),
+                'kompetensi'        => $kompetensi
+            ];
+        }
+
+        return $this->response->setJSON([
+            "draw"            => intval($draw),
+            "recordsTotal"    => $totalRecords,
+            "recordsFiltered" => $totalFiltered,
+            "data"            => $data
+        ]);
+    }
+
+    public function updateStatusCompetence()
+    {
+        $id     = $this->request->getPost('id');
+        $status = $this->request->getPost('status');
+        $competenceModel = new UsersCompetenceModel();
+
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID tidak ditemukan'
+            ]);
+        }
+
+        $update = $competenceModel->update($id, ['status' => $status]);
+
+        if ($update) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Status berhasil diupdate'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Gagal update database'
+            ]);
+        }
+    }
+
+    public function deleteCompetence()
+    {
+        $id = $this->request->getPost('id');
+        $competenceModel = new UsersCompetenceModel();
+
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID tidak valid'
+            ]);
+        }
+
+        $delete = $competenceModel->delete($id);
+
+        return $this->response->setJSON([
+            'success' => $delete ? true : false,
+            'message' => $delete ? 'Kompetensi berhasil dihapus' : 'Gagal menghapus kompetensi'
+        ]);
+    }
+
+
+
 }

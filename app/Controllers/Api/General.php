@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\FasyankesModel;
 use App\Models\NonFasyankesModel;
+use App\Models\MasterTrainingModel;
 
 class General extends ResourceController
 {
@@ -165,4 +166,28 @@ class General extends ResourceController
                     'data'      => $data
                 ]);
         }
+
+   public function postPelatihanSiakpel()
+{
+    $term = $this->request->getPost('q');
+    $model = new MasterTrainingModel();
+
+    $query = $model->select('id, nama_pelatihan');
+
+    if ($term) {
+        $query->where("nama_pelatihan ILIKE '%" . $term . "%'");
+    }
+
+    $results = $query->findAll(20);
+
+    $data = [];
+    foreach ($results as $row) {
+        $data[] = [
+            'id'   => $row['id'],
+            'text' => $row['nama_pelatihan']
+        ];
+    }
+
+    return $this->response->setJSON($data);
+}
 }

@@ -33,6 +33,10 @@ $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
     $routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
 	$routes->get('/profile/nonfasyankes/data', 'Profile::getUserNonFasyankes');
 	$routes->post('/profile/nonfasyankes/delete/(:num)', 'Profile::deleteUserNonFasyankes/$1');	
+	$routes->post('/profile/jobdesc-competence', 'Profile::storeJobdescCompetence');
+	$routes->get('/profile/listjobdesc-competence', 'Profile::listJobDescCompetence');
+	$routes->post('/profile/update-status-competence', 'Profile::updateStatusCompetence');
+	$routes->post('/profile/delete-competence', 'Profile::deleteCompetence');
 
 	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile'] );
 });
@@ -48,6 +52,7 @@ $routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
 $routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
 $routes->post('api/nonfasyankes_check', 'Api\General::postNonFasyankesCheck');
 $routes->post('api/nonfasyankes_search', 'Api\General::postNonFasyankesSearch');
+$routes->post('api/pelatihan_siakpel', 'Api\General::postPelatihanSiakpel');
 
 $routes->get('api/provinsi', 'Api\Area::provinsi');
 $routes->get('api/kabupaten', 'Api\Area::kabupaten');

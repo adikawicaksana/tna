@@ -234,47 +234,14 @@
           <i class="icon-base ti tabler-plus icon-sm me-1_5"></i></button>
       </div>
       <div class="card-datatable table-responsive pt-0">
-        <table class="table datatables-uraian-tugas">
+        <table id="tableUraianTugas" class="table table-bordered">
           <thead>
             <tr>
               <th>No</th>
               <th>Uraian Tugas</th>
-              <th>Pelatihan</th>
-              <th>Status</th>
+              <th>Jumlah Pengembangan</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Edukasi pasien/keluarga, promosi kesehatan</td>
-              <td>Pelatihan Komunikasi efektif.</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Melaksanakan skrining risiko infeksi pada pasien dan lingkungan kerja sesuai prosedur PPI di FKTP.</td>
-              <td>Pelatihan Pencegahan dan Pengendalian Infeksi (PPI) bagi Tenaga Kesehatan di Fasilitas Kesehatan Tingkat Pertama (FKTP)</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Melaksanakan pelayanan ANC terstandar pada ibu hamil sesuai pedoman Kemenkes, termasuk pemeriksaan fisik, laboratorium dasar, dan penilaian faktor risiko.</td>
-              <td>Pelatihan Pelayanan Antenatal Care, Persalinan, Nifas Dan Skrining Hipotiroid Kongenital (ANC SHK) Bagi Bidan di FKTP</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Memberikan konseling pra dan pasca tes untuk mendukung informed consent dan pemahaman pasien.</td>
-              <td>Pelatihan Pencegahan Penularan HIV, Sifilis dan Hepatitis B dari Ibu Ke Anak (Menuju Triple Eliminasi)</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>Melaksanakan konseling menyusui pada ibu hamil, ibu nifas, dan ibu menyusui dengan teknik komunikasi efektif sesuai pedoman Kemenkes.</td>
-              <td>Pelatihan Konseling Menyusui (KON-ASI)</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
-            </tr>
-          </tbody>
         </table>
       </div>
     </div>
@@ -392,7 +359,7 @@
 <div class="modal fade" id="modalUraianTugas" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <form id="formNonFasyankes">
+      <form id="formUraianTugas">
         <div class="modal-header">
           <h5 class="modal-title">Tambah Data Uraian Tugas</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -403,35 +370,10 @@
             <textarea name="user_uraiantugas" id="user_uraiantugas" class="form-control" ></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label">Pelatihan yang Tersedia (SIAKPEL)</label>
-            <select name="user_pelatihan" id="user_pelatihan" class="form-control">
-                <option value="">-- Pilih Pelatihan --</option>
-                <option value="ppi_fktp">Pelatihan Pencegahan dan Pengendalian Infeksi (PPI) bagi Tenaga Kesehatan di Fasilitas Kesehatan Tingkat Pertama (FKTP)</option>
-                <option value="anc_shk_fktp">Pelatihan Pelayanan Antenatal Care, Persalinan, Nifas dan Skrining Hipotiroid Kongenital (ANC SHK) Bagi Bidan di FKTP</option>
-                <option value="triple_eliminasi">Pelatihan Pencegahan Penularan HIV, Sifilis dan Hepatitis B dari Ibu ke Anak (Menuju Triple Eliminasi)</option>
-                <option value="kon_asi">Pelatihan Konseling Menyusui (KON-ASI)</option>
+            <label class="form-label">Pengembangan Kompetensi (sesuai dengan SIAKPEL)</label>
+            <select name="user_pelatihan[]" id="user_pelatihan" class="form-control" multiple="multiple">
+             
             </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label d-block">Sudah Mengikuti?</label>
-                <div class="form-check form-check-inline mt-4">
-                  <input
-                    class="form-check-input form-check-success"
-                    type="radio"
-                    name="inlineRadioOptions"
-                    id="inlineRadio1"
-                    value="option1" />
-                  <label class="form-check-label" for="inlineRadio1">Sudah</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="inlineRadioOptions"
-                    id="inlineRadio2"
-                    value="option2" />
-                  <label class="form-check-label" for="inlineRadio2">Belum</label>
-                </div>                
           </div>
         </div>
         <div class="modal-footer">
@@ -491,6 +433,30 @@
       allowClear: true,
       width: '100%' 
     });
+
+      $('#user_pelatihan').select2({
+        dropdownParent: $('#modalUraianTugas'),
+        placeholder: "Cari dan pilih pelatihan",
+        multiple: true,
+        ajax: {
+          url: '/api/pelatihan_siakpel',
+          type: 'POST',        // pakai POST
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term // keyword pencarian
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        minimumInputLength: 2
+      });
 
     $('#jurusanProfesi').on('change', function() {
       if ($(this).val() === 'lainnya') {
@@ -582,7 +548,6 @@
     }
   });
 
-  // $('#nonfasyankes_name').on('keypress', e => e.which === 13 && e.preventDefault());
   $('#nonfasyankes_name').on('keypress', e => { if (e.which === 13) e.preventDefault(); });
 
 
@@ -794,8 +759,180 @@
     });
 
   loadNonFasyankes();
+  initJobdescTable();
 });
 
+
+  $('#formUraianTugas').on('submit', function(e) {
+          e.preventDefault();
+
+          let formData = {
+              user_uraiantugas: $('#user_uraiantugas').val(),
+              user_pelatihan: $('#user_pelatihan').val(),
+          };
+
+          $.ajax({
+              url: "<?= base_url('profile/jobdesc-competence') ?>",
+              type: "POST",
+              data: formData,
+              dataType: "json",
+              success: function(response) {
+                  if(response.success) {
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Berhasil',
+                          text: response.message
+                      });
+                      $('#modalUraianTugas').modal('hide');
+                  } else {
+                      Swal.fire({
+                          icon: 'warning',
+                          title: 'Gagal',
+                          text: response.message
+                      });
+                  }
+              },
+              error: function(xhr, status, error) {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Terjadi Kesalahan',
+                      text: 'Silakan coba lagi'
+                  });
+                  console.log(xhr.responseText);
+              }
+          });
+      });
+
+    let tableJobdesc;
+
+    function initJobdescTable() {
+      tableJobdesc = $('#tableUraianTugas').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+          url: '/profile/listjobdesc-competence',
+          type: 'GET'
+        },
+        columns: [
+          { data: 'no' },
+          { data: 'job_description' },
+          { data: 'jumlah_kompetensi', className: 'text-center', width: '80px' }
+        ]
+      });
+
+    $('#tableUraianTugas tbody').on('mouseenter', 'tr td:nth-child(1), tr td:nth-child(2)', function() {
+        $(this).css('cursor', 'pointer');
+    });
+
+      $('#tableUraianTugas tbody').on('click', 'tr td:nth-child(1), tr td:nth-child(2)', function () {
+        let row = tableJobdesc.row(this);
+        if (row.child.isShown()) {
+          row.child.hide();
+          $(this).removeClass('shown');
+        } else {
+          row.child(format(row.data())).show();
+          $(this).addClass('shown');
+        }
+      });
+    }
+
+    function format(d) {
+      let html = '<table class="table table-sm">';
+      html += '<tr><th>Kompetensi</th><th>Status</th></tr>';
+      d.kompetensi.forEach(function (item) {
+        html += `<tr>
+                  <td>${item.nama_pelatihan}</td>
+                  <td>
+                    <button type="button"
+                            class="btn btn-sm rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
+                            data-id="${item.id}" 
+                            data-status="${item.status}">
+                      ${item.status == '1' ? 'Sudah' : 'Belum'}
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm rounded-pill btn-danger delete-competence"
+                            data-id="${item.id}">
+                      <i class="icon-base ti tabler-trash icon-sm"></i>
+                    </button>
+                  </td>
+                </tr>`;
+      });
+      html += '</table>';
+      return html;
+    }
+
+    $(document).on('click', '.toggle-status', function (e) {
+      e.stopPropagation(); 
+      let id = $(this).data('id');
+      let status = $(this).data('status');
+      let newStatus = status == '1' ? '0' : '1';
+
+    
+      let openRows = [];
+      tableJobdesc.rows('.shown').every(function () {
+        openRows.push(this.data().id);
+      });
+
+      $.ajax({
+        url: '/profile/update-status-competence',
+        type: 'POST',
+        data: { id: id, status: newStatus },
+        success: function (res) {
+          if (res.success) {
+            tableJobdesc.ajax.reload(function () {
+              tableJobdesc.rows().every(function () {
+                if (openRows.includes(this.data().id)) {
+                  $(this.node()).trigger('click'); 
+                }
+              });
+            }, false);
+          } else {
+            alert('Gagal update status');
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error AJAX:", error, xhr.responseText);
+          alert('Terjadi kesalahan server');
+        }
+      });
+    });
+
+    $(document).on('click', '.delete-competence', function (e) {
+    e.stopPropagation(); 
+
+    if (!confirm('Apakah Anda yakin ingin menghapus kompetensi ini?')) return;
+
+    let id = $(this).data('id');
+
+  
+    let openRows = [];
+    tableJobdesc.rows('.shown').every(function () {
+        openRows.push(this.data().id);
+    });
+
+    $.ajax({
+        url: '/profile/delete-competence',
+        type: 'POST',
+        data: { id: id },
+        success: function (res) {
+            if (res.success) {
+                tableJobdesc.ajax.reload(function () {
+                    tableJobdesc.rows().every(function () {
+                        if (openRows.includes(this.data().id)) {
+                            $(this.node()).trigger('click'); 
+                        }
+                    });
+                }, false);
+            } else {
+                alert(res.message || 'Gagal menghapus kompetensi');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error AJAX:", error, xhr.responseText);
+            alert('Terjadi kesalahan server');
+        }
+    });
+});
 
   </script>
 <?= $this->endSection() ?>

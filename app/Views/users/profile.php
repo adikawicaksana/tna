@@ -71,6 +71,16 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
+              <label class="form-label" for="basic-default-front-title">Pangkat/Golongan</label>
+              <input type="text" name="user_pangkatgolongan" class="form-control" id="basic-default-front-title" value="<?= esc($data['pangkatgolongan']) ?>"/>
+            </div>
+            <div class="col-md-6 mb-6">
+              <label class="form-label" for="basic-default-back-title">Jabatan</label>
+              <input type="text" name="user_jabatan" class="form-control" id="basic-default-back-title" value="<?= esc($data['jabatan']) ?>"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-6">
               <label class="form-label" for="basic-default-front-title">Gelar Depan</label>
               <input type="text" name="user_front_title" class="form-control" id="basic-default-front-title" value="<?= esc($data['front_title']) ?>"/>
             </div>
@@ -411,122 +421,61 @@
 
     <?php endif; ?>
     
-    $(document).ready(function () {
-
-      function formatMobile(input) {
-          let v = input.value.replace(/\D/g, ''); 
-          v = v.replace(/^(0|62)/, '');
-            input.value = v.replace(
-                /^(\d{0,2})(\d{0,3})(\d{0,4})(\d{0,4}).*/,
-                (_, a, b, c, d) => [a, b, c, d].filter(Boolean).join(' ')
-            );
-      }
-
-      $('#MobileNumber').on('input', function () {
-          formatMobile(this);
-      });
-
-      formatMobile(document.getElementById('MobileNumber'));
-
-    $('.select2').select2({
-      placeholder: '-- Pilih --',
-      allowClear: true,
-      width: '100%' 
-    });
-
-      $('#user_pelatihan').select2({
-        dropdownParent: $('#modalUraianTugas'),
-        placeholder: "Cari dan pilih pelatihan",
-        multiple: true,
-        ajax: {
-          url: '/api/pelatihan_siakpel',
-          type: 'POST',        // pakai POST
-          dataType: 'json',
-          delay: 250,
-          data: function (params) {
-            return {
-              q: params.term // keyword pencarian
-            };
-          },
-          processResults: function (data) {
-            return {
-              results: data
-            };
-          },
-          cache: true
-        },
-        minimumInputLength: 2
-      });
-
-    $('#jurusanProfesi').on('change', function() {
-      if ($(this).val() === 'lainnya') {
-        $('#jurusanManualWrapper').show();
-        $('#jurusanManual').attr('required', true);
-      } else {
-        $('#jurusanManualWrapper').hide();
-        $('#jurusanManual').removeAttr('required').val('');
-      }
-    });
+  $(document).ready(function () {
 
   const base_url = "<?= base_url() ?>";
   const api_url  = base_url + "api";
 
-  // === Utility Functions ===
-  const showAlert = (type, message) => Swal.fire({ text: message, icon: type });
 
-  const ajaxRequest = (url, method = 'GET', data = {}, successCb, errorCb) => {
+  const ajaxRequest = (url, method = 'GET', data = {}, success, error) => {
     $.ajax({
-      url,
-      method,
-      data,
-      dataType: 'json',
-      xhrFields: { withCredentials: true },
-      success: successCb,
-      error: xhr => {
-        console.error('Error:', xhr.responseText);
-        if (errorCb) errorCb(xhr);
-      }
+      url, method, data, dataType: 'json', xhrFields: { withCredentials: true },
+      success,
+      error: error || (xhr => console.error(xhr.responseText))
+    });
+  };
+
+  const loadDataTable = (selector, url, columns) => {
+    return $(selector).DataTable({
+      processing: true,
+      serverSide: false,
+      ajax: { url, type: "GET", dataSrc: "data", xhrFields: { withCredentials: true } },
+      columns
     });
   };
 
   const renderSuggestions = (container, results, template, emptyText) => {
-    $(container).html(
-      results?.length
-        ? results.map(template).join('')
-        : `<div class="item text-muted">${emptyText}</div>`
-    ).slideDown(150);
+    $(container).html(results?.length ? results.map(template).join('') : `<div class="item text-muted">${emptyText}</div>`).slideDown(150);
   };
 
-  const loadDetail = (url, data, onSuccess) => {
-    ajaxRequest(`${api_url}/${url}`, 'POST', data, (response) => {
-      if (response.code === 200) {
-        onSuccess(response.data);
-        $('#segment2').prop('disabled', false);
-      } else {
-        onSuccess({});
-        $('#segment2').prop('disabled', true);
-      }
+  const handleDelete = (selector, tableSelector, urlSegment, message) => {
+    $(document).on('click', selector, function() {
+      const id = $(this).data('id');
+      Swal.fire({ title: 'Yakin?', text: message, icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, nonaktifkan!' })
+        .then(result => {
+          if (result.isConfirmed) {
+            ajaxRequest(`${base_url}${urlSegment}/${id}`, 'POST', {}, res => {
+              if (res.success) {
+                $(tableSelector).DataTable().ajax.reload();
+                showSwal('success', 'Berhasil', res.message);
+              } else {
+                showSwal('error', 'Gagal', res.message);
+              }
+            }, xhr => showSwal('error','Error',xhr.responseText));
+          }
+        });
     });
   };
 
-  const FasyankesDetail = (code) => {
-    loadDetail('fasyankes_check', { fasyankes_code: code }, (r) => {
-      $('#fasyankes_type').val(r.fasyankes_type?.toUpperCase() || "");
-      $('#fasyankes_name').val(r.fasyankes_name || "");
-      $('#fasyankes_address').val(r.fasyankes_address || "");
-    });
+  const formatMobile = input => {
+    let v = input.value.replace(/\D/g, '').replace(/^(0|62)/, '');
+    input.value = v.replace(/^(\d{0,2})(\d{0,3})(\d{0,4})(\d{0,4}).*/, (_, a, b, c, d) => [a,b,c,d].filter(Boolean).join(' '));
   };
+  $('#MobileNumber').on('input', function(){ formatMobile(this); });
+  formatMobile(document.getElementById('MobileNumber'));
 
-  const NonFasyankesDetail = (id) => {
-    loadDetail('nonfasyankes_check', { id }, (r) => {
-      $('#nonfasyankes_id').val(r.id || "");
-      $('#nonfasyankes_name').val(r.nonfasyankes_name || "");
-      $('#nonfasyankes_address').val(r.nonfasyankes_address || "");
-    });
-  };
-
-  const initSelect2 = (id, url, extraData) => {
-    $(id).select2({
+  const initSelect2 = (selector, url, extraData) => {
+    $(selector).select2({
       placeholder: '-- Pilih --',
       allowClear: true,
       width: '100%',
@@ -540,372 +489,230 @@
     });
   };
 
-  // === Input Events ===
-  $('#fasyankes_code').on('keypress', e => {
-    if (e.which === 13) {
-      e.preventDefault();
-      FasyankesDetail($(e.target).val());
-    }
-  });
+  $('.select2').select2({ placeholder: '-- Pilih --', allowClear: true, width: '100%' });
+  initSelect2('#provinsi','provinsi');
+  initSelect2('#kabupaten','kabupaten', () => ({ prov_id: $('#provinsi').val() }));
+  initSelect2('#kecamatan','kecamatan', () => ({ kab_id: $('#kabupaten').val() }));
+  initSelect2('#kelurahan','kelurahan', () => ({ kec_id: $('#kecamatan').val() }));
 
-  $('#nonfasyankes_name').on('keypress', e => { if (e.which === 13) e.preventDefault(); });
-
-
-  $('#nonfasyankes_name').on('keyup', function () {
-    const query = $(this).val();
-    if (query.length > 1) {
-      ajaxRequest(`${api_url}/nonfasyankes_search`, 'POST', { keyword: query }, (response) => {
-        renderSuggestions('#nonfasyankes_suggestions', response.data,
-          item => `<div class="item" data-id="${item.id}">${item.text}</div>`,
-          'Tidak ditemukan'
-        );
-      });
-    } else {
-      $('#nonfasyankes_suggestions').slideUp(150);
-    }
-  });
-
-  $('#fasyankes_code').on('keyup', function () {
-    const query = $(this).val();
-    if (query.length > 1) {
-      ajaxRequest(`${api_url}/fasyankes_search`, 'POST', { keyword: query }, (response) => {
-        renderSuggestions('#suggestions', response.data,
-          item => `<div class="item" data-code="${item.fasyankes_code}">${item.text}</div>`,
-          'Tidak ditemukan'
-        );
-      });
-    } else {
-      $('#suggestions').slideUp(150);
-    }
-  });
-
-  $(document).on('click', '#suggestions .item', function () {
-    const code = $(this).data('code');
-    $('#fasyankes_code').val(code);
-    FasyankesDetail(code);
-    $('#suggestions').fadeOut();
-  });
-
-  $(document).on('click', '#nonfasyankes_suggestions .item', function () {
-    NonFasyankesDetail($(this).data('id'));
-    $('#nonfasyankes_suggestions').fadeOut();
-  });
-
-  // === Select2 Dropdowns ===
-  initSelect2('#provinsi', 'provinsi');
-  initSelect2('#kabupaten', 'kabupaten', () => ({ prov_id: $('#provinsi').val() }));
-  initSelect2('#kecamatan', 'kecamatan', () => ({ kab_id: $('#kabupaten').val() }));
-  initSelect2('#kelurahan', 'kelurahan', () => ({ kec_id: $('#kecamatan').val() }));
-
-  // === Form Submit ===
-  $('#btnRegister').on('click', function () {
-    const captcha = $('input[name="captcha"]').val();
-    if (!captcha) {
-      showAlert('error', 'Captcha wajib diisi.');
-      return;
-    }
-
-    $.ajax({
-      url: $('#multiStepsForm').attr('action'),
-      method: $('#multiStepsForm').attr('method'),
-      data: $('#multiStepsForm').serialize(),
-      dataType: 'json',
-      success: (response) => {
-        if (response.code === 400) {
-          showAlert(response.type, response.message);
-          reloadCaptcha();
-        }
-      },
-      error: (xhr) => console.error(xhr.responseText)
-    });
-  });
-
-  $('#formFasyankes').on('submit', function (e) {
-    e.preventDefault();
-    $.ajax({
-      url: base_url + 'profile/fasyankes',
-      method: 'POST',
-      data: $(this).serialize(),
-      dataType: 'json',
-      success: (res) => {
-        $('#modalFasyankes').modal('hide');
-        Swal.fire(res.success ? 'Berhasil' : 'Gagal', res.message, res.success ? 'success' : 'error');
-        if (res.success) $('.datatables-fasyankes').DataTable().ajax.reload();
-      },
-      error: () => Swal.fire('Error', 'Terjadi kesalahan pada server.', 'error')
-    });
-  });
-
-  // === Load Data Fasyankes ===
-  const loadFasyankes = () => {
-    $('.datatables-fasyankes').DataTable({
-      processing: true,
-      serverSide: false,
-      ajax: {
-        url: base_url + "profile/fasyankes/data",
-        type: "GET",
-        dataSrc: "data",
-        xhrFields: { withCredentials: true }
-      },
-      columns: [
-        { data: "no" },
-        { data: "fasyankes" },
-        { data: "alamat" },
-        { data: "aksi" }
-      ]
-    });
-  };
-
-      $(document).on('click', '.delete-fasyankes', function() {
-        let id = $(this).data('id');
-
-        Swal.fire({
-            title: 'Yakin?',
-            text: "Data fasyankes ini akan dinonaktifkan",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, nonaktifkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: base_url + 'profile/fasyankes/delete/' + id,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(res) {
-                        if (res.success) {
-                            $('.datatables-fasyankes').DataTable().ajax.reload();
-                            Swal.fire('Berhasil', res.message, 'success');
-                        } else {
-                            Swal.fire('Gagal', res.message, 'error');
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire('Error', xhr.responseText, 'error');
-                    }
-                });
-            }
-        });
-    });
-
-  loadFasyankes();
-
-
-   $('#formNonFasyankes').on('submit', function (e) {
-    e.preventDefault();
-    $.ajax({
-      url: base_url + 'profile/nonfasyankes',
-      method: 'POST',
-      data: $(this).serialize(),
-      dataType: 'json',
-      success: (res) => {
-        $('#modalNonFasyankes').modal('hide');
-        Swal.fire(res.success ? 'Berhasil' : 'Gagal', res.message, res.success ? 'success' : 'error');
-        if (res.success) $('.datatables-non-fasyankes').DataTable().ajax.reload();
-      },
-       error: () => Swal.fire('Error', 'Terjadi kesalahan pada server.', 'error')
-    });
-  });
+  const loadDetail = (url, data, onSuccess) => ajaxRequest(`${api_url}/${url}`, 'POST', data, res => onSuccess(res.code===200 ? res.data : {}));
   
-  // === Load Data Fasyankes ===
-  const loadNonFasyankes = () => {
-    $('.datatables-non-fasyankes').DataTable({
-      processing: true,
-      serverSide: false,
-      ajax: {
-        url: base_url + "profile/nonfasyankes/data",
-        type: "GET",
-        dataSrc: "data",
-        xhrFields: { withCredentials: true }
-      },
-      columns: [
-        { data: "no" },
-        { data: "non_fasyankes" },
-        { data: "alamat" },
-        { data: "aksi" }
-      ]
+  const FasyankesDetail = code => loadDetail('fasyankes_check', { fasyankes_code: code }, r => {
+    $('#fasyankes_type').val(r.fasyankes_type?.toUpperCase()||'');
+    $('#fasyankes_name').val(r.fasyankes_name||'');
+    $('#fasyankes_address').val(r.fasyankes_address||'');
+  });
+
+  const NonFasyankesDetail = id => loadDetail('nonfasyankes_check', { id }, r => {
+    $('#nonfasyankes_id').val(r.id||'');
+    $('#nonfasyankes_name').val(r.nonfasyankes_name||'');
+    $('#nonfasyankes_address').val(r.nonfasyankes_address||'');
+  });
+
+  $('#fasyankes_code').on('keypress', e => { if(e.which===13){ e.preventDefault(); FasyankesDetail($(e.target).val()); } });
+  $('#nonfasyankes_name').on('keypress', e => { if(e.which===13) e.preventDefault(); });
+
+  $('#fasyankes_code, #nonfasyankes_name').on('keyup', function(){
+    const isFasy = $(this).attr('id') === 'fasyankes_code';
+    const query = $(this).val();
+    if(query.length>1){
+      ajaxRequest(`${api_url}/${isFasy?'fasyankes_search':'nonfasyankes_search'}`, 'POST', { keyword: query }, res => {
+        renderSuggestions(isFasy?'#suggestions':'#nonfasyankes_suggestions', res.data,
+          item => `<div class="item" data-${isFasy?'code':'id'}="${isFasy?item.fasyankes_code:item.id}">${item.text}</div>`,
+          'Tidak ditemukan'
+        );
+      });
+    } else $(isFasy?'#suggestions':'#nonfasyankes_suggestions').slideUp(150);
+  });
+
+  $(document).on('click','#suggestions .item', function(){ const code=$(this).data('code'); $('#fasyankes_code').val(code); FasyankesDetail(code); $('#suggestions').fadeOut(); });
+  $(document).on('click','#nonfasyankes_suggestions .item', function(){ NonFasyankesDetail($(this).data('id')); $('#nonfasyankes_suggestions').fadeOut(); });
+
+  $('#jurusanProfesi').on('change', function(){
+    const val = $(this).val();
+    $('#jurusanManualWrapper').toggle(val==='lainnya');
+    $('#jurusanManual').attr('required', val==='lainnya').val(val==='lainnya'?'':'');
+  });
+
+  const handleFormSubmit = (formSelector, url, tableSelector=null) => {
+    $(formSelector).on('submit', function(e){
+      e.preventDefault();
+      ajaxRequest(url, 'POST', $(this).serialize(), res => {
+        $(formSelector).closest('.modal').modal('hide');
+        showSwal(res.success?'success':'error', res.success?'Berhasil':'Gagal', res.message);
+        if(res.success && tableSelector) $(tableSelector).DataTable().ajax.reload();
+      }, () => showSwal('error','Error','Terjadi kesalahan pada server.'));
     });
   };
 
-      $(document).on('click', '.delete-non-fasyankes', function() {
-        let id = $(this).data('id');
+  handleFormSubmit('#formFasyankes', base_url+'profile/fasyankes','.datatables-fasyankes');
+  handleFormSubmit('#formNonFasyankes', base_url+'profile/nonfasyankes','.datatables-non-fasyankes');
 
-        Swal.fire({
-            title: 'Yakin?',
-            text: "Data non fasyankes ini akan dinonaktifkan",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, nonaktifkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: base_url + 'profile/nonfasyankes/delete/' + id,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(res) {
-                      console.log(res);
-                        if (res.success) {
-                            $('.datatables-non-fasyankes').DataTable().ajax.reload();
-                            Swal.fire('Berhasil', res.message, 'success');
-                        } else {
-                            Swal.fire('Gagal', res.message, 'error');
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire('Error', xhr.responseText, 'error');
-                    }
-                });
+  loadDataTable('.datatables-fasyankes', base_url+'profile/fasyankes/data', [
+    { data: "no" }, { data: "fasyankes" }, { data: "alamat" }, { data: "aksi" }
+  ]);
+  loadDataTable('.datatables-non-fasyankes', base_url+'profile/nonfasyankes/data', [
+    { data: "no" }, { data: "non_fasyankes" }, { data: "alamat" }, { data: "aksi" }
+  ]);
+
+  handleDelete('.delete-fasyankes', '.datatables-fasyankes','profile/fasyankes/delete','Data fasyankes ini akan dinonaktifkan');
+  handleDelete('.delete-non-fasyankes', '.datatables-non-fasyankes','profile/nonfasyankes/delete','Data non fasyankes ini akan dinonaktifkan');
+
+  initJobdescTable();
+
+    $('#user_pelatihan').select2({
+    dropdownParent: $('#modalUraianTugas'),
+    placeholder: "Cari dan pilih pelatihan",
+    multiple: true,
+    minimumInputLength: 2,
+    ajax: {
+      url: '/api/pelatihan_siakpel',
+      type: 'POST',
+      dataType: 'json',
+      delay: 250,
+      data: params => ({ q: params.term }),
+      processResults: data => ({ results: data }),
+      cache: true
+    },
+    templateSelection: data => {
+      if (!data.id) return data.text;
+      const color = data.id.includes('&&1') ? '#28a745' : data.id.includes('&&0') ? '#dc3545' : null;
+      return color 
+        ? $(`<span style="background-color:${color};color:white;padding:2px 5px;border-radius:3px;">${data.text}</span>`) 
+        : data.text;
+    }
+  });
+
+  $('#user_pelatihan').on('select2:select', e => {
+    const { id, text } = e.params.data;
+    const $select = $(e.target);
+
+    Swal.fire({
+      text: `Apakah sudah melaksanakan "${text}" ?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sudah',
+      cancelButtonText: 'Belum',
+      buttonsStyling: false,
+      customClass: { confirmButton: 'btn btn-success ms-1', cancelButton: 'btn btn-danger ms-1' }
+    }).then(result => {
+      const newValue = result.isConfirmed ? id + '&&1' : result.dismiss === Swal.DismissReason.cancel ? id + '&&0' : id;
+      let selectedOptions = ($select.val() || []).filter(v => !v.startsWith(id));
+      selectedOptions.push(newValue);
+
+      if (!$select.find(`option[value='${newValue}']`).length) {
+        $select.append(new Option(text, newValue, true, true));
+      }
+
+      $select.val(selectedOptions).trigger('change');
+    });
+  });
+
+});
+
+
+ let tableJobdesc;
+
+    function initJobdescTable() {
+        tableJobdesc = $('#tableUraianTugas').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '/profile/listjobdesc-competence',
+                type: 'GET'
+            },
+            columns: [
+                { data: 'no', width: '50px', className: 'text-center' },
+                { data: 'job_description' },
+                { 
+                    data: 'kompetensi',
+                    render: renderKompetensi
+                }
+            ],
+            order: [[0, 'asc']],
+            autoWidth: false
+        });
+    }
+
+    function renderKompetensi(data) {
+        return `<ul class="mb-0">
+            ${data.map(item => `
+                <li class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="me-2">${item.nama_pelatihan}</span>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
+                                data-id="${item.id}" data-status="${item.status}">
+                                ${item.status == '1' ? 'Sudah' : 'Belum'}
+                            </button>
+                            <button type="button" class="btn rounded-pill btn-danger delete-competence ms-1" data-id="${item.id}">
+                                <i class="icon-base ti tabler-trash icon-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </li>`).join('')}
+        </ul>`;
+    }
+
+    function showSwal(icon, title, text) {
+        Swal.fire({ icon, title, text });
+    }
+
+    $('#formUraianTugas').on('submit', function(e) {
+        e.preventDefault();
+
+        let userUraian = $('#user_uraiantugas').val();
+        let userPelatihan = $('#user_pelatihan').val();
+
+        if (!userUraian) return showSwal('warning', 'Peringatan', 'Uraian tugas wajib diisi!');
+
+        $.post({
+            url: "<?= base_url('profile/jobdesc-competence') ?>",
+            data: { user_uraiantugas: userUraian, user_pelatihan: userPelatihan },
+            dataType: 'json',
+            success: function(response) {
+                if(response.success){
+                    showSwal('success', 'Berhasil', response.message);
+                    tableJobdesc.ajax.reload(null, false);
+                    $('#modalUraianTugas').modal('hide');
+                } else {
+                    showSwal('warning', 'Gagal', response.message);
+                }
+            },
+            error: function(xhr) {
+                showSwal('error', 'Terjadi Kesalahan', 'Silakan coba lagi');
+                console.error(xhr.responseText);
             }
         });
     });
 
-  loadNonFasyankes();
-  initJobdescTable();
-});
+    $('#tableUraianTugas').on('click', '.toggle-status, .delete-competence', function(e) {
+        e.stopPropagation();
+        let $btn = $(this);
+        let id = $btn.data('id');
 
+        if ($btn.hasClass('toggle-status')) {
+            let newStatus = $btn.data('status') == '1' ? '0' : '1';
+            $.post('/profile/update-status-competence', { id, status: newStatus }, function(res) {
+                if (res.success) tableJobdesc.ajax.reload(null, false);
+                else alert('Gagal update status');
+            }, 'json').fail(() => alert('Terjadi kesalahan server'));
+        }
 
-  $('#formUraianTugas').on('submit', function(e) {
-          e.preventDefault();
+        if ($btn.hasClass('delete-competence')) {
+          Swal.fire({ text: 'Apakah Anda yakin ingin menghapus kompetensi ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya' })
+            .then(result => {
+              if (result.isConfirmed) {
 
-          let formData = {
-              user_uraiantugas: $('#user_uraiantugas').val(),
-              user_pelatihan: $('#user_pelatihan').val(),
-          };
-
-          $.ajax({
-              url: "<?= base_url('profile/jobdesc-competence') ?>",
-              type: "POST",
-              data: formData,
-              dataType: "json",
-              success: function(response) {
-                  if(response.success) {
-                      Swal.fire({
-                          icon: 'success',
-                          title: 'Berhasil',
-                          text: response.message
-                      });
-                      $('#modalUraianTugas').modal('hide');
-                  } else {
-                      Swal.fire({
-                          icon: 'warning',
-                          title: 'Gagal',
-                          text: response.message
-                      });
-                  }
-              },
-              error: function(xhr, status, error) {
-                  Swal.fire({
-                      icon: 'error',
-                      title: 'Terjadi Kesalahan',
-                      text: 'Silakan coba lagi'
-                  });
-                  console.log(xhr.responseText);
+                $.post('/profile/delete-competence', { id }, function(res) {
+                if (res.success) tableJobdesc.ajax.reload(null, false);
+                else showSwal('error', 'Gagal', res.message);
+            }, 'json').fail(() => showSwal('error', 'Gagal', 'Terjadi kesalahan server'));
               }
-          });
-      });
-
-   let tableJobdesc;
-
-function initJobdescTable() {
-  tableJobdesc = $('#tableUraianTugas').DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-      url: '/profile/listjobdesc-competence',
-      type: 'GET'
-    },
-    columns: [
-      { data: 'no', width: '50px', className: 'text-center' },
-      { data: 'job_description' },
-      { 
-        data: 'kompetensi', 
-      render: function(data, type, row) {
-  let html = '<ul class="mb-0">'; // bullet akan muncul
-  data.forEach(function(item) {
-    html += `<li class="mb-2">
-               <div class="d-flex justify-content-between align-items-center">
-                 <span class="me-2">${item.nama_pelatihan}</span>
-                 <div class="btn-group btn-group-sm" role="group">
-                   <button type="button"
-                           class="btn rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
-                           data-id="${item.id}" 
-                           data-status="${item.status}">
-                     ${item.status == '1' ? 'Sudah' : 'Belum'}
-                   </button>
-                   <button type="button"
-                           class="btn rounded-pill btn-danger delete-competence ms-1"
-                           data-id="${item.id}">
-                     <i class="icon-base ti tabler-trash icon-sm"></i>
-                   </button>
-                 </div>
-               </div>
-             </li>`;
-  });
-  html += '</ul>';
-  return html;
-}
-
-
-      }
-    ],
-    order: [[0, 'asc']],
-    autoWidth: false
-  });
-
-  // cursor pointer hanya pada kolom No
-  $('#tableUraianTugas tbody').on('mouseenter', 'tr td:nth-child(1)', function() {
-    $(this).css('cursor', 'pointer');
-  });
-}
-
-// Event klik tombol toggle status
-$(document).on('click', '.toggle-status', function(e) {
-  e.stopPropagation();
-  let id = $(this).data('id');
-  let status = $(this).data('status');
-  let newStatus = status == '1' ? '0' : '1';
-
-  $.ajax({
-    url: '/profile/update-status-competence',
-    type: 'POST',
-    data: { id: id, status: newStatus },
-    success: function(res) {
-      if (res.success) {
-        tableJobdesc.ajax.reload(null, false); // reload tanpa reset paging
-      } else {
-        alert('Gagal update status');
-      }
-    },
-    error: function(xhr, status, error) {
-      console.error('Error AJAX:', error, xhr.responseText);
-      alert('Terjadi kesalahan server');
-    }
-  });
-});
-
-// Event klik tombol hapus competence
-$(document).on('click', '.delete-competence', function(e) {
-  e.stopPropagation();
-  if (!confirm('Apakah Anda yakin ingin menghapus kompetensi ini?')) return;
-
-  let id = $(this).data('id');
-
-  $.ajax({
-    url: '/profile/delete-competence',
-    type: 'POST',
-    data: { id: id },
-    success: function(res) {
-      if (res.success) {
-        tableJobdesc.ajax.reload(null, false); // reload tanpa reset paging
-      } else {
-        alert(res.message || 'Gagal menghapus kompetensi');
-      }
-    },
-    error: function(xhr, status, error) {
-      console.error('Error AJAX:', error, xhr.responseText);
-      alert('Terjadi kesalahan server');
-    }
-  });
-});
+            });
+            
+        }
+    });
 
 
   </script>

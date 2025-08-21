@@ -57,6 +57,8 @@ class Profile extends BaseController
             'front_title' => $this->request->getPost('user_front_title'),
             'fullname' => $this->request->getPost('user_fullname'),
             'back_title' => $this->request->getPost('user_back_title'),
+            'pangkatgolongan' => $this->request->getPost('user_pangkatgolongan'),
+            'jabatan' => $this->request->getPost('user_jabatan'),
             'mobile' => "62" . preg_replace('/\D/', '', $this->request->getPost('user_mobilenumber')),
             'address' => $this->request->getPost('user_address'),
             'users_provinces' => $this->request->getPost('user_provinces'),
@@ -111,7 +113,6 @@ class Profile extends BaseController
                 }
             }
 
-            // Jika belum ada, simpan baru
             $this->usersFasyankesModel->insert([
                 'email'          => $email,
                 'fasyankes_code' => $fasyankes_code
@@ -223,7 +224,6 @@ class Profile extends BaseController
                 ]);
             }
 
-            // Jika belum ada, simpan baru
             $this->usersNonFasyankesModel->insert([
                 'email'          => $email,
                 'nonfasyankes_id' => $nonfasyankes_id
@@ -311,36 +311,35 @@ class Profile extends BaseController
         $competenceModel  = new UsersCompetenceModel();
 
         $jobDescription = $this->request->getPost('user_uraiantugas');
-        $trainings      = $this->request->getPost('user_pelatihan'); // array multiple
+        $trainings      = $this->request->getPost('user_pelatihan'); 
 
-        // Cek apakah email + jobdesc sudah ada
         $jobdesc = $jobdescModel
             ->where('email', $email)
             ->where('job_description', $jobDescription)
             ->first();
 
         if (!$jobdesc) {
-            // Insert baru ke users_jobdesc
             $idUsersJobdesc = $jobdescModel->insert([
                 'email'          => $email,
                 'job_description'=> $jobDescription
-            ], true); // true → return insert id
+            ], true); 
         } else {
             $idUsersJobdesc = $jobdesc['id'];
         }
 
-        // Simpan kompetensi (Add Only → tanpa hapus data lama)
         if (is_array($trainings)) {
-            foreach ($trainings as $trainingId) {
+            foreach ($trainings as $training) {
+                $trainingData = explode("&&",$training);
                 $exists = $competenceModel
                     ->where('id_users_jobdesc', $idUsersJobdesc)
-                    ->where('id_training', $trainingId)
+                    ->where('id_training', $trainingData[0])
                     ->first();
 
                 if (!$exists) {
                     $competenceModel->insert([
                         'id_users_jobdesc' => $idUsersJobdesc,
-                        'id_training'              => $trainingId
+                        'id_training'              => $trainingData[0],
+                        'status'            => $trainingData[1]
                     ]);
                 }
             }
@@ -363,25 +362,20 @@ class Profile extends BaseController
         $jobdescModel    = new UsersJobdescModel();
         $competenceModel = new UsersCompetenceModel();
 
-        // Total semua data jobdesc
         $totalRecords = $jobdescModel->countAll();
 
-        // Query dasar
         $builder = $jobdescModel;
 
-        // Kalau ada filter search
         if (!empty($search)) {
             $builder = $builder->like('job_description', $search, 'both', null, true);
         }
 
-        // Ambil data
         $jobdescs = $builder->findAll($length, $start);
 
-        // Hitung total setelah filter
         if (!empty($search)) {
             $totalFiltered = $jobdescModel
                 ->like('job_description', $search, 'both', null, true)
-                ->countAllResults(false); // false = jangan reset builder
+                ->countAllResults(false); 
         } else {
             $totalFiltered = $totalRecords;
         }
@@ -392,6 +386,7 @@ class Profile extends BaseController
                 ->select('users_competence.id, master_training.nama_pelatihan, users_competence.status')
                 ->join('master_training', 'master_training.id = users_competence.id_training')
                 ->where('id_users_jobdesc', $jd['id'])
+                ->orderBy('users_competence.id', 'ASC')
                 ->findAll();
 
             $data[] = [
@@ -442,8 +437,6 @@ class Profile extends BaseController
     public function deleteCompetence()
     {
         $id = $this->request->getPost('id');
-        $competenceModel = new UsersCompetenceModel();
-
         if (!$id) {
             return $this->response->setJSON([
                 'success' => false,
@@ -451,11 +444,31 @@ class Profile extends BaseController
             ]);
         }
 
-        $delete = $competenceModel->delete($id);
+        $competenceModel = new UsersCompetenceModel();
+        $jobdescModel    = new UsersJobdescModel();
+
+        $idUserJobdesc = $competenceModel->where('id', $id)->get()->getRowArray()['id_users_jobdesc'] ?? null;
+        if (!$idUserJobdesc) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Data kompetensi tidak ditemukan'
+            ]);
+        }
+
+        if ($competenceModel->delete($id)) {
+            if ($competenceModel->where('id_users_jobdesc', $idUserJobdesc)->countAllResults() == 0) {
+                $jobdescModel->delete($idUserJobdesc);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Kompetensi berhasil dihapus'
+            ]);
+        }
 
         return $this->response->setJSON([
-            'success' => $delete ? true : false,
-            'message' => $delete ? 'Kompetensi berhasil dihapus' : 'Gagal menghapus kompetensi'
+            'success' => false,
+            'message' => 'Gagal menghapus kompetensi'
         ]);
     }
 

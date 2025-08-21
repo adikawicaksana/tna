@@ -71,6 +71,16 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
+              <label class="form-label" for="basic-default-front-title">Gelar Depan</label>
+              <input type="text" name="user_front_title" class="form-control" id="basic-default-front-title" value="<?= esc($data['front_title']) ?>"/>
+            </div>
+            <div class="col-md-6 mb-6">
+              <label class="form-label" for="basic-default-back-title">Gelar Belakang</label>
+              <input type="text" name="user_back_title" class="form-control" id="basic-default-back-title" value="<?= esc($data['back_title']) ?>"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-6">
               <label class="form-label" for="basic-default-front-title">Pangkat/Golongan</label>
               <input type="text" name="user_pangkatgolongan" class="form-control" id="basic-default-front-title" value="<?= esc($data['pangkatgolongan']) ?>"/>
             </div>
@@ -81,12 +91,8 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-front-title">Gelar Depan</label>
-              <input type="text" name="user_front_title" class="form-control" id="basic-default-front-title" value="<?= esc($data['front_title']) ?>"/>
-            </div>
-            <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-back-title">Gelar Belakang</label>
-              <input type="text" name="user_back_title" class="form-control" id="basic-default-back-title" value="<?= esc($data['back_title']) ?>"/>
+              <label class="form-label" for="basic-default-front-title">Bidang Kerja</label>
+              <input type="text" name="user_bidangkerja" class="form-control" id="basic-default-front-title" value="<?= esc($data['bidangkerja']) ?>"/>
             </div>
           </div>
           <div class="row">

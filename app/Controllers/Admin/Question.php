@@ -66,8 +66,8 @@ class Question extends BaseController
 					'no' => $start + $index + 1,
 					'question' => $each['question'],
 					'question_description' => !empty($each['question_description']) ? $each['question_description'] : '-',
-					'answer_type' => $answer_type()[$each['answer_type']],
-					'question_status' => $status()[$each['question_status']],
+					'answer_type' => $answer_type[$each['answer_type']],
+					'question_status' => $status[$each['question_status']],
 					'action' => view('admin/question/_action_buttons', ['id' => $each['question_id']])
 				];
 			}

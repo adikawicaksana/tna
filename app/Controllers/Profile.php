@@ -152,7 +152,7 @@ class Profile extends BaseController
                     'no'       => $no++,
                     'fasyankes' => strtoupper($row['fasyankes_type'] . ' ' . $row['fasyankes_name']),
                     'alamat'   => $row['fasyankes_address'],
-                    'aksi'     => '<button class="btn btn-danger btn-sm delete-fasyankes" data-id="' . $row['id'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+                    'aksi'     => '<button class="btn rounded-pill btn-danger btn-sm delete-fasyankes" data-id="' . $row['id'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
                 ];
             }
 
@@ -263,7 +263,7 @@ class Profile extends BaseController
                     'no'       => $no++,
                     'non_fasyankes' => $row['nonfasyankes_name'],
                     'alamat'   => $row['nonfasyankes_address'],
-                    'aksi'     => '<button class="btn btn-danger btn-sm delete-non-fasyankes" data-id="' . $row['id_users_nonfasyankes'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+                    'aksi'     => '<button class="btn rounded-pill btn-danger btn-sm delete-non-fasyankes" data-id="' . $row['id_users_nonfasyankes'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
                 ];
             }
 

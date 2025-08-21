@@ -5,52 +5,20 @@ use App\Helpers\CommonHelper;
 
 <form action="<?= route_to('survey.store') ?>" method="post">
 	<?= csrf_field() ?>
+	<input type="hidden" value="<?= $question[0]['questionnaire_id'] ?>">
 	<div class="row mb-3">
 	<div class="card-datatable table-responsive pt-0">
-        <table class="table datatables-uraian-tugas">
+		<table id="tableUraianTugas" class="table table-bordered">
           <thead>
             <tr>
               <th>No</th>
-              <th>Uraian Tugas</th>
-              <th>Pelatihan</th>
-              <th>Status</th>
+              <th width="35%">Uraian Tugas</th>
+              <th>Pengembangan Kompetensi</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Edukasi pasien/keluarga, promosi kesehatan</td>
-              <td>Pelatihan Komunikasi efektif.</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Melaksanakan skrining risiko infeksi pada pasien dan lingkungan kerja sesuai prosedur PPI di FKTP.</td>
-              <td>Pelatihan Pencegahan dan Pengendalian Infeksi (PPI) bagi Tenaga Kesehatan di Fasilitas Kesehatan Tingkat Pertama (FKTP)</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Melaksanakan pelayanan ANC terstandar pada ibu hamil sesuai pedoman Kemenkes, termasuk pemeriksaan fisik, laboratorium dasar, dan penilaian faktor risiko.</td>
-              <td>Pelatihan Pelayanan Antenatal Care, Persalinan, Nifas Dan Skrining Hipotiroid Kongenital (ANC SHK) Bagi Bidan di FKTP</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Memberikan konseling pra dan pasca tes untuk mendukung informed consent dan pemahaman pasien.</td>
-              <td>Pelatihan Pencegahan Penularan HIV, Sifilis dan Hepatitis B dari Ibu Ke Anak (Menuju Triple Eliminasi)</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-danger waves-effect waves-light">Belum</button></td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>Melaksanakan konseling menyusui pada ibu hamil, ibu nifas, dan ibu menyusui dengan teknik komunikasi efektif sesuai pedoman Kemenkes.</td>
-              <td>Pelatihan Konseling Menyusui (KON-ASI)</td>
-              <td><button type="button" class="btn btn-sm rounded-pill btn-success waves-effect waves-light">Sudah</button></td>
-            </tr>
-          </tbody>
         </table>
       </div>
-      </div><br><br>
+	</div><br><br>
 	<div class="row mb-3">
 		<div class="col-sm-4">
 			<label class="col-form-label" for="basic-default-<?= esc($fasyankes_nonfasyankes['selectName']) ?>"><?= esc($fasyankes_nonfasyankes['label']) ?></label>
@@ -72,7 +40,9 @@ use App\Helpers\CommonHelper;
 				<label for="question" class="col-form-label text-wrap">
 					<?= $each['question'] ?>
 				</label>
-
+				<small class="ms-5 text-muted">
+					<?= !empty($each['question_description']) ? '<br>' . $each['question_description'] : '' ?>
+				</small>
 			</div>
 			<div class="col-sm-8">
 				<?= CommonHelper::generateInputField(
@@ -97,10 +67,79 @@ use App\Helpers\CommonHelper;
 	<button type="submit" class="btn btn-sm btn-primary" id="btn-submit" disabled>Simpan</button>
 </form>
 
-
 <?= $this->section('scripts') ?>
 <script>
 $(document).ready(function () {
+	let tableJobdesc;
+	initJobdescTable();
+
+	function initJobdescTable() {
+        tableJobdesc = $('#tableUraianTugas').DataTable({
+			processing: true,
+			serverSide: true,
+			ajax: {
+			url: '/profile/listjobdesc-competence',
+			type: 'GET'
+			},
+			columns: [
+				{ data: 'no', width: '50px', className: 'text-center' },
+				{ data: 'job_description' },
+				{ data: 'kompetensi', render: renderKompetensi },
+			]
+		})
+	}
+
+	function renderKompetensi(data) {
+        return `<ul class="mb-0">
+            ${data.map(item => `
+                <li class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="me-2">${item.nama_pelatihan}</span>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
+                                data-id="${item.id}" data-status="${item.status}">
+                                ${item.status == '1' ? 'Sudah' : 'Belum'}
+                            </button>
+                            <button type="button" class="btn rounded-pill btn-danger delete-competence ms-1" data-id="${item.id}">
+                                <i class="icon-base ti tabler-trash icon-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </li>`).join('')}
+        </ul>`;
+    }
+
+	$('#tableUraianTugas').on('click', '.toggle-status, .delete-competence', function(e) {
+        e.stopPropagation();
+        let $btn = $(this);
+        let id = $btn.data('id');
+
+        if ($btn.hasClass('toggle-status')) {
+			Swal.fire({ text: 'Apakah Anda yakin ingin mengubah status kompetensi ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya' })
+				.then(result => {
+				if (result.isConfirmed) {
+					let newStatus = $btn.data('status') == '1' ? '0' : '1';
+					$.post('/profile/update-status-competence', { id, status: newStatus }, function(res) {
+						if (res.success) tableJobdesc.ajax.reload(null, false);
+						else alert('Gagal update status');
+					}, 'json').fail(() => alert('Terjadi kesalahan server'));
+				}
+			})
+        }
+
+        if ($btn.hasClass('delete-competence')) {
+          	Swal.fire({ text: 'Apakah Anda yakin ingin menghapus kompetensi ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya' })
+				.then(result => {
+				if (result.isConfirmed) {
+						$.post('/profile/delete-competence', { id }, function(res) {
+						if (res.success) tableJobdesc.ajax.reload(null, false);
+						else showSwal('error', 'Gagal', res.message);
+					}, 'json').fail(() => showSwal('error', 'Gagal', 'Terjadi kesalahan server'));
+				}
+			});
+        }
+    });
+
 	$('#verification').change(function() {
 		$('#btn-submit').prop('disabled', !this.checked);
 	})
@@ -109,7 +148,6 @@ $(document).ready(function () {
 
 	function checkInputs() {
 		let allFilled = true;
-
 		// Check input field
 		$('.field-input').each(function() {
 			if ($(this).val() === "") {
@@ -117,7 +155,6 @@ $(document).ready(function () {
 				return false;
 			}
 		});
-
 		// Check select field
 		$('.field-select').each(function() {
 			if ($(this).val() === "") {
@@ -125,7 +162,6 @@ $(document).ready(function () {
 				return false;
 			}
 		});
-
 		// Check radio button
 		$('.form-group input[type="radio"]:checked').each(function() {
 			if ($(this).val() === "") {
@@ -133,7 +169,6 @@ $(document).ready(function () {
 				return false;
 			}
 		});
-
 		// Check textarea
 		$('.field-textarea').each(function() {
 			if ($(this).val().trim() === "") {

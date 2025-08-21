@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\UsersFasyankesModel;
@@ -9,7 +10,9 @@ use App\Models\UsersNonFasyankesModel;
 use App\Models\ReferenceDataModel;
 use App\Models\UsersJobdescModel;
 use App\Models\UsersCompetenceModel;
+use App\Models\FasyankesModel;
 use App\Services\NotificationService;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Profile extends BaseController
 {
@@ -18,9 +21,11 @@ class Profile extends BaseController
     protected $userDetailModel;
     protected $usersFasyankesModel;
     protected $usersNonFasyankesModel;
+    protected $fasyankesModel;
 
     public function __construct()
     {
+        $this->fasyankesModel = new FasyankesModel();
         $this->userModel = new UserModel();
         $this->userDetailModel = new UserDetailModel();
         $this->usersFasyankesModel = new UsersFasyankesModel();
@@ -31,7 +36,6 @@ class Profile extends BaseController
     {
 
         $userDetail = $this->userDetailModel->getUserDetail();
-
 
         if (!empty($userDetail['mobile']) && substr($userDetail['mobile'], 0, 2) === '62') {
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
@@ -70,7 +74,8 @@ class Profile extends BaseController
             'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
         ];
 
-        if ($userDetailModel->update($session->get('email'), $data)) {
+        
+        if ($userDetailModel->where('_id_users', $session->get('_id_users'))->set($data)->update()) {
             return redirect()->back()->with('update_profil', ['type' => 'success', 'message' => 'Profil berhasil diperbarui']);
         } else {
             return redirect()->back()->with('update_profil', ['type' => 'error', 'message' => 'Gagal memperbarui profil']);
@@ -81,7 +86,7 @@ class Profile extends BaseController
     {
         $session = session();
         $fasyankes_code = $this->request->getPost('fasyankes_code');
-        $email = $session->get('email');
+        $_id_users = $session->get('_id_users');
 
         if (empty($fasyankes_code)) {
             return $this->response->setJSON([
@@ -91,32 +96,41 @@ class Profile extends BaseController
         }
 
         try {
-            $existing = $this->usersFasyankesModel
-                ->where('email', $email)
+            $fasyankesData = $this->fasyankesModel
                 ->where('fasyankes_code', $fasyankes_code)
                 ->first();
 
-            if ($existing) {
+            $existing = $this->usersFasyankesModel
+                ->where('_id_users', $_id_users)
+                ->where('_id_master_fasyankes', $fasyankesData['id'])
+                ->first();
 
-                if ($existing['status'] == 'true') {
+            if ($existing) {
+                if ($existing['status'] === 'true') {
                     return $this->response->setJSON([
                         'success' => false,
                         'message' => 'Data fasyankes sudah pernah ditambahkan.'
                     ]);
                 } else {
-
-                    $updated = $this->usersFasyankesModel->update($existing['id'], ['status' => 'true']);
+                    $this->usersFasyankesModel->update($existing['id'], [
+                        'status' => 'true'
+                    ]);
 
                     return $this->response->setJSON([
                         'success' => true,
                         'message' => 'Data fasyankes berhasil disimpan.'
                     ]);
                 }
-            }
+            }            
+
+            // generate UUID baru
+            $idUsersFasyankes = Uuid::uuid4()->toString();
 
             $this->usersFasyankesModel->insert([
-                'email'          => $email,
-                'fasyankes_code' => $fasyankes_code
+                'id' => $idUsersFasyankes,
+                '_id_users'             => $_id_users,
+                '_id_master_fasyankes'  =>  $fasyankesData['id'],
+                'status'                => 'true'
             ]);
 
             return $this->response->setJSON([
@@ -126,7 +140,7 @@ class Profile extends BaseController
         } catch (\Exception $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Gagal menyimpan data'
+                'message' => 'Gagal menyimpan data: ' . $e->getMessage()
             ]);
         }
     }
@@ -135,14 +149,14 @@ class Profile extends BaseController
     {
         try {
             $session = session();
-            $email = $session->get('email');
+            $_id_users = $session->get('_id_users');
 
             $usersFasyankesModel = new \App\Models\UsersFasyankesModel();
             $fasyankes = $usersFasyankesModel
-                ->select('*')
-                ->join('master_fasyankes', 'master_fasyankes.fasyankes_code = users_fasyankes.fasyankes_code', 'left')
+                ->select('*, users_fasyankes.id as id_userfasyankes')
+                ->join('master_fasyankes', 'master_fasyankes.id = users_fasyankes._id_master_fasyankes', 'left')
                 ->where('users_fasyankes.status', 'true')
-                ->where('users_fasyankes.email', $email)
+                ->where('users_fasyankes._id_users', $_id_users)
                 ->findAll();
 
             $data = [];
@@ -152,7 +166,7 @@ class Profile extends BaseController
                     'no'       => $no++,
                     'fasyankes' => strtoupper($row['fasyankes_type'] . ' ' . $row['fasyankes_name']),
                     'alamat'   => $row['fasyankes_address'],
-                    'aksi'     => '<button class="btn rounded-pill btn-danger btn-sm delete-fasyankes" data-id="' . $row['id'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+                    'aksi'     => '<button class="btn rounded-pill btn-danger btn-sm delete-fasyankes" data-id="' . $row['id_userfasyankes'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
                 ];
             }
 
@@ -196,7 +210,7 @@ class Profile extends BaseController
     {
         $session = session();
         $nonfasyankes_id = $this->request->getPost('nonfasyankes_id');
-        $email = $session->get('email');
+        $_id_users = $session->get('_id_users');
 
         if (empty($nonfasyankes_id)) {
             return $this->response->setJSON([
@@ -207,8 +221,8 @@ class Profile extends BaseController
 
         try {
             $existing = $this->usersNonFasyankesModel
-                ->where('email', $email)
-                ->where('nonfasyankes_id', $nonfasyankes_id)
+                ->where('_id_users', $_id_users)
+                ->where('_id_master_nonfasyankes', $nonfasyankes_id)
                 ->first();
             if ($existing) {
                 if ($existing['status'] === 'true') {
@@ -226,8 +240,9 @@ class Profile extends BaseController
             }
 
             $this->usersNonFasyankesModel->insert([
-                'email'          => $email,
-                'nonfasyankes_id' => $nonfasyankes_id
+                'id'                        => Uuid::uuid4()->toString(),
+                '_id_users'                 => $_id_users,
+                '_id_master_nonfasyankes'   => $nonfasyankes_id
             ]);
 
             return $this->response->setJSON([
@@ -246,14 +261,14 @@ class Profile extends BaseController
     {
         try {
             $session = session();
-            $email = $session->get('email');
+            $_id_users = $session->get('_id_users');
 
             $usersNonFasyankesModel = new \App\Models\UsersNonFasyankesModel();
             $fasyankes = $usersNonFasyankesModel
                 ->select('*, users_nonfasyankes.id as id_users_nonfasyankes')
-                ->join('master_nonfasyankes', 'master_nonfasyankes.id = users_nonfasyankes.nonfasyankes_id', 'left')
+                ->join('master_nonfasyankes', 'master_nonfasyankes.id = users_nonfasyankes._id_master_nonfasyankes', 'left')
                 ->where('users_nonfasyankes.status', 'true')
-                ->where('users_nonfasyankes.email', $email)
+                ->where('users_nonfasyankes._id_users', $_id_users)
                 ->findAll();
 
             $data = [];
@@ -303,54 +318,66 @@ class Profile extends BaseController
         }
     }
 
-    public function storeJobdescCompetence()
-    {
-        $session = session();
+    
+public function storeJobdescCompetence()
+{
+    $session = session();
 
-        $email = $session->get('email');
-        $jobdescModel     = new UsersJobdescModel();
-        $competenceModel  = new UsersCompetenceModel();
+    $_id_users      = $session->get('_id_users');
+    $jobdescModel   = new UsersJobdescModel();
+    $competenceModel= new UsersCompetenceModel();
 
-        $jobDescription = $this->request->getPost('user_uraiantugas');
-        $trainings      = $this->request->getPost('user_pelatihan'); 
+    $jobDescription = $this->request->getPost('user_uraiantugas');
+    $trainings      = $this->request->getPost('user_pelatihan'); 
 
-        $jobdesc = $jobdescModel
-            ->where('email', $email)
-            ->where('job_description', $jobDescription)
-            ->first();
+    // Cek apakah jobdesc sudah ada
+    $jobdesc = $jobdescModel
+        ->where('_id_users', $_id_users)
+        ->where('job_description', $jobDescription)
+        ->first();
 
-        if (!$jobdesc) {
-            $idUsersJobdesc = $jobdescModel->insert([
-                'email'          => $email,
-                'job_description'=> $jobDescription
-            ], true); 
-        } else {
-            $idUsersJobdesc = $jobdesc['id'];
-        }
+    if (!$jobdesc) {
+        // Generate UUID baru untuk tabel jobdesc
+        $newJobdescId = Uuid::uuid4()->toString();
 
-        if (is_array($trainings)) {
-            foreach ($trainings as $training) {
-                $trainingData = explode("&&",$training);
-                $exists = $competenceModel
-                    ->where('id_users_jobdesc', $idUsersJobdesc)
-                    ->where('id_training', $trainingData[0])
-                    ->first();
+        $jobdescModel->insert([
+            'id'              => $newJobdescId,
+            '_id_users'       => $_id_users,
+            'job_description' => $jobDescription
+        ]);
 
-                if (!$exists) {
-                    $competenceModel->insert([
-                        'id_users_jobdesc' => $idUsersJobdesc,
-                        'id_training'              => $trainingData[0],
-                        'status'            => $trainingData[1]
-                    ]);
-                }
+        $idUsersJobdesc = $newJobdescId;
+    } else {
+        $idUsersJobdesc = $jobdesc['id'];
+    }
+
+    // Insert kompetensi kalau ada data training
+    if (is_array($trainings)) {
+        foreach ($trainings as $training) {
+            $trainingData = explode("&&", $training);
+
+            $exists = $competenceModel
+                ->where('_id_users_jobdesc', $idUsersJobdesc)
+                ->where('_id_master_training', $trainingData[0])
+                ->first();
+
+            if (!$exists) {
+                $newCompetenceId = Uuid::uuid4()->toString();
+                $competenceModel->insert([
+                    'id'                  => $newCompetenceId,
+                    '_id_users_jobdesc'   => $idUsersJobdesc,
+                    '_id_master_training' => $trainingData[0],
+                    'status'              => $trainingData[1]
+                ]);
             }
         }
-
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Data berhasil disimpan.'
-        ]);
     }
+
+    return $this->response->setJSON([
+        'success' => true,
+        'message' => 'Data berhasil disimpan.'
+    ], ResponseInterface::HTTP_OK);
+}
 
     public function listJobDescCompetence()
     {
@@ -371,7 +398,7 @@ class Profile extends BaseController
             $builder = $builder->like('job_description', $search, 'both', null, true);
         }
 
-        $jobdescs = $builder->findAll($length, $start);
+        $jobdescs = $builder->where('_id_users', session()->get('_id_users'))->findAll($length, $start);
 
         if (!empty($search)) {
             $totalFiltered = $jobdescModel
@@ -385,8 +412,8 @@ class Profile extends BaseController
         foreach ($jobdescs as $jd) {
             $kompetensi = $competenceModel
                 ->select('users_competence.id, master_training.nama_pelatihan, users_competence.status')
-                ->join('master_training', 'master_training.id = users_competence.id_training')
-                ->where('id_users_jobdesc', $jd['id'])
+                ->join('master_training', 'master_training.id = users_competence._id_master_training')
+                ->where('_id_users_jobdesc', $jd['id'])
                 ->orderBy('users_competence.id', 'ASC')
                 ->findAll();
 
@@ -448,7 +475,7 @@ class Profile extends BaseController
         $competenceModel = new UsersCompetenceModel();
         $jobdescModel    = new UsersJobdescModel();
 
-        $idUserJobdesc = $competenceModel->where('id', $id)->get()->getRowArray()['id_users_jobdesc'] ?? null;
+        $idUserJobdesc = $competenceModel->where('id', $id)->get()->getRowArray()['_id_users_jobdesc'] ?? null;
         if (!$idUserJobdesc) {
             return $this->response->setJSON([
                 'success' => false,
@@ -457,7 +484,7 @@ class Profile extends BaseController
         }
 
         if ($competenceModel->delete($id)) {
-            if ($competenceModel->where('id_users_jobdesc', $idUserJobdesc)->countAllResults() == 0) {
+            if ($competenceModel->where('_id_users_jobdesc', $idUserJobdesc)->countAllResults() == 0) {
                 $jobdescModel->delete($idUserJobdesc);
             }
 

@@ -14,21 +14,6 @@ class Auth extends BaseController
     public function login()
     {
 
-        // $session = session();
-
-        // if ($session->get('logged_in') && $session->get('token')) {
-        //     try {
-        //         $decoded = JWT::decode($session->get('token'), new Key(env('JWT_SECRET'), 'HS256'));
-
-        //         // Jika token masih valid, langsung redirect
-        //         return redirect()->to(base_url('dashboard'));
-        //     } catch (\Exception $e) {
-        //         // Token tidak valid, hapus dan lanjut ke tampilan login
-        //         $session->remove('token');
-        //         $session->remove('logged_in');
-        //     }
-        // }
-
         return view('auth/login');
     }
 
@@ -56,13 +41,13 @@ class Auth extends BaseController
 
             // Access Token
             $payload = [
-                'sub'   => $user['id'],
-                'email' => $user['email'],
-                'ip'    => $ip,
-                'ua'    => $ua,
-                'jti'   => bin2hex(random_bytes(8)),
-                'iat'   => time(),
-                'exp'   => time() + (60 * 15) // 15 menit
+                'sub'       => $user['id'],
+                '_id_users' => $user['id'],
+                'ip'        => $ip,
+                'ua'        => $ua,
+                'jti'       => bin2hex(random_bytes(8)),
+                'iat'       => time(),
+                'exp'       => time() + (60 * 15) // 15 menit
             ];
             $token = JWT::encode($payload, $key, 'HS256');
 
@@ -88,8 +73,7 @@ class Auth extends BaseController
             $session->set([
                 'token'         => $token,
                 'refresh_token' => $refreshToken,
-                'email'         => $user['email'],
-                'user_id'       => $user['id'],
+                '_id_users'     => $user['id'],
                 'logged_in'     => true
             ]);
 

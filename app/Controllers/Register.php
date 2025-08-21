@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Controllers;
+
+use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
 use App\Models\UserDetailModel;
+use App\Models\FasyankesModel;
+use App\Models\UsersFasyankesModel;
+use App\Models\UsersNonFasyankesModel;
 use App\Services\NotificationService;
 
 class Register extends BaseController
@@ -89,8 +94,8 @@ class Register extends BaseController
         $detailModel = new UserDetailModel();
 
         $builder = $userModel->builder();
-        $builder->select('users.email, users.status, users_detail.mobile');
-        $builder->join('users_detail', 'users_detail.email = users.email', 'left');
+        $builder->select('users.id, users.email, users.status, users_detail.mobile');
+        $builder->join('users_detail', 'users_detail._id_users = users.id', 'left');
         $builder->groupStart()
             ->where('users.email', $email)
             ->orWhere('users_detail.mobile', $mobile)
@@ -110,19 +115,45 @@ class Register extends BaseController
             ]);
         }
 
+        $newIDUser=Uuid::uuid4()->toString();
+        $newIDDetailUser=Uuid::uuid4()->toString();
         $userModel->insert([
-            'email'    => $email,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
-            'status'   => 'pending'
+            'id'        => $newIDUser,
+            'email'     => $email,
+            'password'  => password_hash($password, PASSWORD_DEFAULT),
+            'status'    => 'pending'
         ]);
 
         $detailModel->insert([ 
-            'fullname'   => $fullname,
-            'email'   => $email,
-            'mobile'  => $mobile
+            'id'       => $newIDDetailUser,
+            '_id_users'=> $newIDUser,
+            'fullname' => $fullname,
+            'email'    => $email,
+            'mobile'   => $mobile
         ]);
 
-        return $this->generateOtpAndResponse($session, $mobile, $email);
+       if (in_array($mode, ['fasyankes', 'non-fasyankes'])) {
+            $data = [
+                'id'        => Uuid::uuid4()->toString(),
+                '_id_users' => $newIDUser
+            ];
+
+            if ($mode === 'fasyankes') {
+                $fasyankesData = (new FasyankesModel())
+                    ->where('fasyankes_code', $request->getPost('fasyankes_code'))
+                    ->first();
+
+                if ($fasyankesData) {
+                    $data['_id_master_fasyankes'] = $fasyankesData['id'];
+                    (new UsersFasyankesModel())->insert($data);
+                }
+            } else {
+                $data['_id_master_nonfasyankes'] = $request->getPost('nonfasyankes_id');
+                (new UsersNonFasyankesModel())->insert($data);
+            }
+        }
+
+        return $this->generateOtpAndResponse($session, $mobile, $email, $newIDUser);
 
     }
 
@@ -133,7 +164,7 @@ class Register extends BaseController
             'hash'        => password_hash($otp, PASSWORD_DEFAULT),
             'expire'      => time() + 300,
             'generated_at'=> time(),
-            'user_id'     => $user['email'], 
+            'id'     => $user['id'], 
             'email'       => $user['email']
         ]);
 
@@ -149,14 +180,14 @@ class Register extends BaseController
         ]);
     }
 
-    private function generateOtpAndResponse($session, $mobile, $email)
+    private function generateOtpAndResponse($session, $mobile, $email, $newIDUser)
     {
         $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         $session->set('otp_data', [
             'hash'        => password_hash($otp, PASSWORD_DEFAULT),
             'expire'      => time() + 300,
             'generated_at'=> time(),
-            'user_id'     => $email, 
+            'id'          => $newIDUser, 
             'email'       => $email
         ]);
 
@@ -207,7 +238,7 @@ class Register extends BaseController
         }
 
         $userModel = new UserModel();
-        $userModel->update($otpData['email'], ['status' => 'active']);
+        $userModel->update($otpData['id'], ['status' => 'active']);
         $session->remove('otp_data');
 
          return $this->response->setJSON([

@@ -13,30 +13,30 @@ class CheckUserProfileFilter implements FilterInterface
         $session = session();
 
         // Pastikan email tersimpan di session
-        if ($session->has('email')) {
-            $email = $session->get('email');
+        if ($session->has('_id_users')) {
+            $_id_users = $session->get('_id_users');
 
-            $user = model('UserModel')->where('email', $email)->first();
+            $user = model('UserModel')->where('id', $_id_users)->first();
             $userDetail = null;
 
             if ($user) {
                 $userDetail = model('UserDetailModel')
-                    ->where('email', $email)
+                    ->where('_id_users', $_id_users)
                     ->first();
             }
 
             $requiredFields = [
                 'nik',
                 'nip',
-                // 'front_title',
                 'fullname',
-                // 'back_title',
                 'mobile',
                 'address',
-                'users_provinces',
-                'users_regencies',
-                'users_districts',
-                'users_villages',
+                '_id_provinces',
+                '_id_regencies',
+                '_id_districts',
+                '_id_villages',
+                'jenjang_pendidikan',
+                'jurusan_profesi',
             ];
 
             if (!$userDetail) {
@@ -49,7 +49,7 @@ class CheckUserProfileFilter implements FilterInterface
                     if (empty($userDetail[$field])) {
                         if (current_url() !== site_url('/profile')) {
                             return redirect()->to(base_url('profile'))
-                                ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.');
+                                ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.'.$userDetail['fullname']);
                         }
                     }
                 }
@@ -59,6 +59,6 @@ class CheckUserProfileFilter implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // Tidak perlu dipakai
+       
     }
 }

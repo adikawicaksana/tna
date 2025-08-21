@@ -8,15 +8,15 @@ class UsersJobdescModel extends Model
 {
     protected $table      = 'users_jobdesc';
     protected $primaryKey = 'id';
-
+    protected $useAutoIncrement = false; 
     protected $allowedFields = [
-        'email',
-        'job_description',
+        'id',
+        '_id_users',
+        'job_description', 
         'created_at',
         'updated_at'
     ];
 
     protected $useTimestamps = true;   
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
 }
+

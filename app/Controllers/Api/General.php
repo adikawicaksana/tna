@@ -101,16 +101,6 @@ class General extends ResourceController
             ])->setStatusCode(200);
         }
 
-        // Validasi format (hanya huruf dan angka)
-        if (!ctype_digit($fasyankesId)) {
-            return $this->response->setJSON([
-                'status'    => false,
-                'code'      => 400,
-                'type'      => 'warning',
-                'message'   => 'Format ID Non Fasyankes tidak valid, hanya angka yang diperbolehkan.'
-            ])->setStatusCode(200);
-        }
-
         $model = new NonFasyankesModel();
         $data = $model->where('id', $fasyankesId)->first();
 

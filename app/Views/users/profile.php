@@ -119,13 +119,13 @@
             <div class="col-md-6 mb-6">
               <label class="form-label" for="Provinsi">Provinsi</label>
               <select name="user_provinces" id="provinsi" class="form-control">
-                <? if($data['users_provinces']){ ?><option value="<?= esc($data['users_provinces']) ?>" selected><?= esc($data['users_provinsi']) ?></option><? } ?>
+                <? if($data['_id_provinces']){ ?><option value="<?= esc($data['_id_provinces']) ?>" selected><?= esc($data['users_provinsi']) ?></option><? } ?>
               </select>
             </div>
             <div class="col-md-6 mb-6">
               <label class="form-label" for="Kabupaten">Kabupaten / Kota</label>
               <select name="user_regencies" id="kabupaten" class="form-select">
-                <? if($data['users_regencies']){ ?><option value="<?= esc($data['users_regencies']) ?>" selected><?= esc($data['users_kabkota']) ?></option><? } ?>
+                <? if($data['_id_regencies']){ ?><option value="<?= esc($data['_id_regencies']) ?>" selected><?= esc($data['users_kabkota']) ?></option><? } ?>
               </select>
             </div>
           </div>
@@ -133,13 +133,13 @@
               <div class="col-md-6 mb-6">
                 <label class="form-label" for="Kecamatan">Kecamatan</label>
                 <select name="user_districts" id="kecamatan" class="form-control">
-                <? if($data['users_districts']){ ?><option value="<?= esc($data['users_districts']) ?>" selected><?= esc($data['users_kecamatan']) ?></option><? } ?>
+                <? if($data['_id_districts']){ ?><option value="<?= esc($data['_id_districts']) ?>" selected><?= esc($data['users_kecamatan']) ?></option><? } ?>
               </select>
               </div>
               <div class="col-md-6 mb-6">
                 <label class="form-label" for="Kelurahan">Kelurahan / Desa</label>
                 <select name="user_villages" id="kelurahan" class="form-select">
-                <? if($data['users_villages']){ ?><option value="<?= esc($data['users_villages']) ?>" selected><?= esc($data['users_kelurahan']) ?></option><? } ?>
+                <? if($data['_id_villages']){ ?><option value="<?= esc($data['_id_villages']) ?>" selected><?= esc($data['users_kelurahan']) ?></option><? } ?>
               </select>
               </div>
           </div>    

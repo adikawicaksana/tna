@@ -8,6 +8,7 @@ class NonFasyankesModel extends Model
 {
     protected $table      = 'master_nonfasyankes';
     protected $primaryKey = 'id'; 
+    protected $useAutoIncrement = false; 
     protected $allowedFields = ['id','nonfasyankes_name','nonfasyankes_address','nonfasyankes_villages','nonfasyankes_districts','nonfasyankes_regencies','nonfasyankes_provinces']; 
 
     // Tidak perlu timestamps kalau tidak ada

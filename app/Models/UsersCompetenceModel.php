@@ -8,11 +8,14 @@ class UsersCompetenceModel extends Model
 {
     protected $table      = 'users_competence';
     protected $primaryKey = 'id';
+    protected $useAutoIncrement = false; 
 
     protected $allowedFields = [
-        'id_users_jobdesc',
-        'id_training',
+        'id',
+        '_id_users_jobdesc',
+        '_id_master_training',
         'status'
+        
     ];
 
     protected $useTimestamps = true;  

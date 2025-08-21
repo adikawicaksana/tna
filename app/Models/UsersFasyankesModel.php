@@ -8,12 +8,9 @@ class UsersFasyankesModel extends Model
 {
     protected $table      = 'users_fasyankes';
     protected $primaryKey = 'id'; 
-    protected $allowedFields = ['id','email','fasyankes_code','status']; 
+    protected $useAutoIncrement = false; 
+    protected $allowedFields = ['id','_id_users','_id_master_fasyankes','status']; 
     protected $useTimestamps = true;
-
-    // Tidak perlu timestamps kalau tidak ada
-    // public $useTimestamps = false;
-    
 }
 
 

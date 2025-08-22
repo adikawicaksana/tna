@@ -99,20 +99,20 @@ class Survey extends BaseController
 				$selectName = 'fasyankes';
 				$model = $this->usersFasyankesModel;
 				$joinTable = 'master_fasyankes';
-				$joinCondition = 'master_fasyankes.fasyankes_code = users_fasyankes.fasyankes_code';
+				$joinCondition = 'master_fasyankes.id = users_fasyankes._id_master_fasyankes';
 				$formatOption = fn($item) => strtoupper($item['fasyankes_type']) . ' ' . $item['fasyankes_name'];
 			} else {
 				$labelName = 'Pilih Non Fasyankes';
 				$selectName = 'non-fasyankes';
 				$model = $this->usersNonFasyankesModel;
 				$joinTable = 'master_nonfasyankes';
-				$joinCondition = 'master_nonfasyankes.id = users_nonfasyankes.nonfasyankes_id';
+				$joinCondition = 'master_nonfasyankes.id = users_nonfasyankes._id_master_nonfasyankes';
 				$formatOption = fn($item) => $item['nonfasyankes_name'];
 			}
 
 			$records = $model
 				->join($joinTable, $joinCondition, 'left')
-				->where('email', $session->get('email'))
+				->where('_id_users', $session->get('_id_users'))
 				->where('status', 'true')
 				->findAll();
 

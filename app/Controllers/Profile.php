@@ -52,7 +52,12 @@ class Profile extends BaseController
     public function putDetail()
     {
         $userDetailModel = new UserDetailModel();
+        $userModel = new UserModel();
         $session = session();
+
+        $datauser = [
+            'email' => $this->request->getPost('user_email'),
+        ];
 
         $data = [
             'email' => $this->request->getPost('user_email'),
@@ -66,16 +71,16 @@ class Profile extends BaseController
             'bidangkerja' => $this->request->getPost('user_bidangkerja'),
             'mobile' => "62" . preg_replace('/\D/', '', $this->request->getPost('user_mobilenumber')),
             'address' => $this->request->getPost('user_address'),
-            'users_provinces' => $this->request->getPost('user_provinces'),
-            'users_regencies' => $this->request->getPost('user_regencies'),
-            'users_districts' => $this->request->getPost('user_districts'),
-            'users_villages' => $this->request->getPost('user_villages'),
+            '_id_provinces' => $this->request->getPost('user_provinces'),
+            '_id_regencies' => $this->request->getPost('user_regencies'),
+            '_id_districts' => $this->request->getPost('user_districts'),
+            '_id_villages' => $this->request->getPost('user_villages'),
             'jenjang_pendidikan' => $this->request->getPost('user_jenjang_pendidikan'),
             'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
         ];
 
         
-        if ($userDetailModel->where('_id_users', $session->get('_id_users'))->set($data)->update()) {
+        if ($userDetailModel->where('_id_users', $session->get('_id_users'))->set($data)->update() || $userModel->where('id', $session->get('_id_users'))->set($datauser)->update()) {
             return redirect()->back()->with('update_profil', ['type' => 'success', 'message' => 'Profil berhasil diperbarui']);
         } else {
             return redirect()->back()->with('update_profil', ['type' => 'error', 'message' => 'Gagal memperbarui profil']);

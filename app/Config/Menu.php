@@ -7,20 +7,49 @@ class Menu
     public static function getSidebar(): array
     {
         return [
+            // [
+            //     'label' => 'Dashboards',
+            //     'icon'  => 'ti tabler-smart-home',
+            //     'active' => 'dashboard',
+            //     'children' => [         // If menu has no children, do not need to define children key
+            //         [
+            //             'label' => 'Dashboard',
+            //             'url'   => base_url('dashboard'),
+            //             'active' => 'dashboard',
+            //         ],
+            //         [
+            //             'label' => 'Profil',
+            //             'url'   => route_to('profile'),
+            //             'active' => 'profile',
+            //         ],
+            //     ]
+            // ],
             [
                 'label' => 'Dashboards',
                 'icon'  => 'ti tabler-smart-home',
+                'url'   => base_url('dashboard'),
                 'active' => 'dashboard',
-                'children' => [         // If menu has no children, do not need to define children key
+            ],
+            [
+                'label' => 'Institusi',
+                'icon'  => 'ti tabler-building',
+                'url' => route_to('survey.index'),
+                'active' => 'survey.',
+            ],
+            [
+                'label' => 'Dinas',
+                'icon'  => 'ti tabler-building-skyscraper',
+                'active' => 'master',
+                'children' => [
                     [
-                        'label' => 'Dashboard',
-                        'url'   => base_url('dashboard'),
-                        'active' => 'dashboard',
+                        'label' => 'Kabupaten/Kota',
+                        'url'   => route_to('question.index'),
+                        'active' => 'question.',
                     ],
                     [
-                        'label' => 'Profil',
-                        'url'   => route_to('profile'),
-                        'active' => 'profile',
+                        'label' => 'Provinsi',
+                        'url'   => route_to('questionnaire.index'),
+                        'active' => 'questionnaire.',
                     ],
                 ]
             ],

@@ -52,4 +52,19 @@ class CommonHelper
 
 		return $result;
 	}
+
+	 public static function timeGreeting()
+    {
+        $jam = (int) date("H"); 
+
+        if ($jam >= 4 && $jam < 11) {
+            return 'pagi';
+        } elseif ($jam >= 11 && $jam < 15) {
+            return 'siang';
+        } elseif ($jam >= 15 && $jam < 18) {
+            return 'sore';
+        } else {
+            return 'malam';
+        }
+    }
 }

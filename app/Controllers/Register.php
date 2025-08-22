@@ -9,6 +9,7 @@ use App\Models\FasyankesModel;
 use App\Models\UsersFasyankesModel;
 use App\Models\UsersNonFasyankesModel;
 use App\Services\NotificationService;
+use App\Helpers\CommonHelper;
 
 class Register extends BaseController
 {
@@ -115,8 +116,8 @@ class Register extends BaseController
             ]);
         }
 
-        $newIDUser=Uuid::uuid4()->toString();
-        $newIDDetailUser=Uuid::uuid4()->toString();
+        $newIDUser=Uuid::uuid7()->toString();
+        $newIDDetailUser=Uuid::uuid7()->toString();
         $userModel->insert([
             'id'        => $newIDUser,
             'email'     => $email,
@@ -134,7 +135,7 @@ class Register extends BaseController
 
        if (in_array($mode, ['fasyankes', 'non-fasyankes'])) {
             $data = [
-                'id'        => Uuid::uuid4()->toString(),
+                'id'        => Uuid::uuid7()->toString(),
                 '_id_users' => $newIDUser
             ];
 
@@ -255,7 +256,7 @@ class Register extends BaseController
         $session = session();
         $otpData = $session->get('otp_data');
 
-        if (!$otpData || empty($otpData['email'])) {
+        if (!$otpData || empty($otpData['id'])) {
             return $this->response->setJSON([
                 'status'  => false,
                 'message' => 'Sesi OTP tidak ditemukan, silakan registrasi ulang'
@@ -271,7 +272,7 @@ class Register extends BaseController
         }
 
         $userDetailModel = new \App\Models\UserDetailModel();
-        $detail = $userDetailModel->where('email', $otpData['email'])->first();
+        $detail = $userDetailModel->where('_id_users', $otpData['id'])->first();
 
         if (!$detail || empty($detail['mobile'])) {
             return $this->response->setJSON([
@@ -287,8 +288,11 @@ class Register extends BaseController
             'hash'        => password_hash($otp, PASSWORD_DEFAULT),
             'expire'      => time() + 300,
             'generated_at'=> time(),
+            'id'           => $otpData['id'],
             'email'     => $otpData['email']
         ]);
+
+        
 
         // Kirim OTP ke API
         $sendStatus = $this->sendOtpToApi($detail['mobile'], $otp);
@@ -303,9 +307,10 @@ class Register extends BaseController
     private function sendOtpToApi(string $phone, string $otp): array
     {
         
-        $result = $this->notifService->sendWhatsApp(
-            $phone,
-            "Kode OTP Anda: $otp (berlaku 5 menit)");
+        $pesan = "Hallo Sobat Murnajati, Selamat ".CommonHelper::timeGreeting().". \n\n";
+        $pesan .= "Kode OTP Anda: $otp \n(berlaku 5 menit)";
+        $footer = "Seksi Penyelenggaran Pelatihan";
+        $result = $this->notifService->sendWhatsApp($phone,$pesan,$footer);
 
         if (isset($result['status']) && $result['status'] === 'success') {
             return ['success' => true, 'message' => 'OTP berhasil dikirim'];

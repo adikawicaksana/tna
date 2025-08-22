@@ -9,6 +9,7 @@ class NotificationService
     public function __construct()
     {
         $this->waApiKey = env('notif.wa.apiKey');
+        $this->waSender = env('notif.wa.sender');
         $this->waApiUrlSendText = env('notif.wa.apiUrl.sendText');
         $this->waApiUrlSendMedia = env('notif.wa.apiUrl.sendMedia');
 
@@ -29,7 +30,7 @@ class NotificationService
  * @param string|null $type     Jenis pesan: 'media' atau default text
  * @param string|null $mediaUrl URL media (hanya jika type = media)
  */
-public function sendWhatsApp(string $receiver, string $message, ?string $type = null, ?string $mediaUrl = null): array
+public function sendWhatsApp(string $receiver, string $message,  string $footer, ?string $type = null, ?string $mediaUrl = null): array
 {
     $client = \Config\Services::curlrequest();
 
@@ -39,11 +40,13 @@ public function sendWhatsApp(string $receiver, string $message, ?string $type = 
 
     // payload dasar
     $payload = [
-        'apikey'   => $this->waApiKey,
-        'receiver' => $receiver,
-        'mtype'    => $isMedia ? 'media' : 'text',
-        'text'     => $message,
+        'api_key'   => $this->waApiKey,
+        'sender'    => $this->waSender,
+        'number'    => $receiver,
+        'message'   => $message,
+        'footer'    => $footer,
     ];
+
 
     // tambahkan URL media jika type media valid
     if ($isMedia) {
@@ -63,11 +66,11 @@ public function sendWhatsApp(string $receiver, string $message, ?string $type = 
         $body = json_decode($response->getBody(), true);
 
         return [
-            'success' => ($body['status'] ?? '') === 'success',
-            'message' => $body['message'] ?? 'Gagal mengirim WhatsApp'
+           'status' => (!empty($body['status']) && $body['status'] === true) ? 'success' : 'error',
+            'message' => $body['msg'] ?? 'Gagal mengirim WhatsApp'
         ];
     } catch (\Exception $e) {
-        return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        return ['status' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }
 

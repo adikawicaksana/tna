@@ -592,7 +592,6 @@
           data: $('#multiStepsForm').serialize(),
           dataType: 'json',
           success: res => {
-            console.log(res);
             if (res.code === 400) {
               if (res.show_otp_modal) {
                 const otpModal = new bootstrap.Modal('#otpModal');
@@ -657,10 +656,7 @@
           body: new URLSearchParams({ otp })
         })
           .then(res => {
-            console.log("Status:", res.status);   // log status HTTP
-            console.log("OK:", res.ok);           // true/false
             if (!res.ok) {
-              // kalau server balas error (misal 500/404), log dulu text errornya
               return res.text().then(text => {
                 console.error("Server Error Response:", text);
                 throw new Error(`HTTP error! Status: ${res.status}`);
@@ -669,7 +665,6 @@
             return res.json();
           })
           .then(data => {
-            console.log("Response JSON:", data); // log isi response sukses
             if (data.status) {
               bootstrap.Modal.getInstance(document.getElementById('otpModal')).hide();
               showAlert(data.type, data.message, './login');
@@ -678,7 +673,7 @@
             }
           })
           .catch(err => {
-            console.error("Fetch Error:", err);   // kalau ada error di fetch/JS
+            console.error("Fetch Error:", err);  
           });
       });
 
@@ -692,7 +687,7 @@
         })
           .then(res => res.json())
           .then(data => {
-            showAlert(data.success ? 'success' : 'error', data.message);
+            showAlert(data.status ? 'success' : 'error', data.message);
             resendBtn.disabled = false;
             resendBtn.textContent = "Kirim Ulang OTP";
           });

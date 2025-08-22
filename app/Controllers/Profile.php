@@ -129,7 +129,7 @@ class Profile extends BaseController
             }            
 
             // generate UUID baru
-            $idUsersFasyankes = Uuid::uuid4()->toString();
+            $idUsersFasyankes = Uuid::uuid7()->toString();
 
             $this->usersFasyankesModel->insert([
                 'id' => $idUsersFasyankes,
@@ -245,7 +245,7 @@ class Profile extends BaseController
             }
 
             $this->usersNonFasyankesModel->insert([
-                'id'                        => Uuid::uuid4()->toString(),
+                'id'                        => Uuid::uuid7()->toString(),
                 '_id_users'                 => $_id_users,
                 '_id_master_nonfasyankes'   => $nonfasyankes_id
             ]);
@@ -343,7 +343,7 @@ public function storeJobdescCompetence()
 
     if (!$jobdesc) {
         // Generate UUID baru untuk tabel jobdesc
-        $newJobdescId = Uuid::uuid4()->toString();
+        $newJobdescId = Uuid::uuid7()->toString();
 
         $jobdescModel->insert([
             'id'              => $newJobdescId,
@@ -367,7 +367,7 @@ public function storeJobdescCompetence()
                 ->first();
 
             if (!$exists) {
-                $newCompetenceId = Uuid::uuid4()->toString();
+                $newCompetenceId = Uuid::uuid7()->toString();
                 $competenceModel->insert([
                     'id'                  => $newCompetenceId,
                     '_id_users_jobdesc'   => $idUsersJobdesc,

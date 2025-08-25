@@ -17,4 +17,15 @@ class SurveyModel extends Model
 		'approval_at'
 	];
 	protected $useTimestamps = true;
+
+	const STAT_CANCELLED = 0;
+	const STAT_ACTIVE = 1;
+
+	public static function listStatus()
+	{
+		return [
+			self::STAT_CANCELLED => 'Dibatalkan',
+			self::STAT_ACTIVE => 'Aktif',
+		];
+	}
 }

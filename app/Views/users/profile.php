@@ -576,7 +576,7 @@
       type: 'GET',
       dataType: 'json',
       delay: 250,
-      data: params => ({ q: params.term }),
+      data: params => ({ q: params.term, maxData: 20, }),
       processResults: data => ({ results: data }),
       cache: true
     },

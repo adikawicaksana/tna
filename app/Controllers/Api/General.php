@@ -157,9 +157,10 @@ class General extends ResourceController
                 ]);
         }
 
-   public function postPelatihanSiakpel()
+   public function getPelatihanSiakpel()
 {
     $term = $this->request->getGet('q');
+    $maxData = $this->request->getGet('maxData');
     $model = new MasterTrainingModel();
 
     $query = $model->select('id, nama_pelatihan');
@@ -168,7 +169,7 @@ class General extends ResourceController
         $query->where("nama_pelatihan ILIKE '%" . $term . "%'");
     }
 
-    $results = $query->findAll(20);
+    $results = $query->findAll($maxData);
 
     $data = [];
     foreach ($results as $row) {

@@ -52,7 +52,7 @@ $routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
 $routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
 $routes->post('api/nonfasyankes_check', 'Api\General::postNonFasyankesCheck');
 $routes->post('api/nonfasyankes_search', 'Api\General::postNonFasyankesSearch');
-$routes->get('api/pelatihan_siakpel', 'Api\General::postPelatihanSiakpel', ['as' => 'api.pelatihan_siakpel']);
+$routes->get('api/pelatihan_siakpel', 'Api\General::getPelatihanSiakpel', ['as' => 'api.pelatihan_siakpel']);
 
 $routes->get('api/provinsi', 'Api\Area::provinsi');
 $routes->get('api/kabupaten', 'Api\Area::kabupaten');

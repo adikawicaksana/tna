@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Helpers\CommonHelper;
 use App\Models\UserDetailModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionnaireModel;
@@ -28,10 +29,10 @@ class Survey extends BaseController
 	}
 
 	public function index()
-	{ 
+	{
 		$data = $this->model
 			->findAll();
-			
+
 		return view('survey/index', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'data' => $data,
@@ -53,7 +54,7 @@ class Survey extends BaseController
 		]);
 
 		// Get id and answer options
-		$option = [];
+		$source = [];
 		$ids = [];
 		foreach ($question as $each) {
 			$has_option = in_array($each['answer_type'], QuestionModel::hasOption());
@@ -63,21 +64,14 @@ class Survey extends BaseController
 			$source_reference = $each['source_reference'];
 			if (empty($source_reference)) {
 				$ids[] = $each['question_id'];
-			} else {
-				// Extract class, method, and parameter menggunakan regex
-				preg_match('/(\w+)::(\w+)\((\d+)\)/', $source_reference, $matches);
-				if ($matches) {
-					$class = str_replace(' ', '', 'App\Models\ ' . $matches[1]);
-					$method = $matches[2];
-					$param = $matches[3];
-
-					if (class_exists($class) && method_exists($class, $method)) {
-						$option[$each['question_id']] = $class::$method($param);
-					} else {
-						new \Exception('Invalid source reference');
-					}
-				} else {
-					new \Exception('Invalid source reference');
+			} else if (CommonHelper::isRouteExists($source_reference)) {
+				$url = url_to($source_reference);
+				$response = file_get_contents($url);
+				foreach (json_decode($response) as $res) {
+					$source[$each['question_id']][] = [
+						'question_id' => $res->id,
+						'option_name' => $res->text,
+					];
 				}
 			}
 		}
@@ -86,7 +80,7 @@ class Survey extends BaseController
 			$temp2 = QuestionOptionModel::getData($ids);
 			foreach ($temp2 as $each) {
 				$questionId = $each['question_id'];
-				$option[$questionId][] = $each;
+				$source[$questionId][] = $each;
 			}
 		}
 
@@ -134,7 +128,7 @@ class Survey extends BaseController
 		return view('survey/form', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'question' => $question,
-			'option' => $option,
+			'source' => $source,
 			'title' => 'Formulir Survei',
 			'fasyankes_nonfasyankes' => $fasyankes_nonfasyankes
 		]);

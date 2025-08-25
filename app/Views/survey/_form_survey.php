@@ -48,7 +48,7 @@ use App\Helpers\CommonHelper;
 				<?= CommonHelper::generateInputField(
 					$each['answer_type'],
 					$each['question_id'],
-					$option[$each['question_id']] ?? []
+					$source[$each['question_id']] ?? []
 				) ?>
 			</div>
 		</div>

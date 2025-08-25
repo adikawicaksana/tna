@@ -55,7 +55,7 @@ class CommonHelper
 
 	 public static function timeGreeting()
     {
-        $jam = (int) date("H"); 
+        $jam = (int) date("H");
 
         if ($jam >= 4 && $jam < 11) {
             return 'pagi';
@@ -67,4 +67,18 @@ class CommonHelper
             return 'malam';
         }
     }
+
+	public static function isRouteExists(string $alias)
+	{
+		$routes = service('routes');
+		$options = $routes->getRoutesOptions();
+
+		foreach ($options as $route => $opts) {
+			if (($opts['as'] ?? null) === $alias) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

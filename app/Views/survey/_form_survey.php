@@ -24,7 +24,7 @@ use App\Helpers\CommonHelper;
 			<label class="col-form-label" for="basic-default-<?= esc($fasyankes_nonfasyankes['selectName']) ?>"><?= esc($fasyankes_nonfasyankes['label']) ?></label>
 		</div>
 		<div class="col-sm-8">
-			<select id="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" name="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" class="form-select select2">
+			<select id="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" name="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" class="form-select select2 field-select">
 			<?php foreach ($fasyankes_nonfasyankes['options'] as $key => $label): ?>
 				<option value="<?= esc($key) ?>"
 					>

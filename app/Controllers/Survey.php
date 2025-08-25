@@ -87,35 +87,30 @@ class Survey extends BaseController
         $session = session();
 		$options = ['' => '-- Pilih --'];
 
-		if ($type == 2 || $type == 4) {
-			if ($type == 2) {
-				$labelName = 'Pilih Fasyankes';
-				$selectName = 'fasyankes';
-				$model = $this->usersFasyankesModel;
-				$joinTable = 'master_fasyankes';
-				$joinCondition = 'master_fasyankes.id = users_fasyankes._id_master_fasyankes';
-				$formatOption = fn($item) => strtoupper($item['fasyankes_type']) . ' ' . $item['fasyankes_name'];
-			} else {
-				$labelName = 'Pilih Non Fasyankes';
-				$selectName = 'non-fasyankes';
-				$model = $this->usersNonFasyankesModel;
-				$joinTable = 'master_nonfasyankes';
-				$joinCondition = 'master_nonfasyankes.id = users_nonfasyankes._id_master_nonfasyankes';
-				$formatOption = fn($item) => $item['nonfasyankes_name'];
-			}
-
-			$records = $model
-				->join($joinTable, $joinCondition, 'left')
-				->where('_id_users', $session->get('_id_users'))
-				->where('status', 'true')
-				->findAll();
-
-			foreach ($records as $record) {
-				$options[$record['id']] = $formatOption($record);
-			}
+		if ($type == QuestionnaireModel::TYPE_FASYANKES || $type == QuestionnaireModel::TYPE_INDIVIDUAL_FASYANKES) {
+			$labelName = 'Pilih Fasyankes';
+			$selectName = 'fasyankes';
+			$model = $this->usersFasyankesModel;
+			$joinTable = 'master_fasyankes';
+			$joinCondition = 'master_fasyankes.id = users_fasyankes._id_master_fasyankes';
+			$formatOption = fn($item) => strtoupper($item['fasyankes_type']) . ' ' . $item['fasyankes_name'];
 		} else {
-			$labelName = '';
-			$selectName = '';
+			$labelName = 'Pilih Non Fasyankes';
+			$selectName = 'non-fasyankes';
+			$model = $this->usersNonFasyankesModel;
+			$joinTable = 'master_nonfasyankes';
+			$joinCondition = 'master_nonfasyankes.id = users_nonfasyankes._id_master_nonfasyankes';
+			$formatOption = fn($item) => $item['nonfasyankes_name'];
+		}
+
+		$records = $model
+			->join($joinTable, $joinCondition, 'left')
+			->where('_id_users', $session->get('_id_users'))
+			->where('status', 'true')
+			->findAll();
+
+		foreach ($records as $record) {
+			$options[$record['id']] = $formatOption($record);
 		}
 
 		$fasyankes_nonfasyankes = [
@@ -123,7 +118,6 @@ class Survey extends BaseController
 			'selectName' => $selectName,
 			'options' => $options,
 		];
-
 
 		return view('survey/form', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),

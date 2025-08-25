@@ -29,7 +29,7 @@
                           <div class="user-profile-info">
                             <h4 class="mb-2 mt-lg-6"><?= esc($data['front_title']) ?> <?= esc($data['fullname']) ?>, <?= esc($data['back_title']) ?></h4>
                             <ul
-                              class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4 my-2">                              
+                              class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4 my-2">
                               <li class="list-inline-item d-flex gap-2 align-items-center">
                                 <i class="icon-base ti tabler-map-pin icon-lg"></i
                                 ><span class="fw-medium"><?= esc($data['address']) ?>, <?= esc($data['users_kelurahan']) ?>, <?= esc($data['users_kecamatan']) ?>, <?= esc($data['users_kabkota']) ?>, <?= esc($data['users_provinsi']) ?></span>
@@ -49,7 +49,7 @@
   <!-- Basic Layout -->
   <div class="col-xl">
     <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">                      
+      <div class="card-header d-flex justify-content-between align-items-center">
       </div>
       <div class="card-body">
         <form action="<?= base_url('profile') ?>" method="POST">
@@ -111,7 +111,7 @@
           </div>
           <div class="row">
             <div class="col-md-12 mb-6">
-          <label class="form-label" for="address">Alamat</label>                 
+          <label class="form-label" for="address">Alamat</label>
               <textarea name="user_address" class="form-control" ><?= esc($data['address']) ?></textarea>
           </div>
           </div>
@@ -142,14 +142,14 @@
                 <? if($data['_id_villages']){ ?><option value="<?= esc($data['_id_villages']) ?>" selected><?= esc($data['users_kelurahan']) ?></option><? } ?>
               </select>
               </div>
-          </div>    
+          </div>
           <div class="row">
             <div class="col-md-6 mb-6">
               <label class="form-label" for="basic-default-jenjang">Pendidikan Terkahir</label>
                 <select id="jenjangPendidikan" name="user_jenjang_pendidikan" class="form-select select2">
                    <option value=""></option>
                     <?php foreach ($jenjangPendidikan as $key => $label): ?>
-                        <option value="<?= esc($key) ?>" 
+                        <option value="<?= esc($key) ?>"
                             <?= isset($data['jenjang_pendidikan']) && $data['jenjang_pendidikan'] === $key ? 'selected' : '' ?>>
                             <?= esc($label) ?>
                         </option>
@@ -161,7 +161,7 @@
               <select id="jurusanProfesi" name="user_jurusan_profesi" class="form-select select2">
                <option value=""></option>
                     <?php foreach ($jurusanProfesi as $key => $label): ?>
-                        <option value="<?= esc($key) ?>" 
+                        <option value="<?= esc($key) ?>"
                             <?= isset($data['jurusan_profesi']) && $data['jurusan_profesi'] === $key ? 'selected' : '' ?>>
                             <?= esc($label) ?>
                         </option>
@@ -173,7 +173,7 @@
                   <input type="text" id="jurusanManual" name="jurusan_profesi_manual" class="form-control" placeholder="Ketik jurusan/profesi">
                 </div>
             </div>
-          </div>  
+          </div>
 
           <div class="text-end">
           <!-- isi form -->
@@ -328,7 +328,7 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Nama Institusi Non Fasyankes</label>            
+            <label class="form-label">Nama Institusi Non Fasyankes</label>
             <div class="position-relative">
               <input type="hidden" name="nonfasyankes_id" id="nonfasyankes_id" class="form-control"
                 autocomplete="off" />
@@ -382,13 +382,13 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Uraian Tugas</label>                         
+            <label class="form-label">Uraian Tugas</label>
             <textarea name="user_uraiantugas" id="user_uraiantugas" class="form-control" ></textarea>
           </div>
           <div class="mb-3">
             <label class="form-label">Pengembangan Kompetensi (sesuai dengan SIAKPEL)</label>
             <select name="user_pelatihan[]" id="user_pelatihan" class="form-control" multiple="multiple">
-             
+
             </select>
           </div>
         </div>
@@ -415,9 +415,9 @@
             text: '<?= session()->getFlashdata('warning_profile') ?>',
             confirmButtonText: 'OK'
         });
-    <?php endif; 
-    
-    if (session()->has('update_profil')): 
+    <?php endif;
+
+    if (session()->has('update_profil')):
         $notif = session('update_profil'); ?>
          Swal.fire({
             icon: '<?= esc($notif['type']) ?>',
@@ -426,7 +426,7 @@
         });
 
     <?php endif; ?>
-    
+
   $(document).ready(function () {
 
   const base_url = "<?= base_url() ?>";
@@ -502,7 +502,7 @@
   initSelect2('#kelurahan','kelurahan', () => ({ kec_id: $('#kecamatan').val() }));
 
   const loadDetail = (url, data, onSuccess) => ajaxRequest(`${api_url}/${url}`, 'POST', data, res => onSuccess(res.code===200 ? res.data : {}));
-  
+
   const FasyankesDetail = code => loadDetail('fasyankes_check', { fasyankes_code: code }, r => {
     $('#fasyankes_type').val(r.fasyankes_type?.toUpperCase()||'');
     $('#fasyankes_name').val(r.fasyankes_name||'');
@@ -573,7 +573,7 @@
     minimumInputLength: 2,
     ajax: {
       url: '/api/pelatihan_siakpel',
-      type: 'POST',
+      type: 'GET',
       dataType: 'json',
       delay: 250,
       data: params => ({ q: params.term }),
@@ -583,8 +583,8 @@
     templateSelection: data => {
       if (!data.id) return data.text;
       const color = data.id.includes('&&1') ? '#28a745' : data.id.includes('&&0') ? '#dc3545' : null;
-      return color 
-        ? $(`<span style="background-color:${color};color:white;padding:2px 5px;border-radius:3px;">${data.text}</span>`) 
+      return color
+        ? $(`<span style="background-color:${color};color:white;padding:2px 5px;border-radius:3px;">${data.text}</span>`)
         : data.text;
     }
   });
@@ -630,7 +630,7 @@
             columns: [
                 { data: 'no', width: '50px', className: 'text-center' },
                 { data: 'job_description' },
-                { 
+                {
                     data: 'kompetensi',
                     render: renderKompetensi
                 }
@@ -716,7 +716,7 @@
             }, 'json').fail(() => showSwal('error', 'Gagal', 'Terjadi kesalahan server'));
               }
             });
-            
+
         }
     });
 

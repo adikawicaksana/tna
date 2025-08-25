@@ -38,7 +38,7 @@ class General extends ResourceController
         if ($data) {
             return $this->response->setJSON([
                 'status'    => true,
-                'code'      => 200,                
+                'code'      => 200,
                 'type'      => 'success',
                 'message'   => 'Data Fasyankes ditemukan',
                 'data'      => $data
@@ -67,7 +67,7 @@ class General extends ResourceController
                 ];
             }
 
-            
+
             if (empty($data)) {
                 return $this->response->setJSON([
                     'status'    => false,
@@ -80,14 +80,14 @@ class General extends ResourceController
 
             return $this->response->setJSON([
                     'status'    => true,
-                    'code'      => 200,                
+                    'code'      => 200,
                     'type'      => 'success',
                     'message'   => 'Data Fasyankes ditemukan',
                     'data'      => $data
                 ]);
         }
 
-        
+
     public function postNonFasyankesCheck(){
         $fasyankesId = $this->request->getPost('id');
 
@@ -107,7 +107,7 @@ class General extends ResourceController
         if ($data) {
             return $this->response->setJSON([
                 'status'    => true,
-                'code'      => 200,                
+                'code'      => 200,
                 'type'      => 'success',
                 'message'   => 'Data Non Fasyankes ditemukan',
                 'data'      => $data
@@ -122,7 +122,7 @@ class General extends ResourceController
         }
     }
 
-    
+
      public function postNonFasyankesSearch()
         {
             $keyword = $this->request->getPost('keyword');
@@ -147,10 +147,10 @@ class General extends ResourceController
                 ]);
             }
 
-            
+
             return $this->response->setJSON([
                     'status'    => true,
-                    'code'      => 200,                
+                    'code'      => 200,
                     'type'      => 'success',
                     'message'   => 'Data Non Fasyankes ditemukan ',
                     'data'      => $data
@@ -159,7 +159,7 @@ class General extends ResourceController
 
    public function postPelatihanSiakpel()
 {
-    $term = $this->request->getPost('q');
+    $term = $this->request->getGet('q');
     $model = new MasterTrainingModel();
 
     $query = $model->select('id, nama_pelatihan');

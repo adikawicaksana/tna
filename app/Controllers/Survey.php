@@ -128,7 +128,25 @@ class Survey extends BaseController
 		]);
 	}
 
-	public function store() {}
+	public function store()
+	{
+		$dbtrans = \Config\Database::connect();
+		$dbtrans->transBegin();
+		try {
+			$post = $this->request->getPost();
+			$id=Uuid::uuid7()->toString();
+			// Insert into Survey Table
+			$data = [
+				'survey_id' => $id,
+				'questionnaire_id' => $post['questionnaire_id'],
+				'survey_status' => SurveyModel::STAT_ACTIVE,
+				'user_id' => session()->get('user_id'),
+			];
+		} catch (\Throwable $e) {
+			$dbtrans->transRollback();
+			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data');
+		}
+	}
 
 	public function update($id)
 	{

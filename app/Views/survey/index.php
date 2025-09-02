@@ -22,27 +22,49 @@
 				</div>
 			<?php endif; ?>
 
-			<table class="table table-responsive table-bordered table-hover w-100">
-				<tr>
-					<th class="text-center">No</th>
-					<th>Tanggal</th>
-					<th>Instansi</th>
-					<th>NIP</th>
-					<th>Nama</th>
-					<th>Action</th>
-				</tr>
-				<?php foreach ($data as $key => $each): ?>
+			<table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
+				<thead>
 					<tr>
-						<td class="text-center"><?= $key + 1 ?></td>
-						<td><?= $each['created_at'] ?></td>
-						<td></td>
-						<td><?= $each['citizen_id'] ?></td>
-						<td><?= $each['responden'] ?></td>
-						<td></td>
+						<th class="text-center">No</th>
+						<th>Tanggal</th>
+						<th>Grup</th>
+						<th>Instansi</th>
+						<th>Nama</th>
+						<th>Status</th>
+						<th>Tanggal Disetujui</th>
+						<th>Action</th>
 					</tr>
-				<?php endforeach; ?>
+				</thead>
 			</table>
 		</div>
 	</div>
 </div>
+
+<script>
+	$(document).ready(function () {
+		$('#dataTable').DataTable({
+			processing: true,
+			serverSide: true,
+			searching: false,
+			ajax: {
+				url: "<?= current_url() ?>",
+				type: "GET"
+			},
+			columns: [
+				{ data: "no", name: "no", orderable: false, searchable: false },
+				{ data: "created_at" },
+				{ data: "group_type" },
+				{ data: "institution_name" },
+				{ data: "fullname" },
+				{ data: "survey_status" },
+				{ data: "approved_at" },
+				{ data: "action", orderable: false, searchable: false }
+			],
+			columnDefs: [{
+				targets: [0],
+				className: 'text-center',
+			}],
+		});
+	});
+</script>
 <?= $this->endSection(); ?>

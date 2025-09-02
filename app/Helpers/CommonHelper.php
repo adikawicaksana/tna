@@ -9,6 +9,10 @@ class CommonHelper
 	public static function formatDate($date, $format = 1)
 	{
 		$return = '';
+		if (empty($date) || date($date) < date('1970-01-01')) {
+			return $return;
+		}
+
 		if ($format == 1) {
 			$return .= date('d-m-Y', strtotime($date));
 		}
@@ -28,7 +32,7 @@ class CommonHelper
 			case QuestionModel::TYPE_MULTIPLE_CHOICE:
 				foreach ($source as $each) {
 					$result .= "<div class='form-check form-check-primary'>
-						<input name='$name' class='form-check-input' type='radio' value='{$each['question_id']}' />
+						<input name='$name' class='form-check-input' type='radio' value='{$each['option_name']}' />
 						<label class='form-check-label'>{$each['option_name']}</label>
 						<label>{$each['option_description']}</label>
 					</div>";
@@ -37,17 +41,55 @@ class CommonHelper
 			case QuestionModel::TYPE_MULTI_SELECT:
 				$result .= "<select class='select2 form-select field-select' multiple>";
 				foreach ($source as $each) {
-					$result .= "<option value='{$each['question_id']}'>{$each['option_name']}</option>";
+					$result .= "<option value='{$each['option_name']}'>{$each['option_name']}</option>";
 				}
 				$result .= "</select>";
 				break;
 			case QuestionModel::TYPE_DROPDOWN:
 				$result .= "<select class='form-select field-select' name='$name'>";
 				foreach ($source as $each) {
-					$result .= "<option value='{$each['question_id']}'>{$each['option_name']}</option>";
+					$result .= "<option value='{$each['option_name']}'>{$each['option_name']}</option>";
 				}
 				$result .= "</select>";
 				break;
+		}
+
+		return $result;
+	}
+
+	public static function months($format = 1)
+	{
+		$result = [];
+		if ($format == 1) {
+			$result = [
+				1 => 'Januari',
+				2 => 'Februari',
+				3 => 'Maret',
+				4 => 'April',
+				5 => 'Mei',
+				6 => 'Juni',
+				7 => 'Juli',
+				8 => 'Agustus',
+				9 => 'September',
+				10 => 'Oktober',
+				11 => 'November',
+				12 => 'Desember',
+			];
+		} else {
+			$result = [
+				1 => 'Jan',
+				2 => 'Feb',
+				3 => 'Mar',
+				4 => 'Apr',
+				5 => 'Mei',
+				6 => 'Jun',
+				7 => 'Jul',
+				8 => 'Ags',
+				9 => 'Sep',
+				10 => 'Okt',
+				11 => 'Nov',
+				12 => 'Des',
+			];
 		}
 
 		return $result;

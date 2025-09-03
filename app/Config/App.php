@@ -16,8 +16,15 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://localhost/';
+    // public string $baseURL = 'http://localhost/';
+    
+    public string $baseURL;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->baseURL = rtrim(env('app.baseURL', 'http://localhost/'), '/') . '/';
+    }
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
      * If you want to accept multiple Hostnames, set this.

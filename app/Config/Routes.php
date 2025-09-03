@@ -66,14 +66,14 @@ $routes->group('admin', function ($routes) {
 	$routes->get('question', 'Admin\Question::index', ['as' => 'question.index']);
 	$routes->get('question/create', 'Admin\Question::create', ['as' => 'question.create']);
 	$routes->post('question/store', 'Admin\Question::store');
-	$routes->post('question/deactivate/(:num)', 'Admin\Question::deactivate/$1', ['as' => 'question.deactivate']);
+	$routes->post('question/deactivate/(:any)', 'Admin\Question::deactivate/$1', ['as' => 'question.deactivate']);
 	$routes->get('question/(:any)', 'Admin\Question::show/$1', ['as' => 'question.show']);
 
 	$routes->get('questionnaire', 'Admin\Questionnaire::index', ['as' => 'questionnaire.index']);
 	$routes->get('questionnaire/create', 'Admin\Questionnaire::create', ['as' => 'questionnaire.create']);
 	$routes->post('questionnaire/store', 'Admin\Questionnaire::store', ['as' => 'questionnaire.store']);
-	$routes->post('questionnaire/activate/(:num)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
-	$routes->post('questionnaire/deactivate/(:num)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
+	$routes->post('questionnaire/activate/(:any)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
+	$routes->post('questionnaire/deactivate/(:any)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
 	$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1', ['as' => 'questionnaire.show']);
 });
 

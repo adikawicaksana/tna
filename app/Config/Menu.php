@@ -68,6 +68,11 @@ class Menu
                         'url'   => route_to('questionnaire.index'),
                         'active' => 'questionnaire.',
                     ],
+                    [
+                        'label' => 'Pelatihan',
+                        'url'   => route_to('master-training.index'),
+                        'active' => 'master-training.',
+                    ],
                 ]
             ],
             [

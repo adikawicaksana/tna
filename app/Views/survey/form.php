@@ -11,7 +11,7 @@ use App\Helpers\CommonHelper;
 		<div class="card-header d-flex">
 			<?= $title ?>
 			<div class="ms-auto">
-				<a href="https://docs.google.com/spreadsheets/d/1NghDs19tL6ff5eqFy-P0wEk0CtQH4l4C/edit?usp=sharing&ouid=100181077883614027034&rtpof=true&sd=true"
+				<a href="<?= url_to('master-training.index') ?>"
 					class="btn btn-sm btn-primary float-right" target="_blank">Pelatihan Terakreditasi Ditmutu</a>
 			</div>
 		</div>

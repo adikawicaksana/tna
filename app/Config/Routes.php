@@ -17,6 +17,7 @@ $routes->post('/register', 'Register::store');
 $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');
 
+$routes->get('/master-training', 'MasterTraining::index', ['as' => 'master-training.index']);
 
 $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
 	// $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);

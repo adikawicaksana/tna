@@ -292,4 +292,33 @@ class Survey extends BaseController
 			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data<br>' . $e->getMessage());
 		}
 	}
+
+	public function edit($id)
+	{
+		$model = $this->model->findOne($id);
+		if (!$model->isEditable($id)) {
+			return redirect()->back()->with('error', 'Data tidak dapat diubah.');
+		}
+
+		return view('survey/form', [
+			'userDetail' => $this->userDetailModel->getUserDetail(),
+			'title' => 'Ubah Hasil Assessment / Penilaian',
+		]);
+	}
+
+	public function update()
+	{
+		if ($this->request->getMethod() !== 'POST') {
+			return redirect()->back()->with('error', 'Method tidak diizinkan');
+		}
+
+		$post = $this->request->getPost();
+		$data = $this->model->findOne($post['survey_id']);
+		dd($data);
+		if (!$this->model->isEditable($data['id'])) {
+			return redirect()->back()->with('error', 'Data tidak dapat diubah.');
+		}
+
+
+	}
 }

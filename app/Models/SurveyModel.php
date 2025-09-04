@@ -64,4 +64,12 @@ class SurveyModel extends Model
 			],
 		];
 	}
+
+	public static function isEditable($id)
+	{
+		$model = (new self())->findOne($id);
+		$result = in_array($model->survey_status, [self::STAT_OPEN, self::STAT_DECLINED]);
+
+		return $result;
+	}
 }

@@ -82,3 +82,4 @@ $routes->get('survey', 'Survey::index', ['as' => 'survey.index']);
 $routes->get('survey/create/(:num)', 'Survey::create/$1', ['as' => 'survey.create']);
 $routes->post('survey/store', 'Survey::store', ['as' => 'survey.store']);
 $routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);
+$routes->post('survey/edit/(:any)', 'Survey::edit/$1', ['as' => 'survey.edit']);

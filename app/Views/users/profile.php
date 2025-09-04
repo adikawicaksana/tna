@@ -445,7 +445,15 @@
     return $(selector).DataTable({
       processing: true,
       serverSide: false,
-      ajax: { url, type: "GET", dataSrc: "data", xhrFields: { withCredentials: true } },
+      ajax: { url, type: "GET",  dataSrc: function (json) {
+        if (json.status && Array.isArray(json.data)) {
+          // kalau status true → isi data
+          return json.data;
+        } else {
+          // kalau status false → balikin array kosong, jangan bikin error
+          return [];
+        }
+      }, xhrFields: { withCredentials: true } },
       columns
     });
   };
@@ -501,35 +509,43 @@
   initSelect2('#kecamatan','kecamatan', () => ({ kab_id: $('#kabupaten').val() }));
   initSelect2('#kelurahan','kelurahan', () => ({ kec_id: $('#kecamatan').val() }));
 
-  const loadDetail = (url, data, onSuccess) => ajaxRequest(`${api_url}/${url}`, 'POST', data, res => onSuccess(res.code===200 ? res.data : {}));
+  const loadDetail = (url, params, onSuccess) => ajaxRequest(`${api_url}/${url}?${new URLSearchParams(params)}`, 'GET', null, res => onSuccess(res.code === 200 ? res.data[0] : {}));
 
-  const FasyankesDetail = code => loadDetail('fasyankes_check', { fasyankes_code: code }, r => {
-    $('#fasyankes_type').val(r.fasyankes_type?.toUpperCase()||'');
-    $('#fasyankes_name').val(r.fasyankes_name||'');
-    $('#fasyankes_address').val(r.fasyankes_address||'');
+
+  const FasyankesDetail = code => loadDetail('institution', { k: code }, r => {
+    $('#fasyankes_type').val(r.type?.toUpperCase()||'');
+    $('#fasyankes_name').val(r.name||'');
+    $('#fasyankes_address').val(r.address||'');
   });
 
-  const NonFasyankesDetail = id => loadDetail('nonfasyankes_check', { id }, r => {
+  const NonFasyankesDetail = id => loadDetail('institution', { k: id }, r => {
     $('#nonfasyankes_id').val(r.id||'');
-    $('#nonfasyankes_name').val(r.nonfasyankes_name||'');
-    $('#nonfasyankes_address').val(r.nonfasyankes_address||'');
+    $('#nonfasyankes_name').val(r.name||'');
+    $('#nonfasyankes_address').val(r.address||'');
   });
 
   $('#fasyankes_code').on('keypress', e => { if(e.which===13){ e.preventDefault(); FasyankesDetail($(e.target).val()); } });
   $('#nonfasyankes_name').on('keypress', e => { if(e.which===13) e.preventDefault(); });
 
-  $('#fasyankes_code, #nonfasyankes_name').on('keyup', function(){
-    const isFasy = $(this).attr('id') === 'fasyankes_code';
-    const query = $(this).val();
-    if(query.length>1){
-      ajaxRequest(`${api_url}/${isFasy?'fasyankes_search':'nonfasyankes_search'}`, 'POST', { keyword: query }, res => {
-        renderSuggestions(isFasy?'#suggestions':'#nonfasyankes_suggestions', res.data,
-          item => `<div class="item" data-${isFasy?'code':'id'}="${isFasy?item.fasyankes_code:item.id}">${item.text}</div>`,
-          'Tidak ditemukan'
-        );
-      });
-    } else $(isFasy?'#suggestions':'#nonfasyankes_suggestions').slideUp(150);
-  });
+ $('#fasyankes_code, #nonfasyankes_name').on('keyup', function () {
+  const isFasy = $(this).attr('id') === 'fasyankes_code';
+  const query = $(this).val();
+  if (query.length > 1) {
+    const url = `${api_url}/institution?k=${encodeURIComponent(query)}${isFasy ? '' : '&c=nonfasyankes'}`;
+    ajaxRequest(url, 'GET', null, res => {
+      renderSuggestions(
+        isFasy ? '#suggestions' : '#nonfasyankes_suggestions',
+        res.data,
+        item => isFasy
+          ? `<div class="item" data-code="${item.code}">${item.code} - ${item.name}</div>`
+          : `<div class="item" data-id="${item.id}">${item.name}</div>`,
+        'Tidak ditemukan'
+      );
+    });
+  } else {
+    $(isFasy ? '#suggestions' : '#nonfasyankes_suggestions').slideUp(150);
+  }
+});
 
   $(document).on('click','#suggestions .item', function(){ const code=$(this).data('code'); $('#fasyankes_code').val(code); FasyankesDetail(code); $('#suggestions').fadeOut(); });
   $(document).on('click','#nonfasyankes_suggestions .item', function(){ NonFasyankesDetail($(this).data('id')); $('#nonfasyankes_suggestions').fadeOut(); });
@@ -554,15 +570,15 @@
   handleFormSubmit('#formFasyankes', base_url+'profile/fasyankes','.datatables-fasyankes');
   handleFormSubmit('#formNonFasyankes', base_url+'profile/nonfasyankes','.datatables-non-fasyankes');
 
-  loadDataTable('.datatables-fasyankes', base_url+'profile/fasyankes/data', [
-    { data: "no" }, { data: "fasyankes" }, { data: "alamat" }, { data: "aksi" }
+  loadDataTable('.datatables-fasyankes', base_url+'profile/institutions/data?c=fasyankes', [
+    { data: "no" }, { data: "name" }, { data: "address" }, { data: "action" }
   ]);
-  loadDataTable('.datatables-non-fasyankes', base_url+'profile/nonfasyankes/data', [
-    { data: "no" }, { data: "non_fasyankes" }, { data: "alamat" }, { data: "aksi" }
+  loadDataTable('.datatables-non-fasyankes', base_url+'profile/institutions/data?c=nonfasyankes', [
+    { data: "no" }, { data: "name" }, { data: "address" }, { data: "action" }
   ]);
 
-  handleDelete('.delete-fasyankes', '.datatables-fasyankes','profile/fasyankes/delete','Data fasyankes ini akan dinonaktifkan');
-  handleDelete('.delete-non-fasyankes', '.datatables-non-fasyankes','profile/nonfasyankes/delete','Data non fasyankes ini akan dinonaktifkan');
+  handleDelete('.delete-fasyankes', '.datatables-fasyankes','profile/institutions/delete','Data fasyankes ini akan dihapus');
+  handleDelete('.delete-non-fasyankes', '.datatables-non-fasyankes','profile/institutions/delete','Data non fasyankes ini akan dihapus');
 
   initJobdescTable();
 

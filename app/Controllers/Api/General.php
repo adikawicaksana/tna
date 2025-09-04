@@ -3,182 +3,105 @@
 namespace App\Controllers\Api;
 
 use CodeIgniter\RESTful\ResourceController;
-use App\Models\FasyankesModel;
-use App\Models\NonFasyankesModel;
+use App\Models\InstitutionsModel;
 use App\Models\MasterTrainingModel;
 
 class General extends ResourceController
 {
-    public function postFasyankesCheck(){
-        $fasyankesCode = $this->request->getPost('fasyankes_code');
+     
+    protected $institutions;
 
-        // Validasi jika kosong
-        if (empty($fasyankesCode)) {
+    public function __construct()
+    {
+        $this->institutions = new InstitutionsModel();
+    }
+
+    private function isValidUuid(string $uuid): bool
+    {
+        return (bool) preg_match(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+            $uuid
+        );
+    }
+
+    public function getInstitution()
+    {
+        $category = $this->request->getGet('c') ?? 'fasyankes';
+        $keyword  = $this->request->getGet('k');
+        $page  = $this->request->getGet('p') ?? 1;
+
+        if (empty($keyword)) {
             return $this->response->setJSON([
-                'status'    => false,
-                'code'      => 400,
-                'type'      => 'warning',
-                'message'   => 'Kode Fasyankes tidak boleh kosong'
-            ])->setStatusCode(200);
+                'status'  => false,
+                'code'    => 400,
+                'type'    => 'warning',
+                'message' => 'Parameter keyword wajib diisi.'
+            ])->setStatusCode(400);
         }
 
-        // Validasi format (hanya huruf dan angka)
-        if (!ctype_digit($fasyankesCode)) {
-            return $this->response->setJSON([
-                'status'    => false,
-                'code'      => 400,
-                'type'      => 'warning',
-                'message'   => 'Format kode Fasyankes tidak valid, hanya angka yang diperbolehkan.'
-            ])->setStatusCode(200);
-        }
+        $result = ['total' => 0, 'page' => 0, 'last_page'=> 0, 'per_page' => 0,'data'  => []];
 
-        $model = new FasyankesModel();
-        $data = $model->where('fasyankes_code', $fasyankesCode)->first();
-
-        if ($data) {
-            return $this->response->setJSON([
-                'status'    => true,
-                'code'      => 200,
-                'type'      => 'success',
-                'message'   => 'Data Fasyankes ditemukan',
-                'data'      => $data
-            ]);
+        if ($this->isValidUuid($keyword)) {
+            $row = $this->institutions->where('id', $keyword)->first();
+            if ($row) {
+                $result['total'] = 1; $result['page'] = 1; $result['last_page'] = 1; $result['per_page'] = 1; $result['data']  = [$row];
+            }
+        } elseif (ctype_digit($keyword)) {
+            $row = $this->institutions->where('code', $keyword)->first();
+            if ($row) {
+                $result['total'] = 1; $result['data']  = [$row];
+            } else {
+                $result = $this->institutions->search($keyword, $category, $page);
+            }
         } else {
-            return $this->response->setJSON([
-                'status'    => false,
-                'type'      => 'warning',
-                'code'      => 204, // Data tidak ditemukan (no content secara logika)
-                'message'   => 'Kode Fasyankes tidak ditemukan'
-            ])->setStatusCode(200);
-        }
-    }
-
-     public function postFasyankesSearch()
-        {
-            $keyword = $this->request->getPost('keyword');
-            $model = new FasyankesModel();
-            $results = $model->search($keyword);
-
-            $data = [];
-            foreach ($results as $row) {
-                $data[] = [
-                    'fasyankes_code' => $row['fasyankes_code'],
-                    'text' => $row['fasyankes_name']
-                ];
-            }
-
-
-            if (empty($data)) {
-                return $this->response->setJSON([
-                    'status'    => false,
-                    'code'      => 204,
-                    'type'      => 'error',
-                    'message'   => 'Data Fasyankes tidak ditemukan',
-                    'data'      => []
-                ]);
-            }
-
-            return $this->response->setJSON([
-                    'status'    => true,
-                    'code'      => 200,
-                    'type'      => 'success',
-                    'message'   => 'Data Fasyankes ditemukan',
-                    'data'      => $data
-                ]);
+            $result = $this->institutions->search($keyword, $category, $page);
         }
 
-
-    public function postNonFasyankesCheck(){
-        $fasyankesId = $this->request->getPost('id');
-
-        // Validasi jika kosong
-        if (empty($fasyankesId)) {
+        if ($result['total'] > 0) {
             return $this->response->setJSON([
-                'status'    => false,
-                'code'      => 400,
-                'type'      => 'warning',
-                'message'   => 'ID Institusi tidak boleh kosong'
-            ])->setStatusCode(200);
-        }
-
-        $model = new NonFasyankesModel();
-        $data = $model->where('id', $fasyankesId)->first();
-
-        if ($data) {
-            return $this->response->setJSON([
-                'status'    => true,
-                'code'      => 200,
-                'type'      => 'success',
-                'message'   => 'Data Non Fasyankes ditemukan',
-                'data'      => $data
+                'status'  => true,
+                'code'    => 200,
+                'type'    => 'success',
+                'message' => 'Data ditemukan',
+                'total'   => $result['total'],
+                'page'     => $result['page'],
+                'last_page'=> $result['last_page'],
+                'per_page' => $result['per_page'],
+                'data'    => $result['data']
             ]);
-        } else {
-            return $this->response->setJSON([
-                'status'    => false,
-                'type'      => 'warning',
-                'code'      => 204, // Data tidak ditemukan (no content secara logika)
-                'message'   => 'ID Non Fasyankes tidak ditemukan'
-            ])->setStatusCode(200);
-        }
-    }
-
-
-     public function postNonFasyankesSearch()
-        {
-            $keyword = $this->request->getPost('keyword');
-            $models = new NonFasyankesModel();
-            $results = $models->search($keyword);
-
-            $data = [];
-            foreach ($results as $row) {
-                $data[] = [
-                    'id' => $row['id'],
-                    'text' => $row['nonfasyankes_name']
-                ];
-            }
-
-            if (empty($data)) {
-                return $this->response->setJSON([
-                    'status'    => false,
-                    'code'      => 204,
-                    'type'      => 'error',
-                    'message'   => 'Data Non Fasyankes tidak ditemukan',
-                    'data'      => []
-                ]);
-            }
-
-
-            return $this->response->setJSON([
-                    'status'    => true,
-                    'code'      => 200,
-                    'type'      => 'success',
-                    'message'   => 'Data Non Fasyankes ditemukan ',
-                    'data'      => $data
-                ]);
         }
 
-   public function getPelatihanSiakpel()
-{
-    $term = $this->request->getGet('q');
-    $maxData = $this->request->getGet('maxData');
-    $model = new MasterTrainingModel();
+        return $this->response->setJSON([
+            'status'  => false,
+            'code'    => 204,
+            'type'    => 'warning',
+            'message' => 'Data ' . $category . ' tidak ditemukan'
+        ])->setStatusCode(200);
 
-    $query = $model->select('id, nama_pelatihan');
-
-    if ($term) {
-        $query->where("nama_pelatihan ILIKE '%" . $term . "%'");
     }
 
-    $results = $query->findAll($maxData);
+    public function getPelatihanSiakpel()
+    {
+        $term = $this->request->getGet('q');
+        $maxData = $this->request->getGet('maxData');
+        $model = new MasterTrainingModel();
 
-    $data = [];
-    foreach ($results as $row) {
-        $data[] = [
-            'id'   => $row['id'],
-            'text' => $row['nama_pelatihan']
-        ];
+        $query = $model->select('id, nama_pelatihan');
+
+        if ($term) {
+            $query->where("nama_pelatihan ILIKE '%" . $term . "%'");
+        }
+
+        $results = $query->findAll($maxData);
+
+        $data = [];
+        foreach ($results as $row) {
+            $data[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_pelatihan']
+            ];
+        }
+
+        return $this->response->setJSON($data);
     }
-
-    return $this->response->setJSON($data);
-}
 }

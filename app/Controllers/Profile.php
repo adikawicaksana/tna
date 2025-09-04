@@ -5,6 +5,8 @@ namespace App\Controllers;
 use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
 use App\Models\UserDetailModel;
+use App\Models\InstitutionsModel;
+use App\Models\UsersInstitutionsModel;
 use App\Models\UsersFasyankesModel;
 use App\Models\UsersNonFasyankesModel;
 use App\Models\ReferenceDataModel;
@@ -19,15 +21,21 @@ class Profile extends BaseController
 
     protected $userModel;
     protected $userDetailModel;
+    protected $institutions;
+    protected $userInstitutions;
+
     protected $usersFasyankesModel;
     protected $usersNonFasyankesModel;
     protected $fasyankesModel;
 
     public function __construct()
     {
-        $this->fasyankesModel = new FasyankesModel();
+        $this->institutions = new InstitutionsModel();
+        $this->userInstitutions = new UsersInstitutionsModel;
         $this->userModel = new UserModel();
         $this->userDetailModel = new UserDetailModel();
+
+        $this->fasyankesModel = new FasyankesModel();
         $this->usersFasyankesModel = new UsersFasyankesModel();
         $this->usersNonFasyankesModel = new UsersNonFasyankesModel();
     }
@@ -101,13 +109,13 @@ class Profile extends BaseController
         }
 
         try {
-            $fasyankesData = $this->fasyankesModel
-                ->where('fasyankes_code', $fasyankes_code)
+            $fasyankesData = $this->institutions
+                ->where('code', $fasyankes_code)
                 ->first();
-
-            $existing = $this->usersFasyankesModel
+            
+            $existing = $this->userInstitutions
                 ->where('_id_users', $_id_users)
-                ->where('_id_master_fasyankes', $fasyankesData['id'])
+                ->where('_id_master_institutions', $fasyankesData['id'])
                 ->first();
 
             if ($existing) {
@@ -117,7 +125,7 @@ class Profile extends BaseController
                         'message' => 'Data fasyankes sudah pernah ditambahkan.'
                     ]);
                 } else {
-                    $this->usersFasyankesModel->update($existing['id'], [
+                    $this->userInstitutions->update($existing['id'], [
                         'status' => 'true'
                     ]);
 
@@ -128,13 +136,12 @@ class Profile extends BaseController
                 }
             }            
 
-            // generate UUID baru
             $idUsersFasyankes = Uuid::uuid7()->toString();
 
-            $this->usersFasyankesModel->insert([
+            $this->userInstitutions->insert([
                 'id' => $idUsersFasyankes,
                 '_id_users'             => $_id_users,
-                '_id_master_fasyankes'  =>  $fasyankesData['id'],
+                '_id_master_institutions'  =>  $fasyankesData['id'],
                 'status'                => 'true'
             ]);
 
@@ -150,40 +157,45 @@ class Profile extends BaseController
         }
     }
 
-    public function getUserFasyankes()
+    public function getUserInstitutions()
     {
-        try {
-            $session = session();
-            $_id_users = $session->get('_id_users');
+        $category = $this->request->getGet('c') ?? 'fasyankes';
+        $session = session();
+        $_id_users = $session->get('_id_users');
+        if($category=='nonfasyankes') $classbutton = 'non-fasyankes'; else $classbutton = 'fasyankes';
 
-            $usersFasyankesModel = new \App\Models\UsersFasyankesModel();
-            $fasyankes = $usersFasyankesModel
-                ->select('*, users_fasyankes.id as id_userfasyankes')
-                ->join('master_fasyankes', 'master_fasyankes.id = users_fasyankes._id_master_fasyankes', 'left')
-                ->where('users_fasyankes.status', 'true')
-                ->where('users_fasyankes._id_users', $_id_users)
-                ->findAll();
+        $fasyankes  =  $this->userInstitutions->getInstitutionsByUser($_id_users, $category);
+        $data = [];
+        $no = 1;
 
-            $data = [];
-            $no = 1;
+        if (empty($fasyankes)) {
+            return $this->response->setJSON([
+                'status'  => false,
+                'code'    => 400,
+                'type'    => 'warning',
+                'message' => 'Data tidak ditemukan',
+            ])->setStatusCode(200);
+        }
+
             foreach ($fasyankes as $row) {
                 $data[] = [
                     'no'       => $no++,
-                    'fasyankes' => strtoupper($row['fasyankes_type'] . ' ' . $row['fasyankes_name']),
-                    'alamat'   => $row['fasyankes_address'],
-                    'aksi'     => '<button class="btn rounded-pill btn-danger btn-sm delete-fasyankes" data-id="' . $row['id_userfasyankes'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+                    'name'     => strtoupper($row['type'] . ' ' . $row['name']),
+                    'address'   => $row['address'],
+                    'action'     => '<button class="btn rounded-pill btn-danger btn-sm delete-'.$classbutton.'" data-id="' . $row['id_usersinstitutions'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
                 ];
             }
 
-            return $this->response->setJSON(['data' => $data]);
-        } catch (\Throwable $e) {
-            log_message('error', 'Error getUserFasyankes: ' . $e->getMessage());
-            return $this->response->setStatusCode(500)
-                ->setJSON(['error' => $e->getMessage()]);
-        }
+            return $this->response->setJSON([
+                'status'  => true,
+                'code'    => 200,
+                'type'    => 'success',
+                'message' => 'Data ditemukan',                
+                'data'    => $data
+            ])->setStatusCode(200);
     }
 
-    public function deleteUserFasyankes($id = null)
+    public function deleteUserInstitutions($id = null)
     {
         try {
             if (!$id) {
@@ -191,24 +203,20 @@ class Profile extends BaseController
                     ->setJSON(['error' => 'ID wajib diisi']);
             }
 
-            $usersFasyankesModel = new \App\Models\UsersFasyankesModel();
 
-            $updated = $usersFasyankesModel->update($id, ['status' => 'false']);
+            $this->userInstitutions->delete($id);
 
-            if ($updated) {
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Fasyankes berhasil dihapus'
+                    'message' => 'Institusi berhasil dihapus'
                 ]);
-            } else {
-                return $this->response->setStatusCode(400)
-                    ->setJSON(['success' => false, 'message' => 'Gagal menghapus fasyankes']);
-            }
+           
         } catch (\Throwable $e) {
             log_message('error', 'Gagal menghapus fasyankes');
             return $this->response->setStatusCode(500)
                 ->setJSON(['error' => $e->getMessage()]);
         }
+        
     }
 
     public function storeUserNonFasyankes()
@@ -225,10 +233,12 @@ class Profile extends BaseController
         }
 
         try {
-            $existing = $this->usersNonFasyankesModel
+
+            $existing = $this->userInstitutions
                 ->where('_id_users', $_id_users)
-                ->where('_id_master_nonfasyankes', $nonfasyankes_id)
+                ->where('_id_master_institutions', $nonfasyankes_id)
                 ->first();
+
             if ($existing) {
                 if ($existing['status'] === 'true') {
                     return $this->response->setJSON([
@@ -237,17 +247,17 @@ class Profile extends BaseController
                     ]);
                 }
 
-                $this->usersNonFasyankesModel->update($existing['id'], ['status' => 'true']);
+                $this->userInstitutions->update($existing['id'], ['status' => 'true']);
                 return $this->response->setJSON([
                     'success' => true,
                     'message' => 'Data Non Fasyankes berhasil disimpan.'
                 ]);
             }
 
-            $this->usersNonFasyankesModel->insert([
+            $this->userInstitutions->insert([
                 'id'                        => Uuid::uuid7()->toString(),
                 '_id_users'                 => $_id_users,
-                '_id_master_nonfasyankes'   => $nonfasyankes_id
+                '_id_master_institutions'   => $nonfasyankes_id
             ]);
 
             return $this->response->setJSON([
@@ -262,67 +272,7 @@ class Profile extends BaseController
         }
     }
 
-    public function getUserNonFasyankes()
-    {
-        try {
-            $session = session();
-            $_id_users = $session->get('_id_users');
-
-            $usersNonFasyankesModel = new \App\Models\UsersNonFasyankesModel();
-            $fasyankes = $usersNonFasyankesModel
-                ->select('*, users_nonfasyankes.id as id_users_nonfasyankes')
-                ->join('master_nonfasyankes', 'master_nonfasyankes.id = users_nonfasyankes._id_master_nonfasyankes', 'left')
-                ->where('users_nonfasyankes.status', 'true')
-                ->where('users_nonfasyankes._id_users', $_id_users)
-                ->findAll();
-
-            $data = [];
-            $no = 1;
-            foreach ($fasyankes as $row) {
-                $data[] = [
-                    'no'       => $no++,
-                    'non_fasyankes' => $row['nonfasyankes_name'],
-                    'alamat'   => $row['nonfasyankes_address'],
-                    'aksi'     => '<button class="btn rounded-pill btn-danger btn-sm delete-non-fasyankes" data-id="' . $row['id_users_nonfasyankes'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
-                ];
-            }
-
-            return $this->response->setJSON(['data' => $data]);
-        } catch (\Throwable $e) {
-            log_message('error', 'Error getUserFasyankes: ' . $e->getMessage());
-            return $this->response->setStatusCode(500)
-                ->setJSON(['error' => $e->getMessage()]);
-        }
-    }
-
-    public function deleteUserNonFasyankes($id = null)
-    {
-        try {
-            if (!$id) {
-                return $this->response->setStatusCode(400)
-                    ->setJSON(['error' => 'ID wajib diisi']);
-            }
-
-            $usersNonFasyankesModel = new \App\Models\UsersNonFasyankesModel();
-
-            $updated = $usersNonFasyankesModel->update($id, ['status' => 'false']);
-
-            if ($updated) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Non Fasyankes berhasil dihapus'
-                ]);
-            } else {
-                return $this->response->setStatusCode(400)
-                    ->setJSON(['success' => false, 'message' => 'Gagal menghapus non fasyankes']);
-            }
-        } catch (\Throwable $e) {
-            log_message('error', 'Gagal menghapus non fasyankes');
-            return $this->response->setStatusCode(500)
-                ->setJSON(['error' => $e->getMessage()]);
-        }
-    }
-
+    
     
 public function storeJobdescCompetence()
 {
@@ -335,14 +285,12 @@ public function storeJobdescCompetence()
     $jobDescription = $this->request->getPost('user_uraiantugas');
     $trainings      = $this->request->getPost('user_pelatihan'); 
 
-    // Cek apakah jobdesc sudah ada
     $jobdesc = $jobdescModel
         ->where('_id_users', $_id_users)
         ->where('job_description', $jobDescription)
         ->first();
 
     if (!$jobdesc) {
-        // Generate UUID baru untuk tabel jobdesc
         $newJobdescId = Uuid::uuid7()->toString();
 
         $jobdescModel->insert([
@@ -356,7 +304,6 @@ public function storeJobdescCompetence()
         $idUsersJobdesc = $jobdesc['id'];
     }
 
-    // Insert kompetensi kalau ada data training
     if (is_array($trainings)) {
         foreach ($trainings as $training) {
             $trainingData = explode("&&", $training);

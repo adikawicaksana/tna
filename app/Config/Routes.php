@@ -28,6 +28,11 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 
 $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
 
+	$routes->get('/profile/institutions/data', 'Profile::getUserInstitutions');
+	$routes->post('/profile/institutions/delete/(:segment)', 'Profile::deleteUserInstitutions/$1');
+
+
+
 	$routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes');
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:segment)', 'Profile::deleteUserFasyankes/$1');
@@ -49,11 +54,14 @@ $routes->group('api/v1', ['filter' => 'authjwt'], function ($routes) {
 $routes->post('api/v1/login', 'Api\Auth::login');
 $routes->post('api/v1/logout', 'Api\Auth::logout');
 
-$routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
-$routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
-$routes->post('api/nonfasyankes_check', 'Api\General::postNonFasyankesCheck');
-$routes->post('api/nonfasyankes_search', 'Api\General::postNonFasyankesSearch');
+// $routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
+// $routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
+// $routes->post('api/nonfasyankes_check', 'Api\General::postNonFasyankesCheck');
+// $routes->post('api/nonfasyankes_search', 'Api\General::postNonFasyankesSearch');
+
+$routes->get('api/institution', 'Api\General::getInstitution');
 $routes->get('api/pelatihan_siakpel', 'Api\General::getPelatihanSiakpel', ['as' => 'api.pelatihan_siakpel']);
+
 
 $routes->get('api/provinsi', 'Api\Area::provinsi');
 $routes->get('api/kabupaten', 'Api\Area::kabupaten');

@@ -6,18 +6,22 @@ use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\FasyankesModel;
-use App\Models\UsersFasyankesModel;
-use App\Models\UsersNonFasyankesModel;
+use App\Models\InstitutionsModel;
+use App\Models\UsersInstitutionsModel;
 use App\Services\NotificationService;
 use App\Helpers\CommonHelper;
 
 class Register extends BaseController
 {
     protected $notifService;
+    protected $institutions;
+    protected $userInstitutions;
     
      public function __construct()
     {
         $this->notifService = new NotificationService();
+        $this->institutions = new InstitutionsModel();
+        $this->userInstitutions = new UsersInstitutionsModel;
     }
 
     public function index()
@@ -133,28 +137,53 @@ class Register extends BaseController
             'mobile'   => $mobile
         ]);
 
+
+ $detail_user = $detailModel->where('_id_users', $newIDUser)->first();
+    if($detail_user){
        if (in_array($mode, ['fasyankes', 'non-fasyankes'])) {
             $data = [
                 'id'        => Uuid::uuid7()->toString(),
                 '_id_users' => $newIDUser
-            ];
+            ];            
 
-            if ($mode === 'fasyankes') {
-                $fasyankesData = (new FasyankesModel())
-                    ->where('fasyankes_code', $request->getPost('fasyankes_code'))
+           if ($mode === 'fasyankes') {
+                $institution = $this->institutions
+                    ->where('code', $request->getPost('fasyankes_code'))
                     ->first();
-
-                if ($fasyankesData) {
-                    $data['_id_master_fasyankes'] = $fasyankesData['id'];
-                    (new UsersFasyankesModel())->insert($data);
-                }
             } else {
-                $data['_id_master_nonfasyankes'] = $request->getPost('nonfasyankes_id');
-                (new UsersNonFasyankesModel())->insert($data);
+                $institution = $this->institutions
+                    ->where('id', $request->getPost('nonfasyankes_id'))
+                    ->first();
+            }
+
+            if ($institution) {
+                $data['_id_master_institutions'] = $institution['id'];
+                $this->userInstitutions->insert($data);
             }
         }
 
-        return $this->generateOtpAndResponse($session, $mobile, $email, $newIDUser);
+        $this->generateOtpAndResponse($session, $mobile, $email, $newIDUser);
+
+       
+
+        return $this->response->setJSON([
+                'status'    => true,
+                'code'      => 200,
+                'type'      => 'success',
+                'message'   => 'Registrasi diterima, dan OTP telah dikirim.',
+                'data'      => $detail_user
+            ])->setStatusCode(200);
+
+        }else{
+
+        return $this->response->setJSON([
+        'status'  => false,
+        'code'    => 400,
+        'type'    => 'warning',
+        'message' => 'Registrasi Gagal',
+        'data'    => []
+            ])->setStatusCode(400);
+        }
 
     }
 

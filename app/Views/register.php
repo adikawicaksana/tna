@@ -478,6 +478,18 @@
       });
     };
 
+    const ajaxGet = (url, successCb, errorCb) => {
+      $.ajax({
+        url,
+        method: 'GET',
+        dataType: 'json',
+        success: successCb,
+        error: xhr => errorCb && errorCb(xhr)
+      });
+    };
+
+    
+
     $(document).ready(function () {
       const base_url = "<?= base_url() ?>";
       const api_url = `${base_url}api`;
@@ -488,7 +500,7 @@
       // === Detail Handlers ===
       const fillForm = (res, fields) => {
         if (res.code === 200) {
-          Object.entries(fields).forEach(([key, val]) => $(`#${key}`).val(res.data[val]));
+           Object.entries(fields).forEach(([key, val]) => $(`#${key}`).val(val));
           $('#segment2').prop('disabled', false);
         } else {
           Object.keys(fields).forEach(key => $(`#${key}`).val(""));
@@ -497,57 +509,70 @@
         showAlert(res.type, res.message);
       };
 
-      const FasyankesDetail = code =>
-        ajaxPost(`${api_url}/fasyankes_check`, {
-          fasyankes_code: code
-        },
-          res => fillForm(res, {
-            fasyankes_type: 'fasyankes_type',
-            fasyankes_name: 'fasyankes_name',
-            fasyankes_address: 'fasyankes_address'
-          })
-        );
+      const getInstitutionDetail = (id, type = "fasyankes", cb) => {
+        const mappings = {
+          fasyankes: {
+            fasyankes_type: "type",
+            fasyankes_name: "name",
+            fasyankes_address: "address"
+          },
+          nonfasyankes: {
+            nonfasyankes_id: "id",
+            nonfasyankes_name: "name",
+            nonfasyankes_address: "address"
+          }
+        };
 
-      const NonFasyankesDetail = id =>
-        ajaxPost(`${api_url}/nonfasyankes_check`, {
-          id
-        },
-          res => fillForm(res, {
-            nonfasyankes_id: 'id',
-            nonfasyankes_name: 'nonfasyankes_name',
-            nonfasyankes_address: 'nonfasyankes_address'
-          })
-        );
+        if (!mappings[type]) {
+          console.error(`Unknown institution type: ${type}`);
+          return;
+        }
+
+        ajaxGet(`${api_url}/institution?k=${encodeURIComponent(id)}`, res => {
+          const mapping = mappings[type];
+          const detail = res.status && res.data?.length > 0 ? res.data[0] : null;
+
+          const filled = {};
+          Object.entries(mapping).forEach(([formField, dataKey]) => {
+            filled[formField] = detail?.[dataKey] || "";
+          });
+
+          fillForm(res, filled);
+          if (typeof cb === "function") cb(res, filled);
+        });
+      };
 
       // === Captcha reload ===
       $('#reloadCaptcha').click(reloadCaptcha);
 
       // === Search live ===
-      const liveSearch = (selector, url, container, template) => {
-        $(selector).on('keyup', function () {
-          const q = $(this).val();
-          if (q.length > 1) {
-            ajaxPost(`${api_url}/${url}`, {
-              keyword: q
-            }, res => {
-              $(container).html(
-                res.data.length ? res.data.map(template).join('') : `<div class="item text-muted">Tidak ditemukan</div>`
-              ).slideDown(150);
-            });
-          } else $(container).slideUp(150);
-        });
-      };
+      const liveSearch = (selector, category, container, template) => {
+      $(selector).on('keyup', function () {
+        const q = $(this).val();
+        if (q.length > 1) {
+          ajaxGet(`${api_url}/institution?k=${encodeURIComponent(q)}&c=${category}`, res => {
+            $(container).html(
+              res.data.length
+                ? res.data.map(template).join('')
+                : `<div class="item text-muted">Tidak ditemukan</div>`
+            ).slideDown(150);
+          });
+        } else {
+          $(container).slideUp(150);
+        }
+      });
+    };
 
-      liveSearch('#nonfasyankes_name', 'nonfasyankes_search', '#nonfasyankes_suggestions',
-        item => `<div class="item" data-id="${item.id}">${item.text}</div>`);
+      liveSearch('#nonfasyankes_name', 'nonfasyankes', '#nonfasyankes_suggestions',
+        item => `<div class="item" data-id="${item.id}">${item.name}</div>`);
 
-      liveSearch('#fasyankes_code', 'fasyankes_search', '#suggestions',
-        item => `<div class="item" data-code="${item.fasyankes_code}">${item.fasyankes_code} - ${item.text}</div>`);
+      liveSearch('#fasyankes_code', 'fasyankes', '#suggestions',
+        item => `<div class="item" data-code="${item.code}" data-id="${item.id}">${item.code} - ${item.type} ${item.name}</div>`);
 
       $('#fasyankes_code').on('keydown', function (e) {
         if (e.key === "Enter" || e.which === 13) {
           e.preventDefault();
-          FasyankesDetail($(this).val())
+          getInstitutionDetail($(this).val(),'fasyankes');
         }
       });
 
@@ -557,20 +582,20 @@
         }
       });
 
-      // === Suggestion clicks ===
       $(document).on('click', '#suggestions .item', function () {
         const code = $(this).data('code');
+        const id = $(this).data('id');
         $('#fasyankes_code').val(code);
-        FasyankesDetail(code);
+        getInstitutionDetail(id,'fasyankes');
+        
          $('#suggestions').fadeOut();
       });
       
-    $(document).on('click', '#nonfasyankes_suggestions .item', function () {
-        NonFasyankesDetail($(this).data('id'));
-        $('#nonfasyankes_suggestions').fadeOut();
+      $(document).on('click', '#nonfasyankes_suggestions .item', function () {       
+          getInstitutionDetail($(this).data('id'),'nonfasyankes');
+          $('#nonfasyankes_suggestions').fadeOut();
       });
-
-      // === Segment toggle ===
+      
       $('#segment1').click(function () {
         const selected = $('input[name="fasyankes_mode"]:checked').val();
         $('#fasyankes_mode, #non_fasyankes_mode').hide();
@@ -581,9 +606,18 @@
         $('#multiStepsForm').find('input:not([type="submit"]):input:not([type="radio"]):not([type="button"]):not([type="hidden"]), textarea').val('');
 
       });
-
-      // === Register Submit ===
+      
       $('#btnRegister').click(function () {
+
+        Swal.fire({
+          title: "Loading...",
+          text: "Sedang memproses pendaftaran, mohon tunggu",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         const captcha = $('input[name="captcha"]').val();
 
         $.ajax({
@@ -592,6 +626,7 @@
           data: $('#multiStepsForm').serialize(),
           dataType: 'json',
           success: res => {
+            Swal.close();
             if (res.code === 400) {
               if (res.show_otp_modal) {
                 const otpModal = new bootstrap.Modal('#otpModal');
@@ -614,14 +649,13 @@
               }
             } else {
               const otpModal = new bootstrap.Modal('#otpModal');
-              $('#otpPhoneNumber').text("+62xxxxxxx");
+              $('#otpPhoneNumber').text('+' + res.data.mobile);
               otpModal.show();
             }
           }
         });
       });
 
-      // === OTP Section ===
       const otpInputs = document.querySelectorAll('.otp-input');
       const otpForm = document.getElementById('otpForm');
       const resendBtn = document.getElementById('resendOtpLink');
@@ -645,6 +679,15 @@
 
       otpForm.addEventListener('submit', e => {
         e.preventDefault();
+        Swal.fire({
+          title: "Verifikasi OTP...",
+          text: "Sedang memverifikasi kode, mohon tunggu",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         const otp = Array.from(otpInputs).map(i => i.value).join('');
         if (otp.length < otpInputs.length) return showAlert('error', 'Silakan isi semua digit OTP');
 
@@ -665,6 +708,7 @@
             return res.json();
           })
           .then(data => {
+            Swal.close();
             if (data.status) {
               bootstrap.Modal.getInstance(document.getElementById('otpModal')).hide();
               showAlert(data.type, data.message, './login');

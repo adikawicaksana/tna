@@ -124,7 +124,23 @@ class Survey extends BaseController
 
 	public function show($id)
 	{
-		return view('survey/show', ['id' => $id]);
+		$builder = \Config\Database::connect();
+		$data = $builder->table('survey s')
+			->select('s.*, fasyankes_type, fasyankes_name, nonfasyankes_name, u.front_title, u.fullname, u.back_title')
+			->join('users_detail u', 's.respondent_id = u._id_users')
+			->join('master_fasyankes f', 's.institution_id = f.id AND s.group_type = ' . SurveyModel::GROUP_FASYANKES, 'left')
+			->join('master_nonfasyankes nf', 's.institution_id = nf.id AND s.group_type = ' . SurveyModel::GROUP_NONFASYANKES, 'left')
+			->where(['survey_id' => $id])
+			->get()
+			->getRow();
+		$approval_history = json_decode($data->approval_remark, true);
+
+		return view('survey/show', [
+			'userDetail' => $this->userDetailModel->getUserDetail(),
+			'data' => $data,
+			'approval_history' => $approval_history,
+			'title' => 'Detail Assessment',
+		]);
 	}
 
 	public function create($type)
@@ -275,11 +291,5 @@ class Survey extends BaseController
 			$dbtrans->transRollback();
 			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data<br>' . $e->getMessage());
 		}
-	}
-
-	public function update($id)
-	{
-		$data = $this->model->findOne($id);
-		return view('survey/form', $data);
 	}
 }

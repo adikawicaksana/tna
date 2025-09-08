@@ -18,7 +18,7 @@
 						<th>Jenis</th>
 						<th>Nama</th>
 						<th>Pengusul</th>
-						<th>Action</th>
+						<!-- <th>Action</th> -->
 					</tr>
 				</thead>
 			</table>
@@ -40,7 +40,7 @@
 				{ data: "jenis_pelatihan" },
 				{ data: "nama_pelatihan" },
 				{ data: "instansi_pengusul" },
-				{ data: "action", orderable: false, searchable: false }
+				// { data: "action", orderable: false, searchable: false }
 			],
 			columnDefs: [{
 				targets: [0],

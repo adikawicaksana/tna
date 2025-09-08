@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Helpers\CommonHelper;
-use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\QuestionModel;
 use App\Models\QuestionnaireModel;
@@ -13,8 +12,7 @@ use App\Models\RespondentDetailModel;
 use App\Models\SurveyModel;
 use App\Models\SurveyDetailModel;
 use App\Models\UsersCompetenceModel;
-use App\Models\UsersFasyankesModel;
-use App\Models\UsersNonFasyankesModel;
+use App\Models\UsersInstitutionsModel;
 use Ramsey\Uuid\Uuid;
 use Exception;
 
@@ -25,8 +23,7 @@ class Survey extends BaseController
 	protected $respondentDetailModel;
 	protected $questionModel;
     protected $userDetailModel;
-	protected $usersFasyankesModel;
-    protected $usersNonFasyankesModel;
+	protected $usersInstitutionsModel;
 
 	public function __construct()
 	{
@@ -35,8 +32,7 @@ class Survey extends BaseController
 		$this->surveyDetailModel = new SurveyDetailModel();
 		$this->respondentDetailModel = new RespondentDetailModel();
 		$this->questionModel = new QuestionModel();
-		$this->usersFasyankesModel = new UsersFasyankesModel();
-        $this->usersNonFasyankesModel = new UsersNonFasyankesModel();
+		$this->usersInstitutionsModel = new UsersInstitutionsModel();
 	}
 
 	public function index()
@@ -181,38 +177,22 @@ class Survey extends BaseController
 			}
 		}
 
-        $session = session();
 		$options = ['' => '-- Pilih --'];
-
 		if ($type == QuestionnaireModel::TYPE_FASYANKES || $type == QuestionnaireModel::TYPE_INDIVIDUAL_FASYANKES) {
 			$labelName = 'Pilih Fasyankes';
-			$selectName = 'fasyankes';
-			$model = $this->usersFasyankesModel;
-			$joinTable = 'master_fasyankes';
-			$joinCondition = 'master_fasyankes.id = users_fasyankes._id_master_fasyankes';
-			$formatOption = fn($item) => strtoupper($item['fasyankes_type']) . ' ' . $item['fasyankes_name'];
+			$records = $this->usersInstitutionsModel->getInstitutionsByUser(session()->get('_id_users'));
 		} else {
 			$labelName = 'Pilih Non Fasyankes';
-			$selectName = 'nonfasyankes';
-			$model = $this->usersNonFasyankesModel;
-			$joinTable = 'master_nonfasyankes';
-			$joinCondition = 'master_nonfasyankes.id = users_nonfasyankes._id_master_nonfasyankes';
-			$formatOption = fn($item) => $item['nonfasyankes_name'];
+			$records = $this->usersInstitutionsModel->getInstitutionsByUser(session()->get('_id_users'), 'nonfasyankes');
 		}
-
-		$records = $model
-			->join($joinTable, $joinCondition, 'left')
-			->where('_id_users', $session->get('_id_users'))
-			->where('status', 'true')
-			->findAll();
 
 		foreach ($records as $record) {
-			$options[$record['id']] = $formatOption($record);
+			$options[$record['id']] = strtoupper($record['type']) . ' ' . $record['name'];
 		}
 
-		$fasyankes_nonfasyankes = [
+		$institution = [
 			'label' => $labelName,
-			'selectName' => $selectName,
+			'selectName' => 'institution_id',
 			'options' => $options,
 		];
 
@@ -221,7 +201,7 @@ class Survey extends BaseController
 			'question' => $question,
 			'source' => $source,
 			'title' => 'Formulir Assessment / Penilaian',
-			'fasyankes_nonfasyankes' => $fasyankes_nonfasyankes
+			'institution' => $institution
 		]);
 	}
 

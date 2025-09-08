@@ -21,11 +21,11 @@ use App\Helpers\CommonHelper;
 	</div><br><br>
 	<div class="row mb-3">
 		<div class="col-sm-4">
-			<label class="col-form-label" for="basic-default-<?= esc($fasyankes_nonfasyankes['selectName']) ?>"><?= esc($fasyankes_nonfasyankes['label']) ?></label>
+			<label class="col-form-label" for="basic-default-<?= esc($institution['selectName']) ?>"><?= esc($institution['label']) ?></label>
 		</div>
 		<div class="col-sm-8">
-			<select id="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" name="<?= esc($fasyankes_nonfasyankes['selectName']) ?>" class="form-select select2 field-select">
-			<?php foreach ($fasyankes_nonfasyankes['options'] as $key => $label): ?>
+			<select id="<?= esc($institution['selectName']) ?>" name="<?= esc($institution['selectName']) ?>" class="form-select select2 field-select">
+			<?php foreach ($institution['options'] as $key => $label): ?>
 				<option value="<?= esc($key) ?>"
 					>
 					<?= esc($label) ?>

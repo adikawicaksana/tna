@@ -242,11 +242,59 @@
                         </div>
                       </div>
 
+                        
+                    
                       <div class="row mt-3">
-                        <div class="col-sm-12  form-control-validation">
+                        <div class="col-sm-12">
                           <label class="form-label">Nama Fasyankes</label>
-                          <input type="text" id="fasyankes_name" name="fasyankes_name" class="form-control" readonly />
+                          <div class="position-relative">
+                            <input type="text" name="fasyankes_name" id="fasyankes_name" class="form-control"
+                              placeholder="Cth.: RS Gxxx xxxx" autocomplete="off" />
+                            <style>
+                              .autocomplete-overlay .item {
+                                padding: 8px 16px;
+                                cursor: pointer;
+                                border-bottom: 1px solid #eee;
+                              }
+
+                              .autocomplete-overlay .item:last-child {
+                                border-bottom: none;
+                              }
+
+                              .autocomplete-overlay .item:hover {
+                                background-color: #f8f9fa;
+                              }
+                            </style>
+                            <!-- Dropdown suggestion -->
+                            <div id="suggestions_fasyankes_name" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
+                              style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
+                            </div>
+                          </div>
                         </div>
+                        
+                        <!--<div class="col-sm-12 ">-->
+                        <!--  <label class="form-label">Nama Fasyankes</label>-->
+                        <!--  <input type="text" id="fasyankes_name" name="fasyankes_name" class="form-control" />-->
+                        <!--  <style>-->
+                        <!--      .autocomplete-overlay .item {-->
+                        <!--        padding: 8px 16px;-->
+                        <!--        cursor: pointer;-->
+                        <!--        border-bottom: 1px solid #eee;-->
+                        <!--      }-->
+
+                        <!--      .autocomplete-overlay .item:last-child {-->
+                        <!--        border-bottom: none;-->
+                        <!--      }-->
+
+                        <!--      .autocomplete-overlay .item:hover {-->
+                        <!--        background-color: #f8f9fa;-->
+                        <!--      }-->
+                        <!--    </style>-->
+                            <!-- Dropdown suggestion -->
+                        <!--    <div id="suggestions_fasyankes_name" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"-->
+                        <!--      style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">-->
+                        <!--    </div>-->
+                        <!--</div>-->
                         <div class="col-sm-12  form-control-validation mt-2">
                           <label class="form-label" for="multiStepsConfirmPass">Alamat</label>
                           <textarea id="fasyankes_address" name="fasyankes_address" class="form-control"
@@ -510,37 +558,49 @@
       };
 
       const getInstitutionDetail = (id, type = "fasyankes", cb) => {
-        const mappings = {
-          fasyankes: {
-            fasyankes_type: "type",
-            fasyankes_name: "name",
-            fasyankes_address: "address"
-          },
-          nonfasyankes: {
-            nonfasyankes_id: "id",
-            nonfasyankes_name: "name",
-            nonfasyankes_address: "address"
-          }
-        };
+  const mappings = {
+    fasyankes: {
+      fasyankes_type: "type",
+      fasyankes_name: "name",
+      fasyankes_address: "address"
+    },
+    nonfasyankes: {
+      nonfasyankes_id: "id",
+      nonfasyankes_name: "name",
+      nonfasyankes_address: "address"
+    }
+  };
 
-        if (!mappings[type]) {
-          console.error(`Unknown institution type: ${type}`);
-          return;
+  if (!mappings[type]) {
+    console.error(`Unknown institution type: ${type}`);
+    return;
+  }
+
+  ajaxGet(`${api_url}/institution?k=${encodeURIComponent(id)}`, res => {
+    const mapping = mappings[type];
+    const detail = res.status && res.data?.length > 0 ? res.data[0] : null;
+
+    const filled = {};
+    Object.entries(mapping).forEach(([formField, dataKey]) => {
+      let value = detail?.[dataKey] || "";
+
+      // Kondisi khusus untuk fasyankes_type
+      if (formField === "fasyankes_type") {
+        if (type === "fasyankes" && value.toLowerCase() === "rumahsakit") {
+          value = "RUMAH SAKIT"; // khusus rumah sakit
+        } else {
+          value = value.toUpperCase(); // selain rumah sakit tetap uppercase
         }
+      }
 
-        ajaxGet(`${api_url}/institution?k=${encodeURIComponent(id)}`, res => {
-          const mapping = mappings[type];
-          const detail = res.status && res.data?.length > 0 ? res.data[0] : null;
+      filled[formField] = value;
+    });
 
-          const filled = {};
-          Object.entries(mapping).forEach(([formField, dataKey]) => {
-            filled[formField] = detail?.[dataKey] || "";
-          });
+    fillForm(res, filled);
+    if (typeof cb === "function") cb(res, filled);
+  });
+};
 
-          fillForm(res, filled);
-          if (typeof cb === "function") cb(res, filled);
-        });
-      };
 
       // === Captcha reload ===
       $('#reloadCaptcha').click(reloadCaptcha);
@@ -551,9 +611,10 @@
         const q = $(this).val();
         if (q.length > 1) {
           ajaxGet(`${api_url}/institution?k=${encodeURIComponent(q)}&c=${category}`, res => {
+            const list = Array.isArray(res.data) ? res.data : [];
             $(container).html(
-              res.data.length
-                ? res.data.map(template).join('')
+              list.length
+                ? list.map(template).join('')
                 : `<div class="item text-muted">Tidak ditemukan</div>`
             ).slideDown(150);
           });
@@ -561,15 +622,39 @@
           $(container).slideUp(150);
         }
       });
+    
+      // Tutup suggestion saat klik di luar
+      $(document).on('click', function(e) {
+        if (!$(e.target).closest(selector).length && !$(e.target).closest(container).length) {
+          $(container).slideUp(150);
+        }
+      });
     };
+
 
       liveSearch('#nonfasyankes_name', 'nonfasyankes', '#nonfasyankes_suggestions',
         item => `<div class="item" data-id="${item.id}">${item.name}</div>`);
 
       liveSearch('#fasyankes_code', 'fasyankes', '#suggestions',
-        item => `<div class="item" data-code="${item.code}" data-id="${item.id}">${item.code} - ${item.type} ${item.name}</div>`);
+          item => `<div class="item" data-code="${item.code}" data-id="${item.id}">
+            ${item.code} - ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name}
+          </div>`
+        );
+        
+        liveSearch('#fasyankes_name', 'fasyankesname', '#suggestions_fasyankes_name',
+          item => `<div class="item" data-code="${item.code}" data-id="${item.id}">
+            ${item.code} - ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name}
+          </div>`
+        );
 
       $('#fasyankes_code').on('keydown', function (e) {
+        if (e.key === "Enter" || e.which === 13) {
+          e.preventDefault();
+          getInstitutionDetail($(this).val(),'fasyankes');
+        }
+      });
+      
+      $('#fasyankes_name').on('keydown', function (e) {
         if (e.key === "Enter" || e.which === 13) {
           e.preventDefault();
           getInstitutionDetail($(this).val(),'fasyankes');
@@ -589,6 +674,15 @@
         getInstitutionDetail(id,'fasyankes');
         
          $('#suggestions').fadeOut();
+      });
+      
+      $(document).on('click', '#suggestions_fasyankes_name .item', function () {
+        const code = $(this).data('code');
+        const id = $(this).data('id');
+        $('#fasyankes_code').val(code);
+        getInstitutionDetail(id,'fasyankes');
+        
+         $('#suggestions_fasyankes_name').fadeOut();
       });
       
       $(document).on('click', '#nonfasyankes_suggestions .item', function () {       

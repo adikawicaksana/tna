@@ -24,6 +24,8 @@ class InstitutionsModel extends Model
 
             if ($category === 'fasyankes') {
                 $builder->where('category', 'fasyankes')->like('code', $safeKeyword, 'both');
+            } elseif ($category === 'fasyankesname') {
+                $builder->where('category', 'fasyankes')->like('LOWER(name)', $safeKeyword, 'both');
             } elseif (!empty($category)) {
                 $builder->where('category', strtolower($category))->like('LOWER(name)', $safeKeyword, 'both');
             } else {

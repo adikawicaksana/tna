@@ -49,7 +49,7 @@ class Survey extends BaseController
 			$builder = $builder->table('survey s')
 				->select('survey_id, s.created_at, institution_id, i.category AS institution_category,
 					respondent_id, front_title, fullname, back_title, survey_status, approved_at');
-			$builder->select('CONCAT(i.name, i.type) AS institution_name', false)
+			$builder->select("CONCAT(i.type, ' ', i.name) AS institution_name", false)
 				->join('users_detail u', 's.respondent_id = u._id_users')
 				->join('master_institutions i', 's.institution_id = i.id');
 
@@ -86,7 +86,7 @@ class Survey extends BaseController
 					'no' => $start + $index + 1,
 					'created_at' => CommonHelper::formatDate($each['created_at']),
 					'institution_category' => $each['institution_category'],
-					'institution_name' => $each['institution_name'],
+					'institution_name' => ucwords($each['institution_name']),
 					'fullname' => $each['fullname'],
 					'survey_status' => $status[$each['survey_status']],
 					'approved_at' => CommonHelper::formatDate($each['approved_at']),

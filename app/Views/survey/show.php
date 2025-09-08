@@ -26,7 +26,7 @@ use App\Models\SurveyModel;
 				<tr>
 					<th>Instansi</th>
 					<td>
-						<?= $data->institution_type . ' ' . $data->institution_name ?>
+						<?= ucwords($data->institution_type) . ' ' . $data->institution_name ?>
 					</td>
 				</tr>
 				<tr>
@@ -42,9 +42,44 @@ use App\Models\SurveyModel;
 				<tr>
 					<th>Histori</th>
 					<td>
-
+						<ul>
+							<li>
+								<b><?= $approval_history['datetime'] ?></b>
+								<?= $approval_history['user_id'] ?> <br>
+								<?= $approval_history['remark'] ?>
+							</li>
+						</ul>
 					</td>
 				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+
+	<div class="card">
+		<div class="card-header">
+			<h5>Detail Kompetensi Pegawai</h5>
+		</div>
+		<div class="card-body">
+			<table class="table table-stripped">
+				<tr>
+					<td>No</td>
+					<td>Uraian Tugas</td>
+					<td>Pengembangan Kompetensi</td>
+					<td>Status</td>
+				</tr>
+				<?php foreach($competence as $key => $each): ?>
+					<tr>
+						<td><?= $key+1 ?></td>
+						<td><?= $each['job_description'] ?></td>
+						<td><?= $each['nama_pelatihan'] ?></td>
+						<td>
+							<button type="button" class="btn rounded-pill toggle-status <?= $each['status'] == 1 ? 'btn-success' : 'btn-danger'; ?>">
+								<?= $each['status'] == 1 ? 'Sudah Mengikuti' : 'Belum Mengikuti' ?>
+							</button>
+						</td>
+					</tr>
+				<?php endforeach; ?>
 			</table>
 		</div>
 	</div>

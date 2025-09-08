@@ -120,11 +120,16 @@ class Survey extends BaseController
 			->get()
 			->getRow();
 		$approval_history = json_decode($data->approval_remark, true);
+		// $appro (new UserDetailModel())->getUserDetail($approval_history['user_id'])['fullname'];
+		// dd($approval_history['user']);
+		// Fetch competence
+		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
 
 		return view('survey/show', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'data' => $data,
 			'approval_history' => $approval_history,
+			'competence' => $competence,
 			'title' => 'Detail Assessment',
 		]);
 	}

@@ -6,6 +6,7 @@ use App\Helpers\CommonHelper;
 <form action="<?= route_to('survey.store') ?>" method="post">
 	<?= csrf_field() ?>
 	<input type="hidden" name="questionnaire_id" value="<?= $question[0]['questionnaire_id'] ?>">
+	<input type="hidden" name="type" value="<?= $type ?>">
 	<div class="row mb-3">
 	<div class="card-datatable table-responsive pt-0">
 		<table id="tableUraianTugas" class="table table-bordered">

@@ -21,13 +21,12 @@ use App\Models\SurveyModel;
 				</tr>
 				<tr>
 					<th>Grup</th>
-					<td><?= SurveyModel::listGroupType()[$data->group_type] ?></td>
+					<td><?= $data->institution_group ?></td>
 				</tr>
 				<tr>
 					<th>Instansi</th>
 					<td>
-						<?= $data->fasyankes_type . ' ' . $data->fasyankes_name ?>
-						<?= $data->nonfasyankes_name ?>
+						<?= $data->institution_type . ' ' . $data->institution_name ?>
 					</td>
 				</tr>
 				<tr>
@@ -47,6 +46,16 @@ use App\Models\SurveyModel;
 					</td>
 				</tr>
 			</table>
+		</div>
+	</div>
+	<br>
+
+	<div class="card">
+		<div class="card-header">
+			<h5>Hasil Assessment / Penilaian</h5>
+		</div>
+		<div class="card-body">
+
 		</div>
 	</div>
 </div>

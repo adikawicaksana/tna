@@ -39,8 +39,6 @@ class Survey extends BaseController
 	{
 		if ($this->request->isAJAX()) {
 			$status = SurveyModel::listStatus();
-			$group_type = SurveyModel::listGroupType();
-
 			$request = $this->request->getGet();
 			$draw = (int) $request['draw'];
 			$start = (int) $request['start'];
@@ -49,19 +47,11 @@ class Survey extends BaseController
 
 			$builder = \Config\Database::connect();
 			$builder = $builder->table('survey s')
-				->select('survey_id, s.created_at, group_type, institution_id, fasyankes_name, nonfasyankes_name,
+				->select('survey_id, s.created_at, institution_id, i.category AS institution_category,
 					respondent_id, front_title, fullname, back_title, survey_status, approved_at');
-			$builder->select(
-					'CASE
-						WHEN s.group_type = 1 THEN f.fasyankes_name
-						WHEN s.group_type = 2 THEN nf.nonfasyankes_name
-						ELSE NULL
-					END AS institution_name',
-					false
-				);
-			$builder->join('users_detail u', 's.respondent_id = u._id_users')
-				->join('master_fasyankes f', 's.institution_id = f.id AND s.group_type = ' . SurveyModel::GROUP_FASYANKES, 'left')
-				->join('master_nonfasyankes nf', 's.institution_id = nf.id AND s.group_type = ' . SurveyModel::GROUP_NONFASYANKES, 'left');
+			$builder->select('CONCAT(i.name, i.type) AS institution_name', false)
+				->join('users_detail u', 's.respondent_id = u._id_users')
+				->join('master_institutions i', 's.institution_id = i.id');
 
 			// Filtering
 			if (!empty($search)) {
@@ -71,7 +61,7 @@ class Survey extends BaseController
 					->groupEnd();
 			}
 			// Sorting
-			$columns = ['created_at', 'group_type', 'institution_name', 'fullname', 'survey_status', 'approved_at']; // allow sorting
+			$columns = ['created_at', 'institution_category', 'institution_name', 'fullname', 'survey_status', 'approved_at']; // allow sorting
 			if (isset($request['order'][0])) {
 				$columnIndex = $request['order'][0]['column'];
 				$columnName = $request['columns'][$columnIndex]['data'];
@@ -81,6 +71,7 @@ class Survey extends BaseController
 					$builder->orderBy("$columnName", "$columnSortOrder");
 				}
 			}
+			// echo $builder->getCompiledSelect();die;
 			// Count total
 			$builderClone = clone $builder;
 			$totalRecords = $this->model->countAll();
@@ -94,7 +85,7 @@ class Survey extends BaseController
 				$rows[] = [
 					'no' => $start + $index + 1,
 					'created_at' => CommonHelper::formatDate($each['created_at']),
-					'group_type' => $group_type[$each['group_type']],
+					'institution_category' => $each['institution_category'],
 					'institution_name' => $each['institution_name'],
 					'fullname' => $each['fullname'],
 					'survey_status' => $status[$each['survey_status']],
@@ -122,10 +113,9 @@ class Survey extends BaseController
 	{
 		$builder = \Config\Database::connect();
 		$data = $builder->table('survey s')
-			->select('s.*, fasyankes_type, fasyankes_name, nonfasyankes_name, u.front_title, u.fullname, u.back_title')
+			->select('s.*, i.category AS institution_group, i.type AS institution_type, i.name AS institution_name, u.front_title, u.fullname, u.back_title')
 			->join('users_detail u', 's.respondent_id = u._id_users')
-			->join('master_fasyankes f', 's.institution_id = f.id AND s.group_type = ' . SurveyModel::GROUP_FASYANKES, 'left')
-			->join('master_nonfasyankes nf', 's.institution_id = nf.id AND s.group_type = ' . SurveyModel::GROUP_NONFASYANKES, 'left')
+			->join('master_institutions i', 's.institution_id = i.id')
 			->where(['survey_id' => $id])
 			->get()
 			->getRow();
@@ -201,7 +191,8 @@ class Survey extends BaseController
 			'question' => $question,
 			'source' => $source,
 			'title' => 'Formulir Assessment / Penilaian',
-			'institution' => $institution
+			'institution' => $institution,
+			'type' => $type,
 		]);
 	}
 
@@ -215,20 +206,21 @@ class Survey extends BaseController
 
 			$user_id = session()->get('_id_users');
 			$user = $this->userDetailModel->getUserDetail();
+			$datetime = date('Y-m-d H:i:s');
 
 			// Insert into Survey Table
 			$data = [
 				'survey_id' => $id,
 				'questionnaire_id' => $post['questionnaire_id'],
-				'institution_id' => (isset($post['fasyankes'])) ? $post['fasyankes'] : $post['nonfasyankes'],
-				'group_type' => (isset($post['fasyankes'])) ? SurveyModel::GROUP_FASYANKES : SurveyModel::GROUP_NONFASYANKES,
+				'institution_id' => $post['institution_id'],
+				// 'group_type' => (isset($post['fasyankes'])) ? SurveyModel::GROUP_FASYANKES : SurveyModel::GROUP_NONFASYANKES,
 				'survey_status' => SurveyModel::STAT_ACTIVE,
 				'respondent_id' => $user_id,
 				'jenjang_pendidikan' => $user['jenjang_pendidikan'],
 				'jurusan_profesi' => $user['jurusan_profesi'],
 				'created_at' => date('Y-m-d H:i:s'),
 				'approved_by' => in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]) ? 0 : NULL,
-				'approval_remark' => 'Disetujui oleh sistem',
+				'approval_remark' => in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]) ? 'Disetujui oleh sistem' : NULL,
 				'approved_at' => in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]) ? date('Y-m-d H:i:s') : NULL,
 			];
 			if (!$this->model->insert($data)) {
@@ -239,11 +231,12 @@ class Survey extends BaseController
 			$data = [];
 			foreach ($post as $key => $value) {
 				if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $key)) {
+					$answer = [$datetime => $value ?? ''];
 					$data[] = [
 						'detail_id' => Uuid::uuid7()->toString(),
 						'survey_id' => $id,
 						'question_id' => $key,
-						'answer' => $value ?? '',
+						'answer' => json_encode($answer),
 					];
 				}
 			}
@@ -269,7 +262,7 @@ class Survey extends BaseController
 			return redirect()->to(route_to('survey.index'))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
-			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data<br>' . $e->getMessage());
+			return redirect()->back()->withInput()->with('error', $e->getMessage());
 		}
 	}
 

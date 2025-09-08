@@ -53,7 +53,7 @@
 			columns: [
 				{ data: "no", name: "no", orderable: false, searchable: false },
 				{ data: "created_at" },
-				{ data: "group_type" },
+				{ data: "institution_category" },
 				{ data: "institution_name" },
 				{ data: "fullname" },
 				{ data: "survey_status" },

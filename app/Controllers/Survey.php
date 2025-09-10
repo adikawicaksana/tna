@@ -89,7 +89,7 @@ class Survey extends BaseController
 					'institution_name' => ucwords($each['institution_name']),
 					'fullname' => $each['fullname'],
 					'survey_status' => $status[$each['survey_status']],
-					'approved_at' => CommonHelper::formatDate($each['approved_at']),
+					'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
 					'action' => '<a href="'. route_to("survey.show", $each['survey_id']) .'" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 				];
 			}
@@ -112,10 +112,12 @@ class Survey extends BaseController
 	public function show($id)
 	{
 		$builder = \Config\Database::connect();
+		// Fetch survey header
 		$data = $builder->table('survey s')
-			->select('s.*, i.category AS institution_group, i.type AS institution_type, i.name AS institution_name, u.front_title, u.fullname, u.back_title')
+			->select('s.*, questionnaire_type, i.category AS institution_group, i.type AS institution_type, i.name AS institution_name, u.front_title, u.fullname, u.back_title')
 			->join('users_detail u', 's.respondent_id = u._id_users')
 			->join('master_institutions i', 's.institution_id = i.id')
+			->join('questionnaire q', 's.questionnaire_id = q.questionnaire_id')
 			->where(['survey_id' => $id])
 			->get()
 			->getRow();
@@ -124,11 +126,20 @@ class Survey extends BaseController
 		// dd($approval_history['user']);
 		// Fetch competence
 		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
+		// Fetch survey detail
+		$detail = $this->surveyDetailModel->getDetail($id);
+		$answer = [];
+		foreach ($detail as $key => $each) {
+			$temp = json_decode($each['answer']);
+			$answer[$key] = (array) $temp;
+		}
 
 		return view('survey/show', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'data' => $data,
 			'approval_history' => $approval_history,
+			'detail' => $detail,
+			'answer' => $answer,
 			'competence' => $competence,
 			'title' => 'Detail Assessment',
 		]);

@@ -9,64 +9,86 @@ use App\Models\SurveyModel;
 ?>
 <?= $this->section('content'); ?>
 <style>
-.table-container {
-  position: relative;
-  max-width: 100%;
-  overflow-x: auto;
-}
-.fixed-column-table {
-  border-collapse: collapse;
-  width: max-content; /* Supaya bisa scroll ke kanan */
-  min-width: 100%;
-}
-.sticky-col {
-  position: sticky;
-  left: 0;
-  background-color: #f8f9fa; /* Bootstrap light gray */
-  z-index: 2;
-}
-.first-top {
-	left: 0;
-	z-index: 10;
-}
-.second-col {
-	left: 10;
-	z-index: 10;
-}
-.third-col {
-	left: 20;
-	z-index: 10;
-}
+	.table-container {
+		position: relative;
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	.fixed-column-table {
+		border-collapse: collapse;
+		width: max-content;
+		/* Supaya bisa scroll ke kanan */
+		min-width: 100%;
+	}
+
+	.sticky-col {
+		position: sticky;
+		left: 0;
+		background-color: #f8f9fa;
+		/* Bootstrap light gray */
+		z-index: 2;
+	}
+
+	.first-top {
+		left: 0;
+		z-index: 10;
+	}
+
+	.second-col {
+		left: 10;
+		z-index: 10;
+	}
+
+	.third-col {
+		left: 20;
+		z-index: 10;
+	}
 </style>
 
 <div class="container">
 	<h1><?= $title ?></h1>
+	<div class="d-flex mb-2" style="padding-left: 0 !important;">
+		<?php if (SurveyModel::isEditable($data->survey_id)): ?>
+			<a href="<?= url_to('survey.edit', $data->survey_id) ?>" class="btn btn-sm btn-primary me-2">
+				<i class="fas fa-pen"></i> &nbsp; Edit
+			</a>
+		<?php endif; ?>
+		<?php if (SurveyModel::isApprovable($data->survey_id)): ?>
+			<a href="<?= url_to('survey.approval', $data->survey_id) ?>" class="btn btn-sm btn-primary">
+				<i class="fas fa-check"></i> &nbsp; Setujui
+			</a>
+		<?php endif; ?>
+	</div>
 	<div class="nav-align-top nav-tabs-shadow">
 		<ul class="nav nav-tabs" role="tablist">
 			<li class="nav-item">
-			<button
-				type="button"
-				class="nav-link active"
-				role="tab"
-				data-bs-toggle="tab"
-				data-bs-target="#navs-top-home"
-				aria-controls="navs-top-home"
-				aria-selected="true">
-				Assessment
-			</button>
+				<button
+					type="button"
+					class="nav-link active"
+					role="tab"
+					data-bs-toggle="tab"
+					data-bs-target="#navs-top-home"
+					aria-controls="navs-top-home"
+					aria-selected="true">
+					Assessment
+				</button>
 			</li>
-			<li class="nav-item">
-			<button
-				type="button"
-				class="nav-link"
-				role="tab"
-				data-bs-toggle="tab"
-				data-bs-target="#navs-top-profile"
-				aria-controls="navs-top-profile"
-				aria-selected="false">
-				Kompetensi Pegawai
-			</button>
-			</li>
+
+			<?php if (in_array($data->questionnaire_type, QuestionnaireModel::listIndividual())): ?>
+				<li class="nav-item">
+					<button
+						type="button"
+						class="nav-link"
+						role="tab"
+						data-bs-toggle="tab"
+						data-bs-target="#navs-top-profile"
+						aria-controls="navs-top-profile"
+						aria-selected="false">
+						Kompetensi Pegawai
+					</button>
+				</li>
+			<?php endif; ?>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane fade show active" id="navs-top-home" role="tabpanel">
@@ -103,13 +125,13 @@ use App\Models\SurveyModel;
 						<th>Histori</th>
 						<td>
 							<?php if (!empty($approval_history)): ?>
-							<ul>
-								<li>
-									<b><?= $approval_history['datetime'] ?></b>
-									<?= $approval_history['user_id'] ?> <br>
-									<?= $approval_history['remark'] ?>
-								</li>
-							</ul>
+								<ul>
+									<li>
+										<b><?= $approval_history['datetime'] ?></b>
+										<?= $approval_history['user_id'] ?> <br>
+										<?= $approval_history['remark'] ?>
+									</li>
+								</ul>
 							<?php else: ?>
 								-
 							<?php endif; ?>
@@ -117,28 +139,30 @@ use App\Models\SurveyModel;
 					</tr>
 				</table>
 			</div>
-			<div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
-				<table class="table table-stripped">
-					<tr>
-						<th>No</th>
-						<th>Uraian Tugas</th>
-						<th>Pengembangan Kompetensi</th>
-						<th>Status</th>
-					</tr>
-					<?php foreach($competence as $key => $each): ?>
+			<?php if (in_array($data->questionnaire_type, QuestionnaireModel::listIndividual())): ?>
+				<div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
+					<table class="table table-stripped">
 						<tr>
-							<td><?= $key+1 ?></td>
-							<td><?= $each['job_description'] ?></td>
-							<td><?= $each['nama_pelatihan'] ?></td>
-							<td>
-								<button type="button" class="btn rounded-pill toggle-status <?= $each['status'] == 1 ? 'btn-success' : 'btn-danger'; ?>" style="pointer-events: none">
-									<?= $each['status'] == 1 ? 'Sudah Mengikuti' : 'Belum Mengikuti' ?>
-								</button>
-							</td>
+							<th>No</th>
+							<th>Uraian Tugas</th>
+							<th>Pengembangan Kompetensi</th>
+							<th width="23%">Status</th>
 						</tr>
-					<?php endforeach; ?>
-				</table>
-			</div>
+						<?php foreach ($competence as $key => $each): ?>
+							<tr>
+								<td><?= $key + 1 ?></td>
+								<td><?= $each['job_description'] ?></td>
+								<td><?= $each['nama_pelatihan'] ?></td>
+								<td>
+									<button type="button" class="btn rounded-pill toggle-status <?= $each['status'] == 1 ? 'btn-success' : 'btn-danger'; ?>" style="pointer-events: none">
+										<?= $each['status'] == 1 ? 'Sudah Mengikuti' : 'Belum Mengikuti' ?>
+									</button>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</table>
+				</div>
+			<?php endif; ?>
 		</div>
 	</div>
 	<br>
@@ -161,26 +185,16 @@ use App\Models\SurveyModel;
 						</thead>
 						<tbody>
 							<?php foreach ($detail as $key => $each):
-								$temp = $answer[$key]; ?>
+								$temp = $answer[$key];
+								krsort($temp); ?>
 								<tr>
-									<td><?= $key+1 ?></td>
+									<td><?= $key + 1 ?></td>
 									<td><?= $each['question'] ?></td>
-									<td><?= $each['approved_answer'] ?></td>
+									<td><?= $each['approved_answer'] ?? '-' ?></td>
 									<?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
-									<?php endforeach; ?>
-									<?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
-									<?php endforeach; ?><?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
-									<?php endforeach; ?><?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
-									<?php endforeach; ?><?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
-									<?php endforeach; ?><?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
-									<?php endforeach; ?><?php foreach ($temp as $datetime => $value): ?>
-										<td><?= $datetime . '<br>' . $value ?></td>
+										<td>
+											<b><?= CommonHelper::formatDate($datetime, 2) . '</b><br>' . $value ?>
+										</td>
 									<?php endforeach; ?>
 								</tr>
 							<?php endforeach; ?>

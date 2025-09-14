@@ -22,12 +22,12 @@ class Survey extends BaseController
 	protected $surveyDetailModel;
 	protected $respondentDetailModel;
 	protected $questionModel;
-    protected $userDetailModel;
+	protected $userDetailModel;
 	protected $usersInstitutionsModel;
 
 	public function __construct()
 	{
-        $this->userDetailModel = new UserDetailModel();
+		$this->userDetailModel = new UserDetailModel();
 		$this->model = new SurveyModel();
 		$this->surveyDetailModel = new SurveyDetailModel();
 		$this->respondentDetailModel = new RespondentDetailModel();
@@ -90,7 +90,7 @@ class Survey extends BaseController
 					'fullname' => $each['fullname'],
 					'survey_status' => $status[$each['survey_status']],
 					'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-					'action' => '<a href="'. route_to("survey.show", $each['survey_id']) .'" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+					'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 				];
 			}
 
@@ -209,6 +209,8 @@ class Survey extends BaseController
 			'title' => 'Formulir Assessment / Penilaian',
 			'institution' => $institution,
 			'type' => $type,
+			'model' => [],
+			'url' => 'survey.store',
 		]);
 	}
 
@@ -240,7 +242,7 @@ class Survey extends BaseController
 				'approved_at' => in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]) ? date('Y-m-d H:i:s') : NULL,
 			];
 			if (!$this->model->insert($data)) {
-				throw new \Exception('Gagal menyimpan survei: ' . json_encode($this->model->db->error()));
+				throw new \Exception('Gagal menyimpan assessment / penilaian: ' . json_encode($this->model->db->error()));
 			}
 
 			// Insert into Survey Detail Table
@@ -258,7 +260,7 @@ class Survey extends BaseController
 			}
 			if (!$this->surveyDetailModel->insertBatch($data)) {
 				// echo $this->surveyDetailModel->db->getLastQuery();die;
-				throw new \Exception('Gagal menyimpan detail survei: ' . json_encode($this->surveyDetailModel->db->error()));
+				throw new \Exception('Gagal menyimpan detail assessment / penilaian: ' . json_encode($this->surveyDetailModel->db->error()));
 			}
 
 			// Insert into Respondent Detail Table
@@ -284,30 +286,127 @@ class Survey extends BaseController
 
 	public function edit($id)
 	{
-		$model = $this->model->findOne($id);
-		if (!$model->isEditable($id)) {
+		if (!$this->model->isEditable($id)) {
 			return redirect()->back()->with('error', 'Data tidak dapat diubah.');
 		}
+
+		$model = $this->model->find($id);
+		$question = $this->surveyDetailModel->getDetail($id);
+
+		// Get id and answer options
+		$source = [];
+		$ids = [];
+		$answer = [];
+		foreach ($question as $each) {
+			// Fetch answer
+			$temp = json_decode($each['answer'], true);
+			$answer[$each['question_id']] = $temp[max(array_keys($temp))];
+			// Fetch option list
+			$has_option = in_array($each['answer_type'], QuestionModel::hasOption());
+			if (!$has_option) continue;
+			// Check if data has existing reference
+			$source_reference = $each['source_reference'];
+			if (empty($source_reference)) {
+				$ids[] = $each['question_id'];
+			} else if (CommonHelper::isRouteExists($source_reference)) {
+				$url = url_to($source_reference);
+				$response = file_get_contents($url);
+				foreach (json_decode($response) as $res) {
+					$source[$each['question_id']][] = [
+						'question_id' => $res->id,
+						'option_name' => $res->text,
+					];
+				}
+			}
+		}
+		// Fetch option data
+		if (!empty($ids)) {
+			$temp2 = QuestionOptionModel::getData($ids);
+			foreach ($temp2 as $each) {
+				$questionId = $each['question_id'];
+				$source[$questionId][] = $each;
+			}
+		}
+
+		$options = ['' => '-- Pilih --'];
+		$type = $question[0]['questionnaire_type'];
+		if (in_array($type, [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INDIVIDUAL_FASYANKES])) {
+			$labelName = 'Pilih Fasyankes';
+			$records = $this->usersInstitutionsModel->getInstitutionsByUser(session()->get('_id_users'));
+		} else {
+			$labelName = 'Pilih Non Fasyankes';
+			$records = $this->usersInstitutionsModel->getInstitutionsByUser(session()->get('_id_users'), 'nonfasyankes');
+		}
+
+		foreach ($records as $record) {
+			$options[$record['id']] = strtoupper($record['type']) . ' ' . $record['name'];
+		}
+
+		$institution = [
+			'label' => $labelName,
+			'selectName' => 'institution_id',
+			'options' => $options,
+		];
 
 		return view('survey/form', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'title' => 'Ubah Hasil Assessment / Penilaian',
+			'model' => $model,
+			'question' => $question,
+			'source' => $source,
+			'answer' => $answer,
+			'institution' => $institution,
+			'type' => $type,
+			'url' => 'survey.update',
 		]);
 	}
 
 	public function update()
 	{
+		$post = $this->request->getPost();
+		$survey_id = $post['survey_id'];
+		$user_id = session()->get('_id_users');
+		$datetime = date('Y-m-d H:i:s');
+
 		if ($this->request->getMethod() !== 'POST') {
 			return redirect()->back()->with('error', 'Method tidak diizinkan');
 		}
-
-		$post = $this->request->getPost();
-		$data = $this->model->findOne($post['survey_id']);
-		dd($data);
-		if (!$this->model->isEditable($data['id'])) {
+		if (!$this->model->isEditable($survey_id)) {
 			return redirect()->back()->with('error', 'Data tidak dapat diubah.');
 		}
 
+		$dbtrans = \Config\Database::connect();
+		$dbtrans->transBegin();
+		try {
+			// Insert into Survey Detail Table
+			$survey_detail = $this->surveyDetailModel->where(['survey_id' => $survey_id])->findAll();
+			foreach ($survey_detail as $d) {
+				$temp = json_decode($d['answer'], true);
+				$temp[$datetime] = $post[$d['question_id']];
+				if (!$this->surveyDetailModel->update($d['detail_id'], ['answer' => json_encode($temp)])) {
+					throw new \Exception('Gagal menyimpan detail assessment / penilaian: ' . json_encode($this->surveyDetailModel->db->error()));
+				}
+			}
 
+			// Remove old data and insert new data into Respondent Detail Table
+			$data = [];
+			$this->respondentDetailModel->where(['survey_id' => $survey_id])->delete();
+			foreach ((new UsersCompetenceModel())->getCompetence($user_id) as $each) {
+				$data[] = [
+					'detail_id' => Uuid::uuid7()->toString(),
+					'survey_id' => $survey_id,
+					'competence_id' => $each['id'],
+				];
+			}
+			if (!$this->respondentDetailModel->insertBatch($data)) {
+				throw new \Exception('Gagal menyimpan detail responden: ' . json_encode($this->respondentDetailModel->db->error()));
+			}
+
+			$dbtrans->transCommit();
+			return redirect()->to(route_to('survey.index'))->with('success', 'Data berhasil disimpan');
+		} catch (\Throwable $e) {
+			$dbtrans->transRollback();
+			return redirect()->back()->withInput()->with('error', $e->getMessage());
+		}
 	}
 }

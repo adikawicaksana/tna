@@ -66,6 +66,11 @@ class QuestionnaireModel extends Model
 		];
 	}
 
+	public static function listIndividual()
+	{
+		return [self::TYPE_INDIVIDUAL_FASYANKES, self::TYPE_INDIVIDUAL_INSTITUTE];
+	}
+
 	public static function listStatus()
 	{
 		return [

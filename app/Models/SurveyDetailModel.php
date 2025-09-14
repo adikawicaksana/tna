@@ -16,8 +16,10 @@ class SurveyDetailModel extends Model
 	{
 		$builder = \Config\Database::connect();
 		$builder = $builder->table('survey_detail t')
-			->select('t.*, q.question')
+			->select('t.*, q.*, qr.*')
 			->join('question q', 't.question_id = q.question_id')
+			->join('survey h', 't.survey_id = h.survey_id')
+			->join('questionnaire qr', 'h.questionnaire_id = qr.questionnaire_id')
 			->where('t.survey_id', $survey_id)
 			->get()
 			->getResultArray();

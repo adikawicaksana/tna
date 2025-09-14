@@ -1,8 +1,3 @@
-<?php
-
-use App\Helpers\CommonHelper;
-?>
-
 <?= $this->extend('layout/main') ?>
 <?= $this->section('content'); ?>
 <div class="container">
@@ -28,7 +23,7 @@ use App\Helpers\CommonHelper;
 					<span class="alert-icon rounded">
 						<i class="fas fa-warning"></i>
 					</span>
-					Tidak ada survei yang sedang aktif. Mohon hubungi pihak Murnajati.
+					Tidak ada assessment / penilain yang sedang aktif. Mohon hubungi pihak Murnajati.
 				</div>
 			<?php else: ?>
 				<?= view('survey/_form_survey') ?>

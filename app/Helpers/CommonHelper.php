@@ -15,24 +15,27 @@ class CommonHelper
 
 		if ($format == 1) {
 			$return .= date('d-m-Y', strtotime($date));
+		} else if ($format == 2) {
+			$return .= date('d-m-Y H:i', strtotime($date));
 		}
 		return $return;
 	}
 
-	public static function generateInputField($type, $name, $source = [])
+	public static function generateInputField($type, $name, $source = [], $value = '')
 	{
 		$result = '';
 		switch ($type) {
 			case QuestionModel::TYPE_SHORT:
-				$result .= "<input type='text' class='form-control field-input' name='$name'>";
+				$result .= "<input type='text' class='form-control field-input' name='$name' value='$value'>";
 				break;
 			case QuestionModel::TYPE_TEXT:
-				$result .= "<textarea class='form-control field-input' name='$name'></textarea>";
+				$result .= "<textarea class='form-control field-input' name='$name'>$value</textarea>";
 				break;
 			case QuestionModel::TYPE_MULTIPLE_CHOICE:
 				foreach ($source as $each) {
+					$checked = ($each['option_name'] == $value) ? 'checked' : '';
 					$result .= "<div class='form-check form-check-primary'>
-						<input name='$name' class='form-check-input' type='radio' value='{$each['option_name']}' />
+						<input name='$name' class='form-check-input' type='radio' value='{$each['option_name']}' {$checked} />
 						<label class='form-check-label'>{$each['option_name']}</label>
 						<label>{$each['option_description']}</label>
 					</div>";
@@ -41,14 +44,16 @@ class CommonHelper
 			case QuestionModel::TYPE_MULTI_SELECT:
 				$result .= "<select class='select2 form-select field-select' multiple>";
 				foreach ($source as $each) {
-					$result .= "<option value='{$each['option_name']}'>{$each['option_name']}</option>";
+					$checked = ($each['option_name'] == $value) ? 'checked' : '';
+					$result .= "<option value='{$each['option_name']}' {$checked}>{$each['option_name']}</option>";
 				}
 				$result .= "</select>";
 				break;
 			case QuestionModel::TYPE_DROPDOWN:
 				$result .= "<select class='form-select field-select' name='$name'>";
 				foreach ($source as $each) {
-					$result .= "<option value='{$each['option_name']}'>{$each['option_name']}</option>";
+					$checked = ($each['option_name'] == $value) ? 'checked' : '';
+					$result .= "<option value='{$each['option_name']}' {$checked}>{$each['option_name']}</option>";
 				}
 				$result .= "</select>";
 				break;
@@ -95,20 +100,20 @@ class CommonHelper
 		return $result;
 	}
 
-	 public static function timeGreeting()
-    {
-        $jam = (int) date("H");
+	public static function timeGreeting()
+	{
+		$jam = (int) date("H");
 
-        if ($jam >= 4 && $jam < 11) {
-            return 'pagi';
-        } elseif ($jam >= 11 && $jam < 15) {
-            return 'siang';
-        } elseif ($jam >= 15 && $jam < 18) {
-            return 'sore';
-        } else {
-            return 'malam';
-        }
-    }
+		if ($jam >= 4 && $jam < 11) {
+			return 'pagi';
+		} elseif ($jam >= 11 && $jam < 15) {
+			return 'siang';
+		} elseif ($jam >= 15 && $jam < 18) {
+			return 'sore';
+		} else {
+			return 'malam';
+		}
+	}
 
 	public static function isRouteExists(string $alias)
 	{

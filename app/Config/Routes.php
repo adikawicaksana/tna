@@ -36,7 +36,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
 	$routes->post('/profile/fasyankes', 'Profile::storeUserFasyankes');
 	$routes->get('/profile/fasyankes/data', 'Profile::getUserFasyankes');
 	$routes->post('/profile/fasyankes/delete/(:segment)', 'Profile::deleteUserFasyankes/$1');
-    $routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
+	$routes->post('/profile/nonfasyankes', 'Profile::storeUserNonFasyankes');
 	$routes->get('/profile/nonfasyankes/data', 'Profile::getUserNonFasyankes');
 	$routes->post('/profile/nonfasyankes/delete/(:segment)', 'Profile::deleteUserNonFasyankes/$1');
 	$routes->post('/profile/jobdesc-competence', 'Profile::storeJobdescCompetence');
@@ -44,7 +44,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
 	$routes->post('/profile/update-status-competence', 'Profile::updateStatusCompetence');
 	$routes->post('/profile/delete-competence', 'Profile::deleteCompetence');
 
-	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile'] );
+	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile']);
 });
 
 
@@ -89,5 +89,7 @@ $routes->group('admin', function ($routes) {
 $routes->get('survey', 'Survey::index', ['as' => 'survey.index']);
 $routes->get('survey/create/(:num)', 'Survey::create/$1', ['as' => 'survey.create']);
 $routes->post('survey/store', 'Survey::store', ['as' => 'survey.store']);
+$routes->get('survey/edit/(:any)', 'Survey::edit/$1', ['as' => 'survey.edit']);
+$routes->post('survey/update', 'Survey::update', ['as' => 'survey.update']);
+$routes->get('survey/approval/(:any)', 'Survey::approval/$1', ['as' => 'survey.approval']);
 $routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);
-$routes->post('survey/edit/(:any)', 'Survey::edit/$1', ['as' => 'survey.edit']);

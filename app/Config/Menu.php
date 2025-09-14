@@ -76,7 +76,7 @@ class Menu
                 ]
             ],
             [
-                'label' => 'Survei',
+                'label' => 'Assessment / Penilaian',
                 'icon'  => 'ti tabler-clipboard-text',
                 'url' => route_to('survey.index'),
                 'active' => 'survey.',

@@ -67,8 +67,19 @@ class SurveyModel extends Model
 
 	public static function isEditable($id)
 	{
-		$model = (new self())->findOne($id);
-		$result = in_array($model->survey_status, [self::STAT_OPEN, self::STAT_DECLINED]);
+		$model = (new self())->find($id);
+		$result = in_array($model['survey_status'], [self::STAT_OPEN, self::STAT_DECLINED]);
+		$result &= (session()->get('_id_users') == $model['respondent_id']);
+
+		return $result;
+	}
+
+	public static function isApprovable($id)
+	{
+		$model = (new self())->find($id);
+		$result = ($model['survey_status'] == self::STAT_OPEN);
+
+		// need to check user access
 
 		return $result;
 	}

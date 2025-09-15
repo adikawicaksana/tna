@@ -18,31 +18,32 @@ use App\Models\SurveyModel;
 	.fixed-column-table {
 		border-collapse: collapse;
 		width: max-content;
-		/* Supaya bisa scroll ke kanan */
 		min-width: 100%;
 	}
 
 	.sticky-col {
 		position: sticky;
 		left: 0;
-		background-color: #f8f9fa;
-		/* Bootstrap light gray */
+		background-color: white !important;
 		z-index: 2;
 	}
 
-	.first-top {
+	.first-col {
 		left: 0;
 		z-index: 10;
+		width: 60px;
 	}
 
 	.second-col {
-		left: 10;
-		z-index: 10;
+		left: 60px;
+		z-index: 11;
+		width: 300px;
 	}
 
 	.third-col {
-		left: 20;
-		z-index: 10;
+		left: 360px;
+		z-index: 12;
+		width: 400px;
 	}
 </style>
 
@@ -173,8 +174,8 @@ use App\Models\SurveyModel;
 		</div>
 		<div class="card-body">
 			<div class="table-container">
-				<div class="table-responsive x-scroll text-nowrap fixed-column-table">
-					<table class="table table-bordered" width="100%">
+				<div class="x-scroll fixed-column-table">
+					<table class="table table-bordered table-responsive" width="100%">
 						<thead>
 							<tr>
 								<th class="sticky-col first-col">No</th>
@@ -188,9 +189,9 @@ use App\Models\SurveyModel;
 								$temp = $answer[$key];
 								krsort($temp); ?>
 								<tr>
-									<td><?= $key + 1 ?></td>
-									<td><?= $each['question'] ?></td>
-									<td><?= $each['approved_answer'] ?? '-' ?></td>
+									<td class="sticky-col first-col"><?= $key + 1 ?></td>
+									<td class="sticky-col second-col"><?= $each['question'] ?></td>
+									<td class="sticky-col third-col"><?= $each['approved_answer'] ?? '-' ?></td>
 									<?php foreach ($temp as $datetime => $value): ?>
 										<td>
 											<b><?= CommonHelper::formatDate($datetime, 2) . '</b><br>' . $value ?>

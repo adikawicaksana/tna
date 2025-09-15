@@ -409,4 +409,87 @@ class Survey extends BaseController
 			return redirect()->back()->withInput()->with('error', $e->getMessage());
 		}
 	}
+
+	public function approval($id = NULL)
+	{
+		if ($this->request->getMethod() === 'post') {
+			dd($this->request->getPost());
+		} else {
+
+
+			// die('a');
+
+
+		if (!$this->model->isApprovable($id)) {
+			return redirect()->back()->with('error', 'Data tidak dapat disetujui.');
+		}
+
+		$builder = \Config\Database::connect();
+		// Fetch survey header
+		$data = $builder->table('survey s')
+			->select('s.*, questionnaire_type, i.category AS institution_group, i.type AS institution_type, i.name AS institution_name, u.front_title, u.fullname, u.back_title')
+			->join('users_detail u', 's.respondent_id = u._id_users')
+			->join('master_institutions i', 's.institution_id = i.id')
+			->join('questionnaire q', 's.questionnaire_id = q.questionnaire_id')
+			->where(['survey_id' => $id])
+			->get()
+			->getRow();
+		$approval_history = json_decode($data->approval_remark, true);
+		// Fetch competence
+		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
+		// Fetch survey detail
+		$detail = $this->surveyDetailModel->getDetail($id);
+		$answer = [];
+		$latest_answer = [];
+		foreach ($detail as $key => $each) {
+			$temp = json_decode($each['answer'], true);
+			$answer[$key] = $temp;
+			$latest_answer[$each['question_id']] = $temp[max(array_keys($temp))];
+		}
+
+		// Get id and answer options
+		$source = [];
+		$ids = [];
+		foreach ($detail as $each) {
+			$has_option = in_array($each['answer_type'], QuestionModel::hasOption());
+			if (!$has_option) continue;
+			// Check if data has existing reference
+			$source_reference = $each['source_reference'];
+			if (empty($source_reference)) {
+				$ids[] = $each['question_id'];
+			} else if (CommonHelper::isRouteExists($source_reference)) {
+				$url = url_to($source_reference);
+				$response = file_get_contents($url);
+				foreach (json_decode($response) as $res) {
+					$source[$each['question_id']][] = [
+						'question_id' => $res->id,
+						'option_name' => $res->text,
+					];
+				}
+			}
+		}
+		// Fetch option data
+		if (!empty($ids)) {
+			$temp2 = QuestionOptionModel::getData($ids);
+			foreach ($temp2 as $each) {
+				$questionId = $each['question_id'];
+				$source[$questionId][] = $each;
+			}
+		}
+
+		return view('survey/approval', [
+			'userDetail' => $this->userDetailModel->getUserDetail(),
+			'data' => $data,
+			'approval_history' => $approval_history,
+			'detail' => $detail,
+			'answer' => $answer,
+			'latest_answer' => $latest_answer,
+			'source' => $source,
+			'competence' => $competence,
+			'title' => 'Formulir Persetujuan Assessment',
+		]);
+
+
+		}
+	}
 }

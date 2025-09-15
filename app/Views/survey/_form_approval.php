@@ -1,4 +1,5 @@
 <?php
+
 use App\Helpers\CommonHelper;
 use App\Models\SurveyModel;
 
@@ -8,8 +9,9 @@ use App\Models\SurveyModel;
 		<h5>Setujui Assessment / Penilaian</h5>
 	</div>
 	<div class="card-body">
-		<form action="<?= url_to('survey.approval', $data->survey_id) ?>" method="post">
-		<?= csrf_field() ?>
+		<form id="form-approval" action="<?= url_to('survey.postApproval') ?>" method="post">
+			<?= csrf_field() ?>
+			<input type="hidden" name="survey_id" value="<?= $data->survey_id ?>">
 			<div class="table-container">
 				<div class="x-scroll fixed-column-table">
 					<table class="table table-bordered table-responsive" width="100%">
@@ -31,7 +33,7 @@ use App\Models\SurveyModel;
 									<td class="sticky-col third-col limit-width">
 										<?= CommonHelper::generateInputField(
 											$each['answer_type'],
-											$each['question_id'],
+											"question[{$each['question_id']}]",
 											$source[$each['question_id']] ?? [],
 											$latest_answer[$each['question_id']] ?? '',
 										) ?>
@@ -80,8 +82,6 @@ use App\Models\SurveyModel;
 		}
 
 		$('#approval_status').val(approval_value);
-		console.log(approval_value);
-		return;
-		$('form').submit();
+		$('#form-approval').submit();
 	})
 </script>

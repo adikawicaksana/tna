@@ -33,8 +33,8 @@ class Menu
             [
                 'label' => 'Institusi',
                 'icon'  => 'ti tabler-building',
-                'url' => route_to('survey.index'),
-                'active' => 'survey.',
+                'url' => route_to('institusi.index'),
+                'active' => 'institusi.',
             ],
             [
                 'label' => 'Dinas',

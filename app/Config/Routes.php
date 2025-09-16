@@ -27,6 +27,10 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 
 
 $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
+	
+	$routes->get('institusi', 'Institusi::index', ['as' => 'institusi.index']);
+	$routes->get('institusi/(:segment)', 'Institusi::index/$1', ['as' => 'institusi.detail']);
+
 
 	$routes->get('/profile/institutions/data', 'Profile::getUserInstitutions');
 	$routes->post('/profile/institutions/delete/(:segment)', 'Profile::deleteUserInstitutions/$1');
@@ -53,11 +57,6 @@ $routes->group('api/v1', ['filter' => 'authjwt'], function ($routes) {
 });
 $routes->post('api/v1/login', 'Api\Auth::login');
 $routes->post('api/v1/logout', 'Api\Auth::logout');
-
-// $routes->post('api/fasyankes_check', 'Api\General::postFasyankesCheck');
-// $routes->post('api/fasyankes_search', 'Api\General::postFasyankesSearch');
-// $routes->post('api/nonfasyankes_check', 'Api\General::postNonFasyankesCheck');
-// $routes->post('api/nonfasyankes_search', 'Api\General::postNonFasyankesSearch');
 
 $routes->get('api/institution', 'Api\General::getInstitution');
 $routes->get('api/pelatihan_siakpel', 'Api\General::getPelatihanSiakpel', ['as' => 'api.pelatihan_siakpel']);

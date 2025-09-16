@@ -54,4 +54,25 @@ class InstitutionsModel extends Model
             ];
         }
     }
+
+    public function detail($id)
+    {
+        try {
+            return $this->select('
+                    master_institutions.*,
+                    master_area_districts.name AS district_name,
+                    master_area_regencies.name AS regencies_name,
+                    master_area_provinces.name AS provinces_name
+                ')
+                ->join('master_area_districts','master_area_districts.id = master_institutions._id_districts','left' )
+                ->join('master_area_regencies','master_area_regencies.id = master_institutions._id_regencies','left' )
+                ->join('master_area_provinces','master_area_provinces.id = master_institutions._id_provinces','left' )
+                ->where('master_institutions.id', $id)
+                ->first();  
+
+        } catch (Exception $e) {
+            log_message('error', '[InstitutionsModel::detail] ' . $e->getMessage());
+            return null;
+        }
+    }
 }

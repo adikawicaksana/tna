@@ -25,6 +25,12 @@ class UsersInstitutionsModel extends Model
             return []; 
         }
     }
+
+    public function countByInstitution($institutionId): int
+    {
+        return $this->where('_id_master_institutions', $institutionId)
+                    ->countAllResults();
+    }
 }
 
 

@@ -92,5 +92,5 @@ $routes->post('survey/store', 'Survey::store', ['as' => 'survey.store']);
 $routes->get('survey/edit/(:any)', 'Survey::edit/$1', ['as' => 'survey.edit']);
 $routes->post('survey/update', 'Survey::update', ['as' => 'survey.update']);
 $routes->get('survey/approval/(:any)', 'Survey::approval/$1', ['as' => 'survey.approval']);
-$routes->post('survey/postApproval', 'Survey::approval', ['as' => 'survey.postApproval']);
+$routes->post('survey/postApproval', 'Survey::postApproval', ['as' => 'survey.postApproval']);
 $routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);

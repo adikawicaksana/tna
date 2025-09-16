@@ -117,7 +117,7 @@ use App\Models\SurveyModel;
 								<ul>
 									<li>
 										<b><?= $approval_history['datetime'] ?></b>
-										<?= $approval_history['user_id'] ?> <br>
+										direspons oleh: <?= $approval_history['user_name'] ?> <br>
 										<?= $approval_history['remark'] ?>
 									</li>
 								</ul>

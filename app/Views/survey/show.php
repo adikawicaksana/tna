@@ -49,6 +49,16 @@ use App\Models\SurveyModel;
 
 <div class="container">
 	<h1><?= $title ?></h1>
+	<?php if (session()->getFlashdata('error')): ?>
+		<div class="alert alert-danger">
+			<?= session()->getFlashdata('error') ?>
+		</div>
+	<?php elseif (session()->getFlashdata('success')): ?>
+		<div class="alert alert-success">
+			<?= session()->getFlashdata('success') ?>
+		</div>
+	<?php endif; ?>
+
 	<div class="d-flex mb-2" style="padding-left: 0 !important;">
 		<?php if (SurveyModel::isEditable($data->survey_id)): ?>
 			<a href="<?= url_to('survey.edit', $data->survey_id) ?>" class="btn btn-sm btn-primary me-2">
@@ -129,7 +139,7 @@ use App\Models\SurveyModel;
 								<ul>
 									<li>
 										<b><?= $approval_history['datetime'] ?></b>
-										<?= $approval_history['user_id'] ?> <br>
+										direspons oleh: <?= $approval_history['user_name'] ?> <br>
 										<?= $approval_history['remark'] ?>
 									</li>
 								</ul>
@@ -187,11 +197,13 @@ use App\Models\SurveyModel;
 						<tbody>
 							<?php foreach ($detail as $key => $each):
 								$temp = $answer[$key];
-								krsort($temp); ?>
+								krsort($temp);
+								$max_key = max(array_keys($temp));
+								$bg_color = ($each['approved_answer'] != NULL) && ($each['approved_answer'] != $temp[$max_key]) ? 'pink !important' : 'white !important' ?>
 								<tr>
 									<td class="sticky-col first-col"><?= $key + 1 ?></td>
 									<td class="sticky-col second-col"><?= $each['question'] ?></td>
-									<td class="sticky-col third-col"><?= $each['approved_answer'] ?? '-' ?></td>
+									<td class="sticky-col third-col" style="background-color: <?= $bg_color ?>;"><?= $each['approved_answer'] ?? '-' ?></td>
 									<?php foreach ($temp as $datetime => $value): ?>
 										<td>
 											<b><?= CommonHelper::formatDate($datetime, 2) . '</b><br>' . $value ?>

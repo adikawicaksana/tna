@@ -36,7 +36,7 @@ class CommonHelper
 					$checked = ($each['option_name'] == $value) ? 'checked' : '';
 					$result .= "<div class='form-check form-check-primary'>
 						<input name='$name' class='form-check-input' type='radio' value='{$each['option_name']}' {$checked} />
-						<label class='form-check-label'>{$each['option_name']}</label>
+						<label class='form-check-label'>{$each['option_name']}</label><br>
 						<label>{$each['option_description']}</label>
 					</div>";
 				}

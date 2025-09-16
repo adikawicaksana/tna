@@ -122,8 +122,9 @@ class Survey extends BaseController
 			->get()
 			->getRow();
 		$approval_history = json_decode($data->approval_remark, true);
-		// $appro (new UserDetailModel())->getUserDetail($approval_history['user_id'])['fullname'];
-		// dd($approval_history['user']);
+		$user = ($this->userDetailModel->getUserDetail($approval_history['user_id']));
+		$approval_history['user_name'] = $user['front_title'] . ' ' . $user['fullname'];
+		$approval_history['user_name'] .= (!empty($user['back_title'])) ? ", {$user['back_title']}" : '';
 		// Fetch competence
 		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
 		// Fetch survey detail
@@ -402,6 +403,11 @@ class Survey extends BaseController
 				throw new \Exception('Gagal menyimpan detail responden: ' . json_encode($this->respondentDetailModel->db->error()));
 			}
 
+			// Update survey status
+			if (!$this->model->update($survey_id, ['survey_status' => SurveyModel::STAT_OPEN])) {
+				throw new \Exception('Gagal memperbarui status assessment / penilaian: ' . json_encode($this->model->db->error()));
+			}
+
 			$dbtrans->transCommit();
 			return redirect()->to(route_to('survey.index'))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
@@ -427,6 +433,9 @@ class Survey extends BaseController
 			->get()
 			->getRow();
 		$approval_history = json_decode($data->approval_remark, true);
+		$user = ($this->userDetailModel->getUserDetail($approval_history['user_id']));
+		$approval_history['user_name'] = $user['front_title'] . ' ' . $user['fullname'];
+		$approval_history['user_name'] .= (!empty($user['back_title'])) ? ", {$user['back_title']}" : '';
 		// Fetch competence
 		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
 		// Fetch survey detail
@@ -494,7 +503,7 @@ class Survey extends BaseController
 		if (!$this->model->isApprovable($survey_id)) {
 			return redirect()->back()->with('error', 'Tidak dapat mengubah status persetujuan');
 		}
-		if (($post['approval_value'] == SurveyModel::STAT_DECLINED) && (empty($post['approval_remark']))) {
+		if (($post['approval_status'] == SurveyModel::STAT_DECLINED) && (empty($post['approval_remark']))) {
 			return redirect()->back()->with('error', 'Catatan tidak boleh kosong');
 		}
 
@@ -504,30 +513,33 @@ class Survey extends BaseController
 			// Update Survey data
 			$data = [];
 			$data['survey_status'] = $post['approval_status'];
-			$data['approval_remark'] = [
+			$data['approval_remark'] = json_encode([
 				'datetime' => $datetime,
 				'user_id' => session()->get('_id_users'),
 				'remark' => $post['approval_remark'],
-			];
-			// If assessment is approved, save the approval record
+			]);
+
+			// If assessment is approved, save the approval record and approved answer
 			if ($post['approval_status'] == SurveyModel::STAT_ACTIVE) {
 				$data['approved_by'] = session()->get('_id_users');
 				$data['approved_at'] = $datetime;
+
+				// Save survey detail (approved answer)
+				foreach ($post['question'] as $question_id => $value) {
+					$builder = $this->surveyDetailModel->builder();
+					$surveyDetailModel = $builder->where(['survey_id' => $survey_id, 'question_id' => $question_id])
+						->set(['approved_answer' => $value])
+						->update();
+
+					if (!$surveyDetailModel) {
+						throw new \Exception('Gagal menyimpan detail persetujuan: ' . json_encode($this->model->db->error()));
+					}
+				}
 			}
+
 			// Save record
 			if (!$this->model->update($survey_id, $data)) {
 				throw new \Exception('Gagal menyimpan persetujuan: ' . json_encode($this->model->db->error()));
-			}
-
-			// Save survey detail
-			foreach ($post['question'] as $question_id => $value) {
-				$this->surveyDetailModel->builder();
-				$surveyDetailModel = $this->surveyDetailModel
-					->where(['survey_id' => $survey_id, 'question_id' => $question_id])
-					->update(['approved_answer' => $value]);
-				if (!$surveyDetailModel) {
-					throw new \Exception('Gagal menyimpan detail persetujuan: ' . json_encode($this->model->db->error()));
-				}
 			}
 
 			$dbtrans->transCommit();

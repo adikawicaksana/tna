@@ -74,6 +74,7 @@ class Auth extends BaseController
                 'token'         => $token,
                 'refresh_token' => $refreshToken,
                 '_id_users'     => $user['id'],
+                'user_role'     => $user['user_role'],
                 'logged_in'     => true
             ]);
 
@@ -158,7 +159,7 @@ class Auth extends BaseController
         // Hapus refresh_token dari cookie
             $response = service('response');
             $response->deleteCookie('refresh_token');
-            
+
         $session->destroy();
         return redirect()->to(base_url())->with('success', 'Berhasil logout');
     }

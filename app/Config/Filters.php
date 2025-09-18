@@ -38,6 +38,7 @@ class Filters extends BaseFilters
         'authweb'       => \App\Filters\JwtWebFilter::class,
         'autologin'     => \App\Filters\WebJwtAutoLoginFilter::class,
         'checkprofile'  => \App\Filters\CheckUserProfileFilter::class,
+        'role'          => \App\Filters\RoleFilter::class,
         'redirectIfAuth' => \App\Filters\RedirectIfAuthenticated::class,
     ];
 
@@ -77,6 +78,7 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
+            'role',
         ],
         'after' => [
             // 'honeypot',

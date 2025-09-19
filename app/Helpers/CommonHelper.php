@@ -3,9 +3,23 @@
 namespace App\Helpers;
 
 use App\Models\QuestionModel;
+use Config\Access;
 
 class CommonHelper
 {
+	public static function hasAccess(string $controller, string $method): bool
+	{
+		$session = session();
+		$role = $session->get('user_role');
+		$access = new Access();
+
+		if (isset($access->access[$controller][$method])) {
+			return in_array($role, $access->access[$controller][$method]);
+		}
+
+		return true;
+	}
+
 	public static function formatDate($date, $format = 1)
 	{
 		$return = '';

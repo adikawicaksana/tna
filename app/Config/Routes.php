@@ -26,8 +26,7 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 });
 
 
-$routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
-	
+$routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($routes) {
 	$routes->get('institusi', 'Institusi::index', ['as' => 'institusi.index']);
 	$routes->get('institusi/(:segment)', 'Institusi::index/$1', ['as' => 'institusi.detail']);
 
@@ -49,6 +48,32 @@ $routes->group('', ['filter' => ['authweb',  'autologin']], function ($routes) {
 	$routes->post('/profile/delete-competence', 'Profile::deleteCompetence');
 
 	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile']);
+
+	// Master Question, Questionnaire
+	$routes->group('admin', function ($routes) {
+		$routes->get('question', 'Admin\Question::index', ['as' => 'question.index']);
+		$routes->get('question/create', 'Admin\Question::create', ['as' => 'question.create']);
+		$routes->post('question/store', 'Admin\Question::store');
+		$routes->post('question/deactivate/(:any)', 'Admin\Question::deactivate/$1', ['as' => 'question.deactivate']);
+		$routes->get('question/(:any)', 'Admin\Question::show/$1', ['as' => 'question.show']);
+
+		$routes->get('questionnaire', 'Admin\Questionnaire::index', ['as' => 'questionnaire.index']);
+		$routes->get('questionnaire/create', 'Admin\Questionnaire::create', ['as' => 'questionnaire.create']);
+		$routes->post('questionnaire/store', 'Admin\Questionnaire::store', ['as' => 'questionnaire.store']);
+		$routes->post('questionnaire/activate/(:any)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
+		$routes->post('questionnaire/deactivate/(:any)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
+		$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1', ['as' => 'questionnaire.show']);
+	});
+
+	// Survey
+	$routes->get('survey', 'Survey::index', ['as' => 'survey.index']);
+	$routes->get('survey/create/(:num)', 'Survey::create/$1', ['as' => 'survey.create']);
+	$routes->post('survey/store', 'Survey::store', ['as' => 'survey.store']);
+	$routes->get('survey/edit/(:any)', 'Survey::edit/$1', ['as' => 'survey.edit']);
+	$routes->post('survey/update', 'Survey::update', ['as' => 'survey.update']);
+	$routes->get('survey/approval/(:any)', 'Survey::approval/$1', ['as' => 'survey.approval']);
+	$routes->post('survey/postApproval', 'Survey::postApproval', ['as' => 'survey.postApproval']);
+	$routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);
 });
 
 
@@ -70,26 +95,4 @@ $routes->get('api/kelurahan', 'Api\Area::kelurahan');
 
 $routes->post('api/v1/token/refresh', 'Api\Auth::refreshToken');
 
-$routes->group('admin', function ($routes) {
-	$routes->get('question', 'Admin\Question::index', ['as' => 'question.index']);
-	$routes->get('question/create', 'Admin\Question::create', ['as' => 'question.create']);
-	$routes->post('question/store', 'Admin\Question::store');
-	$routes->post('question/deactivate/(:any)', 'Admin\Question::deactivate/$1', ['as' => 'question.deactivate']);
-	$routes->get('question/(:any)', 'Admin\Question::show/$1', ['as' => 'question.show']);
 
-	$routes->get('questionnaire', 'Admin\Questionnaire::index', ['as' => 'questionnaire.index']);
-	$routes->get('questionnaire/create', 'Admin\Questionnaire::create', ['as' => 'questionnaire.create']);
-	$routes->post('questionnaire/store', 'Admin\Questionnaire::store', ['as' => 'questionnaire.store']);
-	$routes->post('questionnaire/activate/(:any)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
-	$routes->post('questionnaire/deactivate/(:any)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
-	$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1', ['as' => 'questionnaire.show']);
-});
-
-$routes->get('survey', 'Survey::index', ['as' => 'survey.index']);
-$routes->get('survey/create/(:num)', 'Survey::create/$1', ['as' => 'survey.create']);
-$routes->post('survey/store', 'Survey::store', ['as' => 'survey.store']);
-$routes->get('survey/edit/(:any)', 'Survey::edit/$1', ['as' => 'survey.edit']);
-$routes->post('survey/update', 'Survey::update', ['as' => 'survey.update']);
-$routes->get('survey/approval/(:any)', 'Survey::approval/$1', ['as' => 'survey.approval']);
-$routes->post('survey/postApproval', 'Survey::postApproval', ['as' => 'survey.postApproval']);
-$routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);

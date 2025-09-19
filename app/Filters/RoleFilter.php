@@ -27,12 +27,12 @@ class RoleFilter implements FilterInterface
 					return redirect()->to('/unauthorized');
 				}
 			} else {
-				return redirect()->to('/unauthorized');
+				// allow access if controller is not defined in access list
+				return;
 			}
 		}
-		else {
-			return redirect()->to('/unauthorized');
-		}
+
+		return;
 	}
 
 	public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)

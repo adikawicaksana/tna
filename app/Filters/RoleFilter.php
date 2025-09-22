@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use App\Models\UserModel;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Filters\FilterInterface;
@@ -14,10 +15,11 @@ class RoleFilter implements FilterInterface
 		$session = session();
 		$role = $session->get('user_role');
 		$access = new Access();
-
 		$router = service('router');
 		$controller = $router->controllerName();
 		$method = $router->methodName();
+
+		if ($role == UserModel::ROLE_SUPERADMIN) return;
 
 		if (isset($access->access[$controller])) {
 			$methodAccess = $access->access[$controller];

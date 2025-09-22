@@ -7,7 +7,7 @@ use App\Models\UserModel;
 class Access
 {
 	public array $access = [
-		'\App\Controllers\Profile' => [
+		'Profile' => [
 			'index' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 			'putDetail' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 			'storeUserFasyankes' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
@@ -24,7 +24,7 @@ class Access
 			'getUserNonFasyankes' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 			'getUserFasyankes' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 		],
-		'\App\Controllers\Admin\Question' => [
+		'Question' => [
 			'index' => [UserModel::ROLE_ADMIN],
 			'show' => [UserModel::ROLE_ADMIN],
 			'create' => [UserModel::ROLE_ADMIN],
@@ -32,7 +32,7 @@ class Access
 			'update' => [UserModel::ROLE_ADMIN],
 			'deactivate' => [UserModel::ROLE_ADMIN],
 		],
-		'\App\Controllers\Admin\Questionnaire' => [
+		'Questionnaire' => [
 			'index' => [UserModel::ROLE_ADMIN],
 			'show' => [UserModel::ROLE_ADMIN],
 			'create' => [UserModel::ROLE_ADMIN],
@@ -41,7 +41,7 @@ class Access
 			'activate' => [UserModel::ROLE_ADMIN],
 			'deactivate' => [UserModel::ROLE_ADMIN],
 		],
-		'\App\Controllers\Survey' => [
+		'Survey' => [
 			'index' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 			'show' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 			'create' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],

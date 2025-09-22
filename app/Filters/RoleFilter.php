@@ -16,7 +16,7 @@ class RoleFilter implements FilterInterface
 		$role = $session->get('user_role');
 		$access = new Access();
 		$router = service('router');
-		$controller = $router->controllerName();
+		$controller = basename(str_replace('\\', '/', $router->controllerName()));
 		$method = $router->methodName();
 
 		if ($role == UserModel::ROLE_SUPERADMIN) return;

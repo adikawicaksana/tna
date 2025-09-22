@@ -11,6 +11,7 @@ use App\Models\QuestionOptionModel;
 use App\Models\RespondentDetailModel;
 use App\Models\SurveyModel;
 use App\Models\SurveyDetailModel;
+use App\Models\UserModel;
 use App\Models\UsersCompetenceModel;
 use App\Models\UsersInstitutionsModel;
 use Ramsey\Uuid\Uuid;
@@ -52,6 +53,25 @@ class Survey extends BaseController
 			$builder->select("CONCAT(i.type, ' ', i.name) AS institution_name", false)
 				->join('users_detail u', 's.respondent_id = u._id_users')
 				->join('master_institutions i', 's.institution_id = i.id');
+
+			// Filter by user access
+			$user_id = session()->get('_id_users');
+			if (session()->get('user_role') == UserModel::ROLE_USER) {
+				$user = (new UserModel())->find($user_id);
+				$p_institusi = json_decode($user['p_institusi']) ?? [];
+				$p_kabkota = json_decode($user['p_kabkota']) ?? [];
+				$p_provinsi = json_decode($user['p_provinsi']) ?? [];
+				$p_access = array_merge($p_institusi, $p_kabkota, $p_provinsi);
+
+				if (!empty($p_access)) {
+					$builder->groupStart()
+						->whereIn('s.institution_id', $p_access)
+						->orWhere('respondent_id', $user_id)
+						->groupEnd();
+				} else {
+					$builder->where('respondent_id', $user_id);
+				}
+			}
 
 			// Filtering
 			if (!empty($search)) {
@@ -122,9 +142,11 @@ class Survey extends BaseController
 			->get()
 			->getRow();
 		$approval_history = json_decode($data->approval_remark, true);
-		$user = ($this->userDetailModel->getUserDetail($approval_history['user_id']));
-		$approval_history['user_name'] = $user['front_title'] . ' ' . $user['fullname'];
-		$approval_history['user_name'] .= (!empty($user['back_title'])) ? ", {$user['back_title']}" : '';
+		if (!empty($approval_history)) {
+			$user = ($this->userDetailModel->getUserDetail($approval_history['user_id']));
+			$approval_history['user_name'] = $user['front_title'] . ' ' . $user['fullname'];
+			$approval_history['user_name'] .= (!empty($user['back_title'])) ? ", {$user['back_title']}" : '';
+		}
 		// Fetch competence
 		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
 		// Fetch survey detail

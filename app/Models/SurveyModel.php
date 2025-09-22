@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\CommonHelper;
 use CodeIgniter\Model;
 
 class SurveyModel extends Model
@@ -78,8 +79,7 @@ class SurveyModel extends Model
 	{
 		$model = (new self())->find($id);
 		$result = ($model['survey_status'] == self::STAT_OPEN);
-
-		// need to check user access
+		$result &= (CommonHelper::hasAccess('Survey', 'approval'));
 
 		return $result;
 	}

@@ -15,7 +15,7 @@
               <!-- Search -->
               <div class="navbar-nav align-items-center">
                 <div class="nav-item navbar-search-wrapper px-md-0 px-2 mb-0">
-                                  
+
                 </div>
               </div>
 
@@ -49,10 +49,7 @@
                         class="dropdown-item align-items-center"
                         data-bs-theme-value="dark"
                         aria-pressed="true">
-                        <span
-                          ><i class="icon-base ti tabler-moon-stars icon-22px me-3" data-icon="moon-stars"></i
-                          >Dark</span
-                        >
+                        <span><i class="icon-base ti tabler-moon-stars icon-22px me-3" data-icon="moon-stars"></i>Dark</span>
                       </button>
                     </li>
                     <li>
@@ -61,18 +58,15 @@
                         class="dropdown-item align-items-center"
                         data-bs-theme-value="system"
                         aria-pressed="false">
-                        <span
-                          ><i
+                        <span><i
                             class="icon-base ti tabler-device-desktop-analytics icon-22px me-3"
-                            data-icon="device-desktop-analytics"></i
-                          >System</span
-                        >
+                            data-icon="device-desktop-analytics"></i>System</span>
                       </button>
                     </li>
                   </ul>
                 </li>
                 <!-- / Style Switcher-->
-                 
+
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a
@@ -104,14 +98,13 @@
                     </li>
                     <li>
                       <a class="dropdown-item" href="<?= base_url('profile') ?>">
-                        <i class="icon-base ti tabler-user me-3 icon-md"></i
-                        ><span class="align-middle">My Profile</span>
+                        <i class="icon-base ti tabler-user me-3 icon-md"></i><span class="align-middle">My Profile</span>
                       </a>
                     </li>
-                    
+
                     <li>
                       <div class="d-grid px-2 pt-2 pb-1">
-                        <a class="btn btn-sm btn-danger d-flex" href="./logout">
+                        <a class="btn btn-sm btn-danger d-flex" href="<?= route_to('logout') ?>">
                           <small class="align-middle">Logout</small>
                           <i class="icon-base ti tabler-logout ms-2 icon-14px"></i>
                         </a>

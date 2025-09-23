@@ -126,7 +126,8 @@ class Register extends BaseController
             'id'        => $newIDUser,
             'email'     => $email,
             'password'  => password_hash($password, PASSWORD_DEFAULT),
-            'status'    => 'pending'
+            'status'    => 'pending',
+            'user_role' => 3
         ]);
 
         $detailModel->insert([ 

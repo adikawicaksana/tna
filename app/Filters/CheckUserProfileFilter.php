@@ -23,6 +23,11 @@ class CheckUserProfileFilter implements FilterInterface
                 $userDetail = model('UserDetailModel')
                     ->where('_id_users', $_id_users)
                     ->first();
+
+                $userCompetence = model('UsersJobdescModel')
+                    ->where('_id_users', $_id_users)
+                    ->get()
+                    ->getResultArray();
             }
 
             $requiredFields = [
@@ -45,11 +50,16 @@ class CheckUserProfileFilter implements FilterInterface
                         ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.');
                 }
             } else {
-                foreach ($requiredFields as $field) {
-                    if (empty($userDetail[$field])) {
-                        if (current_url() !== site_url('/profile')) {
+                if (current_url() !== site_url('/profile')) {
+                    if (empty($userCompetence)) {
+                        return redirect()->to(base_url('profile'))
+                            ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.' . $userDetail['fullname']);
+                    }
+
+                    foreach ($requiredFields as $field) {
+                        if (empty($userDetail[$field])) {
                             return redirect()->to(base_url('profile'))
-                                ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.'.$userDetail['fullname']);
+                                ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.' . $userDetail['fullname']);
                         }
                     }
                 }
@@ -57,8 +67,5 @@ class CheckUserProfileFilter implements FilterInterface
         }
     }
 
-    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-    {
-       
-    }
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null) {}
 }

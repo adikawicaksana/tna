@@ -71,6 +71,7 @@ class SurveyModel extends Model
 		$model = (new self())->find($id);
 		$result = in_array($model['survey_status'], [self::STAT_OPEN, self::STAT_DECLINED]);
 		$result &= (session()->get('_id_users') == $model['respondent_id']);
+		$result &= (CommonHelper::hasAccess('Survey', 'update'));
 
 		return $result;
 	}
@@ -79,7 +80,7 @@ class SurveyModel extends Model
 	{
 		$model = (new self())->find($id);
 		$result = ($model['survey_status'] == self::STAT_OPEN);
-		$result &= (CommonHelper::hasAccess('Survey', 'approval'));
+		$result &= (CommonHelper::hasAccess('Survey', 'approval', true));
 
 		return $result;
 	}

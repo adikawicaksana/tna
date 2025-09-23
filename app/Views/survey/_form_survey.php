@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\CommonHelper;
+use App\Models\QuestionnaireModel;
 ?>
 
 <form action="<?= url_to($url) ?>" method="post">
@@ -8,19 +9,21 @@ use App\Helpers\CommonHelper;
 	<input type="hidden" name="survey_id" value="<?= $model['survey_id'] ?? NULL ?>">
 	<input type="hidden" name="questionnaire_id" value="<?= $question[0]['questionnaire_id'] ?>">
 	<input type="hidden" name="type" value="<?= $type ?>">
-	<div class="row mb-3">
-		<div class="card-datatable table-responsive pt-0">
-			<table id="tableUraianTugas" class="table table-bordered">
-				<thead>
-					<tr>
-						<th>No</th>
-						<th width="35%">Uraian Tugas</th>
-						<th>Pengembangan Kompetensi</th>
-					</tr>
-				</thead>
-			</table>
-		</div>
-	</div><br><br>
+	<?php if (in_array($type, [QuestionnaireModel::TYPE_INDIVIDUAL_FASYANKES, QuestionnaireModel::TYPE_INDIVIDUAL_INSTITUTE])): ?>
+		<div class="row mb-3">
+			<div class="card-datatable table-responsive pt-0">
+				<table id="tableUraianTugas" class="table table-bordered">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th width="35%">Uraian Tugas</th>
+							<th>Pengembangan Kompetensi</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div><br><br>
+	<?php endif; ?>
 	<div class="row mb-3">
 		<div class="col-sm-4">
 			<label class="col-form-label" for="basic-default-<?= esc($institution['selectName']) ?>"><?= esc($institution['label']) ?></label>

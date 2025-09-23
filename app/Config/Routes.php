@@ -10,7 +10,7 @@ $routes->get('/login', 'Auth::login', ['filter' => 'redirectIfAuth']);
 $routes->post('/login', 'Auth::loginPost');
 $routes->post('/refresh-token', 'Auth::refreshWebToken');
 $routes->get('/captcha', 'Captcha::generate');
-$routes->get('/logout', 'Auth::logout');
+$routes->get('/logout', 'Auth::logout', ['as' => 'logout']);
 
 $routes->get('/register', 'Register::index', ['filter' => 'redirectIfAuth']);
 $routes->post('/register', 'Register::store');
@@ -96,5 +96,3 @@ $routes->get('api/kelurahan', 'Api\Area::kelurahan');
 
 
 $routes->post('api/v1/token/refresh', 'Api\Auth::refreshToken');
-
-

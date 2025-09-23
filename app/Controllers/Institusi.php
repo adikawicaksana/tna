@@ -41,12 +41,14 @@ class Institusi extends BaseController
         if (!empty($userDetail['mobile']) && str_starts_with($userDetail['mobile'], '62')) {
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
-
-        $p_institusi = json_decode($userDetail['p_institusi'], true);
+$institusi=[];
+        if($userDetail['p_institusi']){
+            $p_institusi = json_decode($userDetail['p_institusi'], true);
 
         $institusi = $this->institutions
             ->whereIn('id', $p_institusi)
             ->findAll();
+        }
 
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
 

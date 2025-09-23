@@ -10,6 +10,7 @@
 <!-- Content -->
            <div class="container">
 	<h1><?= $title ?></h1>
+    <?php if($data['institusi_detail']) {?>
 	<div class="card">
         <div class="card-header">
              <select name="institusi" id="institusi" class="form-select select2">
@@ -109,7 +110,7 @@
           
             
 		</div>
-	</div>
+	</div> <?php } ?>
 </div>
 <?= $this->endSection() ?>
 

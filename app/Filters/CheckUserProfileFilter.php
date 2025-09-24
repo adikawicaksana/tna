@@ -53,13 +53,13 @@ class CheckUserProfileFilter implements FilterInterface
                 if (current_url() !== site_url('/profile')) {
                     if (empty($userCompetence)) {
                         return redirect()->to(base_url('profile'))
-                            ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.' . $userDetail['fullname']);
+                            ->with('warning_profile', 'Lengkapi uraian tugas Anda terlebih dahulu. ' . $userDetail['fullname']);
                     }
 
                     foreach ($requiredFields as $field) {
                         if (empty($userDetail[$field])) {
                             return redirect()->to(base_url('profile'))
-                                ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu.' . $userDetail['fullname']);
+                                ->with('warning_profile', 'Lengkapi profil Anda terlebih dahulu. ' . $userDetail['fullname']);
                         }
                     }
                 }

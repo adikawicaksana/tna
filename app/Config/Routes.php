@@ -57,6 +57,8 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 		$routes->get('question', 'Admin\Question::index', ['as' => 'question.index']);
 		$routes->get('question/create', 'Admin\Question::create', ['as' => 'question.create']);
 		$routes->post('question/store', 'Admin\Question::store');
+		$routes->get('question/edit/(:any)', 'Admin\Question::edit/$1', ['as' => 'question.edit']);
+		$routes->post('question/update', 'Admin\Question::update', ['as' => 'question.update']);
 		$routes->post('question/deactivate/(:any)', 'Admin\Question::deactivate/$1', ['as' => 'question.deactivate']);
 		$routes->get('question/(:any)', 'Admin\Question::show/$1', ['as' => 'question.show']);
 

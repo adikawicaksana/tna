@@ -92,7 +92,7 @@ class Question extends BaseController
 		$sql = "SELECT q.*, o.option_name, o.option_description
 			FROM question q
 			LEFT JOIN question_option o ON (q.question_id = o.question_id)
-			WHERE q.question_id = $id";
+			WHERE q.question_id = '$id'";
 		$query = $db->query($sql);
 		$data = $query->getResultArray();
 
@@ -103,6 +103,7 @@ class Question extends BaseController
 		return view('admin/question/show', [
 			'data' => $data,
 			'answer_type' => QuestionModel::listAnswerType(),
+			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'title' => 'Detail Pertanyaan',
 		]);
 	}
@@ -112,6 +113,7 @@ class Question extends BaseController
 		return view('admin/question/form', [
 			'answer_type' => $this->model::listAnswerType(),
 			'has_option' => $this->model::hasOption(),
+			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'title' => 'Tambah Pertanyaan',
 		]);
 	}
@@ -163,6 +165,34 @@ class Question extends BaseController
 			// dd($e->getMessage());
 			return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data');
 		}
+	}
+
+	public function edit($id)
+	{
+		if (!QuestionModel::isDeactivatable($id)) {
+			return redirect()->back()->with('error', 'Data tidak dapat diubah.');
+		}
+
+		$db = \Config\Database::connect();
+		$sql = "SELECT q.*, o.option_name, o.option_description
+			FROM question q
+			LEFT JOIN question_option o ON (q.question_id = o.question_id)
+			WHERE q.question_id = '$id'";
+		$query = $db->query($sql);
+		$data = $query->getResultArray();
+
+		if (empty($data)) {
+			throw PageNotFoundException::forPageNotFound('Data tidak ditemukan');
+		}
+		// dd($data);
+
+		return view('admin/question/form_edit', [
+			'data' => $data,
+			'answer_type' => $this->model::listAnswerType(),
+			'has_option' => $this->model::hasOption(),
+			'userDetail' => $this->userDetailModel->getUserDetail(),
+			'title' => 'Tambah Pertanyaan',
+		]);
 	}
 
 	public function update($id)

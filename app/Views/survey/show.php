@@ -190,7 +190,9 @@ use App\Models\SurveyModel;
 							<tr>
 								<th class="sticky-col first-col">No</th>
 								<th class="sticky-col second-col">Pertanyaan</th>
-								<th class="sticky-col third-col">Disetujui</th>
+								<?php if (!$is_institution): ?>
+									<th class="sticky-col third-col">Disetujui</th>
+								<?php endif; ?>
 								<th>Jawaban</th>
 							</tr>
 						</thead>
@@ -203,10 +205,12 @@ use App\Models\SurveyModel;
 								<tr>
 									<td class="sticky-col first-col"><?= $key + 1 ?></td>
 									<td class="sticky-col second-col"><?= $each['question'] ?></td>
-									<td class="sticky-col third-col" style="background-color: <?= $bg_color ?>;"><?= $each['approved_answer'] ?? '-' ?></td>
+									<?php if (!$is_institution): ?>
+										<td class="sticky-col third-col" style="background-color: <?= $bg_color ?>;"><?= $each['approved_answer'] ?? '-' ?></td>
+									<?php endif; ?>
 									<?php foreach ($temp as $datetime => $value): ?>
 										<td>
-											<b><?= CommonHelper::formatDate($datetime, 2) . '</b><br>' . $value ?>
+											<b><?= CommonHelper::formatDate($datetime, 2) . '</b><br>' . esc($value) ?>
 										</td>
 									<?php endforeach; ?>
 								</tr>

@@ -27,7 +27,7 @@ class CommonHelper
 				'Kabkota'   => $p_kabkota,
 				'Provinsi'  => $p_provinsi,
 			];
-		
+
 			if (isset($map[$controller])) {
 				$result = $result && !empty($map[$controller]);
 			}
@@ -73,7 +73,8 @@ class CommonHelper
 				}
 				break;
 			case QuestionModel::TYPE_MULTI_SELECT:
-				$result .= "<select class='select2 form-select field-select' multiple>";
+				$name .= '[]';
+				$result .= "<select class='select2 form-select field-select' name='$name' multiple>";
 				foreach ($source as $each) {
 					$checked = ($each['option_name'] == $value) ? 'checked' : '';
 					$result .= "<option value='{$each['option_name']}' {$checked}>{$each['option_name']}</option>";

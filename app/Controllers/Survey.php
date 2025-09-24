@@ -164,6 +164,7 @@ class Survey extends BaseController
 			'detail' => $detail,
 			'answer' => $answer,
 			'competence' => $competence,
+			'is_institution' => in_array($data->questionnaire_type, [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]),
 			'title' => 'Detail Assessment',
 		]);
 	}
@@ -248,7 +249,7 @@ class Survey extends BaseController
 			$user_id = session()->get('_id_users');
 			$user = $this->userDetailModel->getUserDetail();
 			$datetime = date('Y-m-d H:i:s');
-			$is_intitution = in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]);
+			$is_institution = in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]);
 
 			// Insert into Survey Table
 			$data = [
@@ -261,9 +262,9 @@ class Survey extends BaseController
 				'jenjang_pendidikan' => $user['jenjang_pendidikan'],
 				'jurusan_profesi' => $user['jurusan_profesi'],
 				'created_at' => date('Y-m-d H:i:s'),
-				'approved_by' => $is_intitution ? 0 : NULL,
-				'approval_remark' => $is_intitution ? 'Disetujui oleh sistem' : NULL,
-				'approved_at' => $is_intitution ? date('Y-m-d H:i:s') : NULL,
+				'approved_by' => $is_institution ? $user_id : NULL,
+				'approval_remark' => $is_institution ? 'Disetujui oleh sistem' : NULL,
+				'approved_at' => $is_institution ? date('Y-m-d H:i:s') : NULL,
 			];
 			if (!$this->model->insert($data)) {
 				throw new \Exception('Gagal menyimpan assessment / penilaian: ' . json_encode($this->model->db->error()));
@@ -272,15 +273,14 @@ class Survey extends BaseController
 			// Insert into Survey Detail Table
 			$data = [];
 			foreach ($post['question'] as $key => $value) {
-				// if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $key)) {
-					$answer = [$datetime => $value ?? ''];
-					$data[] = [
-						'detail_id' => Uuid::uuid7()->toString(),
-						'survey_id' => $id,
-						'question_id' => $key,
-						'answer' => json_encode($answer),
-					];
-				// }
+				$value = is_array($value) ? implode('; ', $value) : $value;
+				$answer = [$datetime => $value ?? ''];
+				$data[] = [
+					'detail_id' => Uuid::uuid7()->toString(),
+					'survey_id' => $id,
+					'question_id' => $key,
+					'answer' => json_encode($answer),
+				];
 			}
 			if (!$this->surveyDetailModel->insertBatch($data)) {
 				// echo $this->surveyDetailModel->db->getLastQuery();die;
@@ -288,7 +288,7 @@ class Survey extends BaseController
 			}
 
 			// Insert into Respondent Detail Table
-			if (!$is_intitution) {
+			if (!$is_institution) {
 				$data = [];
 				foreach ((new UsersCompetenceModel())->getCompetence($user_id) as $each) {
 					$data[] = [

@@ -184,19 +184,72 @@ class Question extends BaseController
 		if (empty($data)) {
 			throw PageNotFoundException::forPageNotFound('Data tidak ditemukan');
 		}
-		// dd($data);
 
 		return view('admin/question/form_edit', [
 			'data' => $data,
 			'answer_type' => $this->model::listAnswerType(),
 			'has_option' => $this->model::hasOption(),
 			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'title' => 'Tambah Pertanyaan',
+			'title' => 'Ubah Pertanyaan',
 		]);
 	}
 
-	public function update($id)
+	public function update()
 	{
+		$post = $this->request->getPost();
+		$question_id = $post['question_id'];
+
+		if ($this->request->getMethod() !== 'POST') {
+			return redirect()->back()->with('error', 'Method tidak diizinkan');
+		}
+		if (!$this->model->isDeactivatable($question_id)) {
+			return redirect()->back()->with('error', 'Data tidak dapat diubah.');
+		}
+
+		$dbtrans = \Config\Database::connect();
+		$dbtrans->transBegin();
+		try {
+			// Udpdate Question Table
+			$has_option = in_array($post['answer_type'], QuestionModel::hasOption());
+			$data = [
+				'question' => trim($post['question']),
+				'question_description' => trim($post['question_description']),
+				'answer_type' => $post['answer_type'],
+				'source_reference' => ($has_option && isset($post['has_source'])) ?
+					$post['source_reference'] : '',
+				'updated_at' => date('Y-m-d H:i:s'),
+			];
+			if (!$this->model->update($question_id, $data)) {
+				throw new \Exception('Gagal memperbarui pertanyaan: ' . json_encode($this->model->db->error()));
+			}
+
+			// Remove old data and insert new data into Option Table
+			(new QuestionOptionModel())->where(['question_id' => $question_id])->delete();
+			if ($has_option & !isset($post['has_source'])) {
+				$data = [];
+				$option = new QuestionOptionModel();
+				$description = $post['option_description'];
+				foreach ($post['option_name'] as $key => $each) {
+					if ($each == '') continue;
+					$data[] = [
+						'question_id' => $question_id,
+						'option_name' => trim($each),
+						'option_description' => trim($description[$key]),
+					];
+				}
+				if (empty($data)) throw new \Exception('Pilihan jawaban tidak boleh kosong!');
+				if (!$option->insertBatch($data)) {
+					throw new \Exception('Gagal memperbarui opsi pertanyaan: ' . json_encode($option->db->error()));
+				}
+			}
+
+			$dbtrans->transCommit();
+			return redirect()->to(route_to('question.index'))->with('success', 'Data berhasil disimpan');
+		} catch (\Throwable $e) {
+			$dbtrans->transRollback();
+			return redirect()->back()->withInput()->with('error', $e->getMessage());
+		}
+
 		$data = $this->model->findOne($id);
 		return view('admin/question/form', $data);
 	}

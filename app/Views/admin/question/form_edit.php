@@ -19,8 +19,9 @@ $oldDescriptions = old('option_description') ?? [];
 				</div>
 			<?php endif; ?>
 
-			<form action="<?= base_url('admin/question/update') ?>" method="post">
+			<form action="<?= route_to('question.update') ?>" method="post">
 				<?= csrf_field() ?>
+				<input type="hidden" name="question_id" value="<?= $data[0]['question_id'] ?>">
 				<div class="row mb-3">
 					<label for="question" class="col-sm-2 col-form-label">Pertanyaan</label>
 					<div class="col-sm-10">
@@ -52,45 +53,35 @@ $oldDescriptions = old('option_description') ?? [];
 						<label for="answer_type" class="col-sm-2 col-form-label">Pilihan Jawaban</label>
 						<div class="col-sm-10" style="padding: 0.375rem 0.75rem;">
 							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" role="switch"
-									id="switch-resource" checkbox>
+								<input class="form-check-input" type="checkbox" role="switch" name="has_source" value="1"
+									id="switch-resource" <?= !empty($data[0]['source_reference']) ? 'checked' : '' ?>>
 								<label class="form-check-label">Menggunakan data yang tersedia</label>
 							</div>
 							<div id="field-resource" style="display: none;">
 								<input type="text" class="form-control" name="source_reference"
+									value="<?= $data[0]['source_reference'] ?>"
 									placeholder="Masukkan resource data (menggunakan routing)">
 							</div>
 
 							<div id="field-option">
-								<div class="row mb-2">
-									<div class="col-sm-5">
-										<textarea type="text" class="form-control" name="option_name[]"
-											placeholder="Pilihan Jawaban"><?= isset($oldOptions[0]) ? esc($oldOptions[0]) : '' ?></textarea>
-									</div>
-									<div class="col-sm-6">
-										<textarea type="text" class="form-control" name="option_description[]"
-											placeholder="Deskripsi Jawaban"><?= isset($oldDescriptions[0]) ? esc($oldDescriptions[0]) : '' ?></textarea>
-									</div>
-									<div class="col-sm-1">
-										<button type="button" class="btn btn-sm btn-info btn-add-option">
-											+
-										</button>
-									</div>
-								</div>
-
-								<!-- Display old input values if submission fails  -->
-								<?php foreach ($oldOptions as $key => $each):
-									if ($key == 0) continue; ?>
+								<!-- Display old values -->
+								<?php foreach ($data as $key => $each): ?>
 									<div class="row mb-2">
 										<div class="col-sm-5">
 											<textarea type="text" class="form-control" name="option_name[]"
-												placeholder="Pilihan Jawaban"><?= esc($each) ?></textarea>
+												placeholder="Pilihan Jawaban"><?= esc($each['option_name']) ?></textarea>
 										</div>
 										<div class="col-sm-6">
 											<textarea type="text" class="form-control" name="option_description[]"
-												placeholder="Deskripsi Jawaban"><?= esc($oldDescriptions[$key]) ?></textarea>
+												placeholder="Deskripsi Jawaban"><?= esc($each['option_description']) ?></textarea>
 										</div>
-										<div class="col-sm-1"></div>
+										<div class="col-sm-1">
+											<?php if ($key == 0): ?>
+												<button type="button" class="btn btn-sm btn-info btn-add-option">
+													+
+												</button>
+											<?php endif; ?>
+										</div>
 									</div>
 								<?php endforeach; ?>
 
@@ -121,7 +112,8 @@ $oldDescriptions = old('option_description') ?? [];
 <script>
 	let hasOption = '<?= json_encode($has_option) ?>';
 	$(document).ready(function() {
-		formMultipleChoice($('#answer_type'))
+		formMultipleChoice($('#answer_type'));
+		resourceField($('#switch-resource'));
 	})
 
 	$('#answer_type').change(function() {
@@ -137,14 +129,18 @@ $oldDescriptions = old('option_description') ?? [];
 	}
 
 	$(document).on('change', '#switch-resource', function() {
-		if ($(this).prop('checked')) {
+		resourceField($(this));
+	})
+
+	function resourceField(e) {
+		if (e.prop('checked')) {
 			$('#field-resource').show();
 			$('#field-option').hide();
 		} else {
 			$('#field-resource').hide();
 			$('#field-option').show();
 		}
-	})
+	}
 
 	$(document).on('click', '.btn-add-option', function() {
 		let form = $('#clone-option').html();

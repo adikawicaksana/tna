@@ -52,7 +52,7 @@ use App\Models\QuestionnaireModel;
 			<div class="col-sm-8">
 				<?= CommonHelper::generateInputField(
 					$each['answer_type'],
-					$each['question_id'],
+					"question[{$each['question_id']}]",
 					$source[$each['question_id']] ?? [],
 					$answer[$each['question_id']] ?? '',
 				) ?>

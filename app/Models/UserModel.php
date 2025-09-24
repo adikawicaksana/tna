@@ -8,7 +8,7 @@ class UserModel extends Model
     protected $table      = 'users';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = false;
-    protected $allowedFields = ['id','email', 'password', 'refresh_token', 'refresh_token_expire','status'];
+    protected $allowedFields = ['id','email', 'password', 'refresh_token', 'refresh_token_expire','status','user_role'];
     protected $useTimestamps = true;
 
     const ROLE_SUPERADMIN = 1;

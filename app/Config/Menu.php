@@ -37,7 +37,7 @@ class Menu
                 'icon'  => 'ti tabler-building',
                 'url' => route_to('institusi.index'),
                 'active' => 'institusi.',
-                'access' => ['institusi', 'index'],
+                'access' => ['Institusi', 'index'],
             ],
             [
                 'label' => 'Dinas',
@@ -87,7 +87,6 @@ class Menu
                 'icon'  => 'ti tabler-clipboard-text',
                 'url' => route_to('survey.index'),
                 'active' => 'survey.',
-                'access' => ['Survey', 'index'],
             ],
         ];
 
@@ -105,7 +104,7 @@ class Menu
                     $filtered[] = $menu;
                 }
             } else {
-                if (!isset($menu['access']) || CommonHelper::hasAccess($menu['access'][0], $menu['access'][1])) {
+                if (!isset($menu['access']) || CommonHelper::hasAccess($menu['access'][0], $menu['access'][1], true)) {
                     $filtered[] = $menu;
                 }
             }

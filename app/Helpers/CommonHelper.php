@@ -11,23 +11,31 @@ class CommonHelper
 	public static function hasAccess(string $controller, string $method, bool $checkAdministration = false): bool
 	{
 		$session = session();
-		$role = $session->get('user_role');
-		$result = RoleFilter::manualCheck($controller, $method);
+		$role    = $session->get('user_role');
+		$result  = RoleFilter::manualCheck($controller, $method);
 
-		// Check based on administration
-		if ($checkAdministration) {
-			$user = (new UserModel())->find(session()->get('_id_users'));
-			$p_institusi = json_decode($user['p_institusi']) ?? [];
-			$p_kabkota = json_decode($user['p_kabkota']) ?? [];
-			$p_provinsi = json_decode($user['p_provinsi']) ?? [];
-			$p_access = array_merge($p_institusi, $p_kabkota, $p_provinsi);
-			if ($role == UserModel::ROLE_USER) {
-				$result &= !empty($p_access);
+		// Ambil data user
+		$user = (new UserModel())->find($session->get('_id_users'));
+
+		$p_institusi = json_decode($user['p_institusi'] ?? '[]', true) ?? [];
+		$p_kabkota   = json_decode($user['p_kabkota'] ?? '[]', true) ?? [];
+		$p_provinsi  = json_decode($user['p_provinsi'] ?? '[]', true) ?? [];
+
+		if ($role == UserModel::ROLE_USER) {
+			$map = [
+				'Institusi' => $p_institusi,
+				'Kabkota'   => $p_kabkota,
+				'Provinsi'  => $p_provinsi,
+			];
+		
+			if (isset($map[$controller])) {
+				$result = $result && !empty($map[$controller]);
 			}
 		}
 
 		return $result;
 	}
+
 
 	public static function formatDate($date, $format = 1)
 	{

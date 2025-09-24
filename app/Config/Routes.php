@@ -30,6 +30,9 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 	$routes->get('institusi', 'Institusi::index', ['as' => 'institusi.index']);
 	$routes->get('institusi/(:segment)', 'Institusi::index/$1', ['as' => 'institusi.detail']);
 
+	$routes->get('kabkota', 'Kabkota::index', ['as' => 'kabkota.index']);
+	$routes->get('kabkota/(:segment)', 'Kabkota::index/$1', ['as' => 'kabkota.detail']);
+
 
 	$routes->get('/profile/institutions/data', 'Profile::getUserInstitutions');
 	$routes->post('/profile/institutions/delete/(:segment)', 'Profile::deleteUserInstitutions/$1');

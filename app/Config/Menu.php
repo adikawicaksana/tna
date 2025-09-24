@@ -36,7 +36,7 @@ class Menu
                 'label' => 'Institusi',
                 'icon'  => 'ti tabler-building',
                 'url' => route_to('institusi.index'),
-                'active' => 'institusi.',
+                'active' => 'institusi',
                 'access' => ['Institusi', 'index'],
             ],
             [
@@ -46,15 +46,15 @@ class Menu
                 'children' => [
                     [
                         'label' => 'Kabupaten/Kota',
-                        'url'   => route_to('question.index'),
-                        'active' => 'question.',
-                        'access' => ['Question', 'index'],
+                        'url'   => route_to('kabkota.index'),
+                        'active' => 'kabkota',
+                        'access' => ['Kabkota', 'index'],
                     ],
                     [
                         'label' => 'Provinsi',
-                        'url'   => route_to('questionnaire.index'),
-                        'active' => 'questionnaire.',
-                        'access' => ['Questionnaire', 'index'],
+                        'url'   => route_to('provinsi.index'),
+                       'active' => 'provinsi',
+                        'access' => ['Provinsi', 'index'],
                     ],
                 ]
             ],
@@ -104,7 +104,7 @@ class Menu
                     $filtered[] = $menu;
                 }
             } else {
-                if (!isset($menu['access']) || CommonHelper::hasAccess($menu['access'][0], $menu['access'][1], true)) {
+                if (!isset($menu['access']) || CommonHelper::hasAccess($menu['access'][0], $menu['access'][1])) {
                     $filtered[] = $menu;
                 }
             }

@@ -47,7 +47,7 @@ class General extends ResourceController
                 $result['total'] = 1; $result['page'] = 1; $result['last_page'] = 1; $result['per_page'] = 1; $result['data']  = [$row];
             }
         } elseif (ctype_digit($keyword)) {
-            $row = $this->institutions->where('code', $keyword)->first();
+            $row = $this->institutions->detailByCode('code', $keyword);
             if ($row) {
                 $result['total'] = 1; $result['data']  = [$row];
             } else {

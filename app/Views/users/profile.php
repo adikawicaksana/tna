@@ -91,7 +91,7 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-front-title">Bidang Kerja</label>
+              <label class="form-label" for="basic-default-front-title">Bidang/Unit Kerja</label>
               <input type="text" name="user_bidangkerja" class="form-control" id="basic-default-front-title" value="<?= esc($data['bidangkerja']) ?>"/>
             </div>
           </div>
@@ -111,7 +111,7 @@
           </div>
           <div class="row">
             <div class="col-md-12 mb-6">
-          <label class="form-label" for="address">Alamat</label>
+          <label class="form-label" for="address">Alamat Rumah</label>
               <textarea name="user_address" class="form-control" ><?= esc($data['address']) ?></textarea>
           </div>
           </div>
@@ -145,7 +145,7 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-jenjang">Pendidikan Terkahir</label>
+              <label class="form-label" for="basic-default-jenjang">Pendidikan Terakhir</label>
                 <select id="jenjangPendidikan" name="user_jenjang_pendidikan" class="form-select select2">
                    <option value=""></option>
                     <?php foreach ($jenjangPendidikan as $key => $label): ?>

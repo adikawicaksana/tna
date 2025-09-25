@@ -637,16 +637,29 @@
 
       liveSearch('#fasyankes_code', 'fasyankes', '#suggestions',
           item => `<div class="item" data-code="${item.code}" data-id="${item.id}">
-            ${item.code} - ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name}
+            ${item.code} - ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name}- 
+            ${item.address}${[
+              item.district_name,
+              item.regencies_name,
+              item.provinces_name
+            ].filter(Boolean).map(v => `, ${v}`).join('')}
           </div>`
         );
         
         liveSearch('#fasyankes_name', 'fasyankesname', '#suggestions_fasyankes_name',
-          item => `<div class="item" data-code="${item.code}" data-id="${item.id}">
-            ${item.code} - ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name}
-          </div>`
-        );
-
+        item => `
+          <div class="item" data-code="${item.code}" data-id="${item.id}">
+            ${item.code} -
+            ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name} - 
+            ${item.address}${[
+              item.district_name,
+              item.regencies_name,
+              item.provinces_name
+            ].filter(Boolean).map(v => `, ${v}`).join('')}
+          </div>
+        `
+      );
+      
       $('#fasyankes_code').on('keydown', function (e) {
         if (e.key === "Enter" || e.which === 13) {
           e.preventDefault();

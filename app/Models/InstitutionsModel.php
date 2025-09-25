@@ -21,16 +21,26 @@ class InstitutionsModel extends Model
             $builder     = $this->builder();
             $safeKeyword = $this->db->escapeLikeString(strtolower($keyword));
             $offset      = ($page - 1) * $limit;
+            $builder->select('
+                    master_institutions.*,
+                    master_area_districts.name AS district_name,
+                    master_area_regencies.name AS regencies_name,
+                    master_area_provinces.name AS provinces_name
+                ');
 
             if ($category === 'fasyankes') {
-                $builder->where('category', 'fasyankes')->like('code', $safeKeyword, 'both');
+                $builder->where('category', 'fasyankes')->like('master_institutions.code', $safeKeyword, 'both');
             } elseif ($category === 'fasyankesname') {
-                $builder->where('category', 'fasyankes')->like('LOWER(name)', $safeKeyword, 'both');
+                $builder->where('category', 'fasyankes')->like('LOWER(master_institutions.name)', $safeKeyword, 'both');
             } elseif (!empty($category)) {
-                $builder->where('category', strtolower($category))->like('LOWER(name)', $safeKeyword, 'both');
+                $builder->where('category', strtolower($category))->like('LOWER(master_institutions.name)', $safeKeyword, 'both');
             } else {
-                $builder->like('LOWER(name)', $safeKeyword, 'both', false);
+                $builder->like('LOWER(master_institutions.name)', $safeKeyword, 'both', false);
             }
+
+            $builder->join('master_area_districts','master_area_districts.id = master_institutions._id_districts','left' )
+                    ->join('master_area_regencies','master_area_regencies.id = master_institutions._id_regencies','left' )
+                    ->join('master_area_provinces','master_area_provinces.id = master_institutions._id_provinces','left' );
 
             $countBuilder = clone $builder;
             $total        = $countBuilder->countAllResults(false);
@@ -68,6 +78,27 @@ class InstitutionsModel extends Model
                 ->join('master_area_regencies','master_area_regencies.id = master_institutions._id_regencies','left' )
                 ->join('master_area_provinces','master_area_provinces.id = master_institutions._id_provinces','left' )
                 ->where('master_institutions.id', $id)
+                ->first();  
+
+        } catch (Exception $e) {
+            log_message('error', '[InstitutionsModel::detail] ' . $e->getMessage());
+            return null;
+        }
+    }
+
+     public function detailByCode($code)
+    {
+        try {
+            return $this->select('
+                    master_institutions.*,
+                    master_area_districts.name AS district_name,
+                    master_area_regencies.name AS regencies_name,
+                    master_area_provinces.name AS provinces_name
+                ')
+                ->join('master_area_districts','master_area_districts.id = master_institutions._id_districts','left' )
+                ->join('master_area_regencies','master_area_regencies.id = master_institutions._id_regencies','left' )
+                ->join('master_area_provinces','master_area_provinces.id = master_institutions._id_provinces','left' )
+                ->where('master_institutions.code', $code)
                 ->first();  
 
         } catch (Exception $e) {

@@ -37,8 +37,8 @@ class Question extends BaseController
 			// Filtering
 			if (!empty($search)) {
 				$builder->groupStart()
-					->like('question', $search)
-					->orLike('question_description', $search)
+					->orWhere("question ILIKE '%$search%'")
+					->orWhere("question_description ILIKE '%$search%'")
 					->groupEnd();
 			}
 			// Sorting

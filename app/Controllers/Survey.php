@@ -408,7 +408,7 @@ class Survey extends BaseController
 			$survey_detail = $this->surveyDetailModel->where(['survey_id' => $survey_id])->findAll();
 			foreach ($survey_detail as $d) {
 				$temp = json_decode($d['answer'], true);
-				$temp[$datetime] = $post[$d['question_id']];
+				$temp[$datetime] = $post['question'][$d['question_id']];
 				if (!$this->surveyDetailModel->update($d['detail_id'], ['answer' => json_encode($temp)])) {
 					throw new \Exception('Gagal menyimpan detail assessment / penilaian: ' . json_encode($this->surveyDetailModel->db->error()));
 				}

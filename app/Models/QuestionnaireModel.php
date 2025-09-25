@@ -56,14 +56,22 @@ class QuestionnaireModel extends Model
 		return $result;
 	}
 
-	public static function listType()
+	public static function listType($mode)
 	{
-		return [
-			self::TYPE_FASYANKES => 'Fasyankes',
-			self::TYPE_INDIVIDUAL_FASYANKES => 'Individu Fasyankes',
-			self::TYPE_INSTITUTE => 'Non Fasyankes',
-			self::TYPE_INDIVIDUAL_INSTITUTE => 'Individu Non Fasyankes',
+
+		if($mode=='individu'){
+			$list=[
+			self::TYPE_INDIVIDUAL_FASYANKES => 'Fasyankes',
+			self::TYPE_INDIVIDUAL_INSTITUTE => 'Non Fasyankes',
 		];
+
+		}elseif($mode=='institusi'){
+			$list=[
+			self::TYPE_FASYANKES => 'Fasyankes',
+			self::TYPE_INSTITUTE => 'Non Fasyankes',
+		];
+		}
+		return $list;
 	}
 
 	public static function listIndividual()

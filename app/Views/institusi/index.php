@@ -51,6 +51,11 @@
                         <?= "Latitude: ".$data['institusi_detail']['latitude']."; Longitude: ".$data['institusi_detail']['longitude']; ?></a></td>
                 </tr>
                 </table>
+                <?php foreach ($data['questionnaire_type'] as $key => $each): ?>
+				<a href="<?= url_to('survey.create', $key) ?>" class="btn btn-sm btn-primary">
+					<i class="fas fa-plus"></i> &nbsp; <?= $each ?>
+				</a>
+			<?php endforeach; ?>
             </div>
           </div>
 

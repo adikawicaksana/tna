@@ -15,6 +15,7 @@ use App\Models\UsersCompetenceModel;
 use App\Models\FasyankesModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\QuestionnaireModel;
 
 class Institusi extends BaseController
 {
@@ -68,6 +69,7 @@ $institusi=[];
                 'institusi_selected' => $selectedId,
                 'institusi_detail'   => $institusiDetail,
                 'jumlah_user_institusi'=> $jumlahUserInstitusi,
+                'questionnaire_type' => QuestionnaireModel::listType('institusi'),
             ],
         ]);
     }

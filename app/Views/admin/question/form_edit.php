@@ -7,7 +7,7 @@ $oldDescriptions = old('option_description') ?? [];
 
 <?= $this->section('content'); ?>
 <div class="container">
-	<h1>Tambah Pertanyaan</h1>
+	<h1><?= $title ?></h1>
 	<div class="card">
 		<div class="card-header">
 			Form Pertanyaan

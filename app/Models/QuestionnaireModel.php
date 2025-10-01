@@ -56,7 +56,7 @@ class QuestionnaireModel extends Model
 		return $result;
 	}
 
-	public static function listType($mode)
+	public static function listType($mode='individu')
 	{
 
 		if($mode=='individu'){

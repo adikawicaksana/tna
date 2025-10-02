@@ -76,7 +76,6 @@ class Profile extends BaseController
             'back_title' => $this->request->getPost('user_back_title'),
             'pangkatgolongan' => $this->request->getPost('user_pangkatgolongan'),
             'jabatan' => $this->request->getPost('user_jabatan'),
-            'bidangkerja' => $this->request->getPost('user_bidangkerja'),
             'mobile' => "62" . preg_replace('/\D/', '', $this->request->getPost('user_mobilenumber')),
             'address' => $this->request->getPost('user_address'),
             '_id_provinces' => $this->request->getPost('user_provinces'),

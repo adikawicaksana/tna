@@ -9,7 +9,7 @@ class UserDetailModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = false; 
     protected $allowedFields = [
-        'id','_id_users','nik','nip','front_title','fullname','back_title','pangkatgolongan','jabatan','bidangkerja','mobile','address',
+        'id','_id_users','nik','nip','front_title','fullname','back_title','pangkatgolongan','jabatan','mobile','address',
         '_id_provinces','_id_regencies','_id_districts','_id_villages',
         'jenjang_pendidikan','jurusan_profesi'
     ];

@@ -91,12 +91,6 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-front-title">Bidang/Unit Kerja</label>
-              <input type="text" name="user_bidangkerja" class="form-control" id="basic-default-front-title" value="<?= esc($data['bidangkerja']) ?>"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-6">
               <label class="form-label" for="MobileNumber">Nomor Telepon</label>
                       <div class="input-group">
                         <span class="input-group-text">(+62)</span>

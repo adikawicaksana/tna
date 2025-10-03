@@ -233,6 +233,8 @@ class Survey extends BaseController
 			'title' => 'Formulir Assessment / Penilaian',
 			'institution' => $institution,
 			'type' => $type,
+			'months' => CommonHelper::months(),
+			'years' => CommonHelper::years(date('Y')),
 			'model' => [],
 			'url' => 'survey.store',
 		]);

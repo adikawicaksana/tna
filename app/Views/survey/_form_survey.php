@@ -61,6 +61,38 @@ use App\Models\QuestionnaireModel;
 	<?php endforeach; ?>
 
 	<div class="row mb-3">
+		<div class="col-sm-4">
+			<label class="col-form-label">Tahun Rencana Pengembangan Kompetensi<span class="text-danger">*</span></label>
+		</div>
+		<div class="col-sm-8">
+			<select name="training_plan_year" class="form-select select2 field-select">
+				<?php foreach ($years as $key => $each):
+					$selected = (($model['training_plan_month'] ?? NULL) == $key) ? 'selected' : ''; ?>
+					<option value="<?= esc($key) ?>" <?= $selected ?>>
+						<?= esc($each) ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<div class="col-sm-4">
+			<label class="col-form-label">Bulan Rencana Pengembangan Kompetensi<span class="text-danger">*</span></label>
+		</div>
+		<div class="col-sm-8">
+			<select name="training_plan_month" class="form-select select2 field-select">
+				<?php foreach ($months as $key => $each):
+					$selected = (($model['training_plan_month'] ?? NULL) == $key) ? 'selected' : ''; ?>
+					<option value="<?= esc($key) ?>" <?= $selected ?>>
+						<?= esc($each) ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
 		<div class="col-sm-8 offset-sm-4">
 			<div class="form-check">
 				<input class="form-check-input" type="checkbox" name="verification" id="verification" disabled>

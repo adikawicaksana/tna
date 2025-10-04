@@ -8,6 +8,7 @@ use App\Models\QuestionModel;
 use App\Models\QuestionOptionModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use Exception;
+use Ramsey\Uuid\Uuid;
 
 class Question extends BaseController
 {
@@ -124,29 +125,32 @@ class Question extends BaseController
 		$dbtrans->transBegin();
 		try {
 			$post = $this->request->getPost();
+			$question_id = Uuid::uuid7()->toString();
+
 			// Insert into Question Table
 			$has_option = in_array($post['answer_type'], QuestionModel::hasOption());
 			$data = [
+				'question_id' => $question_id,
 				'question' => trim($post['question']),
 				'question_description' => trim($post['question_description']),
 				'answer_type' => $post['answer_type'],
 				'question_status' => $this->model::STAT_ACTIVE,
 				'source_reference' => ($has_option && !empty($post['source_reference'])) ?
 					$post['source_reference'] : '',
+				'created_at' => date('Y-m-d H:i:s'),
 			];
-			if (!$this->model->save($data)) {
+			if (!$this->model->insert($data)) {
 				throw new \Exception('Gagal menyimpan pertanyaan: ' . json_encode($this->model->errors()));
 			}
 
 			// Insert into Option Table
-			$id = $this->model->getInsertID();
 			if ($has_option & empty($post['source_reference'])) {
 				$data = [];
 				$option = new QuestionOptionModel();
 				$description = $post['option_description'];
 				foreach ($post['option_name'] as $key => $each) {
 					$data[] = [
-						'question_id' => $id,
+						'question_id' => $question_id,
 						'option_name' => trim($each),
 						'option_description' => trim($description[$key]),
 					];

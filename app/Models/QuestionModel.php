@@ -16,7 +16,7 @@ class QuestionModel extends Model
 		'question_status'
 	];
 	protected $useTimestamps = true;
-	protected $useAutoIncrement = true;
+	protected $useAutoIncrement = false;
 
 	const TYPE_SHORT = 1;
 	const TYPE_TEXT = 2;

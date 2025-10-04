@@ -10,6 +10,7 @@ class QuestionnaireModel extends Model
 	protected $primaryKey = 'questionnaire_id';
 	protected $allowedFields = ['questionnaire_type', 'questionnaire_status'];
 	protected $useTimestamps = true;
+	protected $useAutoIncrement = false;
 
 	const TYPE_FASYANKES = 1;
 	const TYPE_INDIVIDUAL_FASYANKES = 2;
@@ -56,22 +57,24 @@ class QuestionnaireModel extends Model
 		return $result;
 	}
 
-	public static function listType($mode='individu')
+	public static function listType($mode = '')
 	{
-
-		if($mode=='individu'){
-			$list=[
-			self::TYPE_INDIVIDUAL_FASYANKES => 'Fasyankes',
-			self::TYPE_INDIVIDUAL_INSTITUTE => 'Non Fasyankes',
+		$types = [
+			'individu' => [
+				self::TYPE_INDIVIDUAL_FASYANKES => 'Individu Fasyankes',
+				self::TYPE_INDIVIDUAL_INSTITUTE => 'Individu Non Fasyankes',
+			],
+			'institusi' => [
+				self::TYPE_FASYANKES => 'Fasyankes',
+				self::TYPE_INSTITUTE => 'Non Fasyankes',
+			]
 		];
 
-		}elseif($mode=='institusi'){
-			$list=[
-			self::TYPE_FASYANKES => 'Fasyankes',
-			self::TYPE_INSTITUTE => 'Non Fasyankes',
-		];
+		if (isset($types[$mode])) {
+			return $types[$mode];
 		}
-		return $list;
+
+		return $types['individu'] + $types['institusi'];
 	}
 
 	public static function listIndividual()

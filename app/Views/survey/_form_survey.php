@@ -11,6 +11,12 @@ use App\Models\QuestionnaireModel;
 	<input type="hidden" name="type" value="<?= $type ?>">
 	<?php if (in_array($type, [QuestionnaireModel::TYPE_INDIVIDUAL_FASYANKES, QuestionnaireModel::TYPE_INDIVIDUAL_INSTITUTE])): ?>
 		<div class="row mb-3">
+			<div class="d-flex justify-content-between align-items-center mb-2">
+				Uraian Tugas & Pelatihan
+				<button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalUraianTugas">
+					<i class="icon-base ti tabler-plus icon-sm me-1_5"></i> Tambah Uraian Tugas
+				</button>
+			</div>
 			<div class="card-datatable table-responsive pt-0">
 				<table id="tableUraianTugas" class="table table-bordered">
 					<thead>
@@ -24,6 +30,7 @@ use App\Models\QuestionnaireModel;
 			</div>
 		</div><br><br>
 	<?php endif; ?>
+
 	<div class="row mb-3">
 		<div class="col-sm-4">
 			<label class="col-form-label" for="basic-default-<?= esc($institution['selectName']) ?>"><?= esc($institution['label']) ?><span class="text-danger">*</span></label>
@@ -66,6 +73,7 @@ use App\Models\QuestionnaireModel;
 		</div>
 		<div class="col-sm-8">
 			<select name="training_plan_year" class="form-select select2 field-select">
+				<option value=""></option>
 				<?php foreach ($years as $key => $each):
 					$selected = (($model['training_plan_month'] ?? NULL) == $key) ? 'selected' : ''; ?>
 					<option value="<?= esc($key) ?>" <?= $selected ?>>
@@ -82,6 +90,7 @@ use App\Models\QuestionnaireModel;
 		</div>
 		<div class="col-sm-8">
 			<select name="training_plan_month" class="form-select select2 field-select">
+				<option value=""></option>
 				<?php foreach ($months as $key => $each):
 					$selected = (($model['training_plan_month'] ?? NULL) == $key) ? 'selected' : ''; ?>
 					<option value="<?= esc($key) ?>" <?= $selected ?>>
@@ -104,6 +113,35 @@ use App\Models\QuestionnaireModel;
 	</div>
 	<button type="submit" class="btn btn-sm btn-primary" id="btn-submit" disabled>Simpan</button>
 </form>
+
+<!-- Modal Tambah Uraian Tugas -->
+<div class="modal fade" id="modalUraianTugas" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<form id="formUraianTugas">
+				<div class="modal-header">
+					<h5 class="modal-title">Tambah Data Uraian Tugas</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">Uraian Tugas</label>
+						<textarea name="user_uraiantugas" id="user_uraiantugas" class="form-control"></textarea>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Pengembangan Kompetensi (sesuai dengan SIAKPEL)</label>
+						<select name="user_pelatihan[]" id="user_pelatihan" class="form-control" multiple="multiple">
+
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Tambah</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 
 <?= $this->section('scripts') ?>
 <script>
@@ -200,6 +238,104 @@ use App\Models\QuestionnaireModel;
 					});
 			}
 		});
+
+		$('#user_pelatihan').select2({
+			dropdownParent: $('#modalUraianTugas'),
+			placeholder: "Cari dan pilih pelatihan",
+			multiple: true,
+			minimumInputLength: 2,
+			ajax: {
+				url: '/api/pelatihan_siakpel',
+				type: 'GET',
+				dataType: 'json',
+				delay: 250,
+				data: params => ({
+					q: params.term,
+					maxData: 20,
+				}),
+				processResults: data => ({
+					results: data
+				}),
+				cache: true
+			},
+			templateSelection: data => {
+				if (!data.id) return data.text;
+				const color = data.id.includes('&&1') ? '#28a745' : data.id.includes('&&0') ? '#dc3545' : null;
+				return color ?
+					$(`<span style="background-color:${color};color:white;padding:2px 5px;border-radius:3px;">${data.text}</span>`) :
+					data.text;
+			}
+		});
+
+		$('#user_pelatihan').on('select2:select', e => {
+			const {
+				id,
+				text
+			} = e.params.data;
+			const $select = $(e.target);
+
+			Swal.fire({
+				text: `Apakah sudah melaksanakan "${text}" ?`,
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonText: 'Sudah',
+				cancelButtonText: 'Belum',
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-success ms-1',
+					cancelButton: 'btn btn-danger ms-1'
+				}
+			}).then(result => {
+				const newValue = result.isConfirmed ? id + '&&1' : result.dismiss === Swal.DismissReason.cancel ? id + '&&0' : id;
+				let selectedOptions = ($select.val() || []).filter(v => !v.startsWith(id));
+				selectedOptions.push(newValue);
+
+				if (!$select.find(`option[value='${newValue}']`).length) {
+					$select.append(new Option(text, newValue, true, true));
+				}
+
+				$select.val(selectedOptions).trigger('change');
+			});
+		});
+
+		$('#formUraianTugas').on('submit', function(e) {
+			e.preventDefault();
+
+			let userUraian = $('#user_uraiantugas').val();
+			let userPelatihan = $('#user_pelatihan').val();
+
+			if (!userUraian) return showSwal('warning', 'Peringatan', 'Uraian tugas wajib diisi!');
+
+			$.post({
+				url: "<?= base_url('profile/jobdesc-competence') ?>",
+				data: {
+					user_uraiantugas: userUraian,
+					user_pelatihan: userPelatihan
+				},
+				dataType: 'json',
+				success: function(response) {
+					if (response.success) {
+						showSwal('success', 'Berhasil', response.message);
+						tableJobdesc.ajax.reload(null, false);
+						$('#modalUraianTugas').modal('hide');
+					} else {
+						showSwal('warning', 'Gagal', response.message);
+					}
+				},
+				error: function(xhr) {
+					showSwal('error', 'Terjadi Kesalahan', 'Silakan coba lagi');
+					console.error(xhr.responseText);
+				}
+			});
+		});
+
+		function showSwal(icon, title, text) {
+			Swal.fire({
+				icon,
+				title,
+				text
+			});
+		}
 
 		$('#verification').change(function() {
 			$('#btn-submit').prop('disabled', !this.checked);

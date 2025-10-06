@@ -37,7 +37,7 @@ class SurveyTrainingPlanModel extends Model
 					$result['approved'] = [
 						'nama_pelatihan' => "- {$each['nama_pelatihan']}",
 						'plan_year' => $each['plan_year'],
-						'plan_month' => $each['plan_month'],
+						'plan_month' => $months[$each['plan_month']],
 					];
 				} else {
 					$result['approved']['nama_pelatihan'] .= "\n- {$each['nama_pelatihan']}";

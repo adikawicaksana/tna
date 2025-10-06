@@ -213,7 +213,7 @@ use App\Models\SurveyModel;
 						<tr>
 							<td><?= ++$key + 1 ?></td>
 							<td>Rencana Pengembangan Kompetensi</td>
-							<td><?= nl2br($training_plan['approved']['nama_pelatihan']) ?? '-' ?></td>
+							<td><?= isset($training_plan['approved']['nama_pelatihan']) ? nl2br($training_plan['approved']['nama_pelatihan']) : '-' ?></td>
 							<td><?= nl2br($training_plan['history']['nama_pelatihan']) ?></td>
 						</tr>
 

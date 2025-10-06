@@ -7,17 +7,15 @@ use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\InstitutionsModel;
 use App\Models\UsersInstitutionsModel;
-use App\Models\UsersFasyankesModel;
-use App\Models\UsersNonFasyankesModel;
 use App\Models\ReferenceDataModel;
 use App\Models\UsersJobdescModel;
 use App\Models\UsersCompetenceModel;
-use App\Models\FasyankesModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\QuestionnaireModel;
 use App\Helpers\CommonHelper;
 use App\Models\SurveyModel;
+use App\Models\ManagerInstitutionModel;
 
 class Institusi extends BaseController
 {
@@ -41,6 +39,8 @@ class Institusi extends BaseController
 
    public function index($id = null)
     {
+        $m_institutions = (new ManagerInstitutionModel())->where('_id_users', session()->get('_id_users'))->findAll();
+
         if ($this->request->isAJAX()) {
 			$status = SurveyModel::listStatus();
 			$request = $this->request->getGet();
@@ -61,7 +61,8 @@ class Institusi extends BaseController
 			$user_id = session()->get('_id_users');
 			if (session()->get('user_role') == UserModel::ROLE_USER) {
 				$user = (new UserModel())->find($user_id);
-				$p_institusi = json_decode($user['p_institusi']) ?? [];
+
+		        $p_institusi = array_column($m_institutions ?? [], '_id_institutions');
 				$p_kabkota = json_decode($user['p_kabkota']) ?? [];
 				$p_provinsi = json_decode($user['p_provinsi']) ?? [];
 				$p_access = array_merge($p_institusi, $p_kabkota, $p_provinsi);
@@ -131,8 +132,8 @@ class Institusi extends BaseController
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
         $institusi=[];
-        if($userDetail['p_institusi']){
-            $p_institusi = json_decode($userDetail['p_institusi'], true);
+        if(array_column($m_institutions, '_id_institutions')){
+            $p_institusi =array_column($m_institutions ?? [], '_id_institutions');
 
         $institusi = $this->institutions
             ->whereIn('id', $p_institusi)

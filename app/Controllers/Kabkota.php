@@ -10,7 +10,6 @@ use App\Models\UsersInstitutionsModel;
 use App\Models\ReferenceDataModel;
 use App\Models\UsersJobdescModel;
 use App\Models\UsersCompetenceModel;
-use App\Models\FasyankesModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
 

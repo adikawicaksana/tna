@@ -7,12 +7,9 @@ use App\Models\UserModel;
 use App\Models\UserDetailModel;
 use App\Models\InstitutionsModel;
 use App\Models\UsersInstitutionsModel;
-use App\Models\UsersFasyankesModel;
-use App\Models\UsersNonFasyankesModel;
 use App\Models\ReferenceDataModel;
 use App\Models\UsersJobdescModel;
 use App\Models\UsersCompetenceModel;
-use App\Models\FasyankesModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -24,9 +21,6 @@ class Profile extends BaseController
     protected $institutions;
     protected $userInstitutions;
 
-    protected $usersFasyankesModel;
-    protected $usersNonFasyankesModel;
-    protected $fasyankesModel;
 
     public function __construct()
     {
@@ -35,9 +29,6 @@ class Profile extends BaseController
         $this->userModel = new UserModel();
         $this->userDetailModel = new UserDetailModel();
 
-        $this->fasyankesModel = new FasyankesModel();
-        $this->usersFasyankesModel = new UsersFasyankesModel();
-        $this->usersNonFasyankesModel = new UsersNonFasyankesModel();
     }
 
     public function index()

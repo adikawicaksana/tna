@@ -5,7 +5,6 @@ namespace App\Controllers;
 use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
 use App\Models\UserDetailModel;
-use App\Models\FasyankesModel;
 use App\Models\InstitutionsModel;
 use App\Models\UsersInstitutionsModel;
 use App\Services\NotificationService;

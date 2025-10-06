@@ -22,6 +22,7 @@ use App\Models\SurveyModel;
 class Institusi extends BaseController
 {
 
+    protected $model;
     protected $userModel;
     protected $userDetailModel;
     protected $institutions;

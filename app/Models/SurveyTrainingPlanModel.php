@@ -68,4 +68,29 @@ class SurveyTrainingPlanModel extends Model
 
 		return $result;
 	}
+
+	public function getLatestAnswer($survey_id)
+	{
+		$builder = \Config\Database::connect();
+
+		// Fetch max created_at
+		$created_at = $builder->table('survey_training_plan')
+			->select('created_at')
+			->where(['survey_id' => $survey_id, 'plan_status' => self::STAT_INACTIVE])
+			->orderBy('created_at', 'DESC')
+			->limit(1)
+			->get()
+			->getRow('created_at');
+
+		// Fetch data
+		$result = $builder->table('survey_training_plan p')
+			->select('p.*, nama_pelatihan')
+			->join('master_training t', 'p.training_id = t.id')
+			->where(['p.survey_id' => $survey_id, 'p.plan_status' => self::STAT_INACTIVE,
+				'p.created_at' => $created_at])
+			->get()
+			->getResultArray();
+
+		return $result;
+	}
 }

@@ -109,6 +109,8 @@ use App\Helpers\CommonHelper;
 
 <?= $this->section('scripts') ?>
 <script>
+	let trainingID = '<?= json_encode($training_id) ?>';
+
 	function getTrainingPlanDropdown() {
 		let trainingPlan = $('#training_plan');
 		trainingPlan.html('');
@@ -121,7 +123,8 @@ use App\Helpers\CommonHelper;
 			success: function(response) {
 				let option = `<option value=''></option>`;
 				response.forEach(each => {
-					option += `<option value="${each.training_id}">${each.nama_pelatihan}</option>`;
+					let selected = trainingID.includes(each.training_id) ? 'selected' : '';
+					option += `<option value="${each.training_id}" ${selected}>${each.nama_pelatihan}</option>`;
 				});
 				trainingPlan.html(option);
 			},

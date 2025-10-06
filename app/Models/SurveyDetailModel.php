@@ -51,4 +51,30 @@ class SurveyDetailModel extends Model
 
 		return $result;
 	}
+
+	public function getLatestAnswer($survey_id)
+	{
+		$builder = \Config\Database::connect();
+
+		// Fetch max created_at
+		$created_at = $builder->table('survey_detail')
+			->select('created_at')
+			->where(['survey_id' => $survey_id, 'is_approved' => 0])
+			->orderBy('created_at', 'DESC')
+			->limit(1)
+			->get()
+			->getRow('created_at');
+
+		// Fetch data
+		$result = $builder->table('survey_detail t')
+			->select('t.*, q.*, qr.questionnaire_type, qr.questionnaire_id')
+			->join('question q', 't.question_id = q.question_id')
+			->join('survey h', 't.survey_id = h.survey_id')
+			->join('questionnaire qr', 'h.questionnaire_id = qr.questionnaire_id')
+			->where(['t.survey_id' => $survey_id, 't.is_approved' => 0, 't.created_at' => $created_at])
+			->get()
+			->getResultArray();
+
+		return $result;
+	}
 }

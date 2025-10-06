@@ -282,7 +282,6 @@ class Survey extends BaseController
 			$data = [];
 			foreach ($post['question'] as $key => $value) {
 				$value = is_array($value) ? implode('; ', $value) : $value; // BINGUNG! Enaknya jadi dipakek kagak ya???? Duh sementara biarin dulu deh
-				// $answer = [$datetime => $value ?? ''];
 				$data[] = [
 					'detail_id' => Uuid::uuid7()->toString(),
 					'survey_id' => $survey_id,
@@ -349,7 +348,8 @@ class Survey extends BaseController
 		}
 
 		$model = $this->model->find($id);
-		$question = $this->surveyDetailModel->getDetail($id);
+		$question = $this->surveyDetailModel->getLatestAnswer($id);
+		$training_plan = $this->surveyTrainingPlanModel->getLatestAnswer($id);
 
 		// Get id and answer options
 		$source = [];
@@ -357,8 +357,7 @@ class Survey extends BaseController
 		$answer = [];
 		foreach ($question as $each) {
 			// Fetch answer
-			$temp = json_decode($each['answer'], true);
-			$answer[$each['question_id']] = $temp[max(array_keys($temp))];
+			$answer[$each['question_id']] = $each['answer_text'];
 			// Fetch option list
 			$has_option = in_array($each['answer_type'], QuestionModel::hasOption());
 			if (!$has_option) continue;
@@ -415,6 +414,10 @@ class Survey extends BaseController
 			'answer' => $answer,
 			'institution' => $institution,
 			'type' => $type,
+			'training_plan' => $training_plan,
+			'training_id' => array_column($training_plan, 'training_id'),
+			'months' => CommonHelper::months(),
+			'years' => CommonHelper::years(date('Y')),
 			'url' => 'survey.update',
 		]);
 	}
@@ -437,13 +440,20 @@ class Survey extends BaseController
 		$dbtrans->transBegin();
 		try {
 			// Insert into Survey Detail Table
-			$survey_detail = $this->surveyDetailModel->where(['survey_id' => $survey_id])->findAll();
-			foreach ($survey_detail as $d) {
-				$temp = json_decode($d['answer'], true);
-				$temp[$datetime] = $post['question'][$d['question_id']];
-				if (!$this->surveyDetailModel->update($d['detail_id'], ['answer' => json_encode($temp)])) {
-					throw new \Exception('Gagal menyimpan detail assessment / penilaian: ' . json_encode($this->surveyDetailModel->db->error()));
-				}
+			$data = [];
+			foreach ($post['question'] as $key => $value) {
+				$value = is_array($value) ? implode('; ', $value) : $value; // BINGUNG! Enaknya jadi dipakek kagak ya???? Duh sementara biarin dulu deh
+				$data[] = [
+					'detail_id' => Uuid::uuid7()->toString(),
+					'survey_id' => $survey_id,
+					'question_id' => $key,
+					'answer_text' => $value,
+					'created_at' => $datetime,
+					'is_approved' => 0,	// Update feature only implemented in individual
+				];
+			}
+			if (!$this->surveyDetailModel->insertBatch($data)) {
+				throw new \Exception('Gagal menyimpan detail assessment / penilaian: ' . json_encode($this->surveyDetailModel->db->error()));
 			}
 
 			// Remove old data and insert new data into Respondent Detail Table
@@ -453,11 +463,32 @@ class Survey extends BaseController
 				$data[] = [
 					'detail_id' => Uuid::uuid7()->toString(),
 					'survey_id' => $survey_id,
-					'competence_id' => $each['id'],
+					'jobdesc_id' => $each['_id_users_jobdesc'],		// BINGUNG! ini kayaknya gaperlu, langsung pakai job description aja gak sih? Takutnya nanti data aslinya dihapus
+					'training_id' => $each['_id_master_training'],
+					'job_description' => $each['job_description'],
+					'status' => $each['status'],
 				];
 			}
 			if (!$this->respondentDetailModel->insertBatch($data)) {
 				throw new \Exception('Gagal menyimpan detail responden: ' . json_encode($this->respondentDetailModel->db->error()));
+			}
+
+			// Insert into Survey Training Plan
+			$data = [];
+			foreach ($post['training_plan'] as $each) {
+				$data[] = [
+					'plan_id' => Uuid::uuid7()->toString(),
+					'survey_id' => $survey_id,
+					'user_id' => $user_id,
+					'training_id' => $each,
+					'plan_year' => $post['training_plan_year'],
+					'plan_month' => $post['training_plan_month'],
+					'plan_status' => SurveyTrainingPlanModel::STAT_INACTIVE, // Update feature only implemented in individual
+					'created_at' => $datetime,
+				];
+			}
+			if (!$this->surveyTrainingPlanModel->insertBatch($data)) {
+				throw new \Exception('Gagal menyimpan rencana pengembangan kompetensi: ' . json_encode($this->surveyTrainingPlanModel->db->error()));
 			}
 
 			// Update survey status
@@ -466,7 +497,7 @@ class Survey extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('survey.index'))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(route_to('survey.show', $survey_id))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			return redirect()->back()->withInput()->with('error', $e->getMessage());

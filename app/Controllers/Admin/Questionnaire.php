@@ -9,10 +9,11 @@ use App\Models\QuestionModel;
 use App\Models\QuestionnaireDetailModel;
 use App\Models\QuestionnaireModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use Ramsey\Uuid\Uuid;
 
 class Questionnaire extends BaseController
 {
-    protected $userDetailModel;
+	protected $userDetailModel;
 	protected $model;
 
 	public function __construct()
@@ -60,7 +61,7 @@ class Questionnaire extends BaseController
 					'created_at' => CommonHelper::formatDate($each['created_at']),
 					'questionnaire_type' => $type[$each['questionnaire_type']],
 					'questionnaire_status' => $status[$each['questionnaire_status']],
-					'action' => '<a href="'. route_to("questionnaire.show", $each['questionnaire_id']) .'" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+					'action' => '<a href="' . route_to("questionnaire.show", $each['questionnaire_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 				];
 			}
 
@@ -119,32 +120,33 @@ class Questionnaire extends BaseController
 
 		try {
 			$post = $this->request->getPost();
+			$questionnaire_id = Uuid::uuid7()->toString();
 
 			// Insert into Questionnaire Table
 			$data = [
-				'questionnaire_type' => $post['questionnaire_type'],
+				'questionnaire_id' => $questionnaire_id,
+				'questionnaire_type' => (int) $post['questionnaire_type'],
 				'questionnaire_status' => QuestionnaireModel::hasActive($post['questionnaire_type']) ?
 					$this->model::STAT_INACTIVE : $this->model::STAT_ACTIVE,
 			];
-			if (!$this->model->save($data)) {
-				throw new \Exception('Gagal menyimpan kuesioner: ' . print_r($this->model->errors(), true));
+			if (!$this->model->insert($data)) {
+				throw new \Exception('Gagal menyimpan kuesioner: ' . print_r($this->model->db->error(), true));
 			}
 
 			// Insert into Detail Table
-			$id = $this->model->getInsertID();
 			$data = [];
 			$detail = new QuestionnaireDetailModel();
 			foreach ($post['question_id'] as $each) {
 				if (empty($each)) continue;	// Skip if empty
 				$data[] = [
-					'questionnaire_id' => $id,
+					'questionnaire_id' => $questionnaire_id,
 					'question_id' => $each,
 				];
 			}
 			if (empty($data)) throw new \Exception('Pertanyaan tidak boleh kosong!');
 
 			if (!$detail->insertBatch($data)) {
-				throw new \Exception('Gagal menyimpan kuesioner: ' . print_r($detail->errors(), true));
+				throw new \Exception('Gagal menyimpan kuesioner: ' . print_r($detail->db->error(), true));
 			}
 
 			$dbtrans->transCommit();

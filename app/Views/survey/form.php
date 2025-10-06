@@ -3,6 +3,7 @@
 <div class="container">
 	<h1><?= $title ?></h1>
 	<div class="card">
+		<?php /*
 		<div class="card-header d-flex">
 			<?= $title ?>
 			<div class="ms-auto">
@@ -10,6 +11,7 @@
 					class="btn btn-sm btn-primary float-right" target="_blank">Pelatihan Terakreditasi Ditmutu</a>
 			</div>
 		</div>
+		*/ ?>
 		<div class="card-body">
 			<?php
 			if (session()->getFlashdata('error')): ?>

@@ -132,6 +132,20 @@ class CommonHelper
 		return $result;
 	}
 
+	public static function years($min = null, $range = null)
+	{
+		$result = [];
+		$range = !empty($range) ? $range : 5;
+		$min = !empty($min) ? $min : date('Y');
+		$max = $min + $range;
+		while ($min <= $max) {
+			$result[$min] = $min;
+			$min++;
+		}
+
+		return $result;
+	}
+
 	public static function timeGreeting()
 	{
 		$jam = (int) date("H");

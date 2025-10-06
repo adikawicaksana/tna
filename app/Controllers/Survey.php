@@ -11,6 +11,7 @@ use App\Models\QuestionOptionModel;
 use App\Models\RespondentDetailModel;
 use App\Models\SurveyModel;
 use App\Models\SurveyDetailModel;
+use App\Models\SurveyTrainingPlanModel;
 use App\Models\UserModel;
 use App\Models\UsersCompetenceModel;
 use App\Models\UsersInstitutionsModel;
@@ -22,6 +23,7 @@ class Survey extends BaseController
 	protected $model;
 	protected $surveyDetailModel;
 	protected $respondentDetailModel;
+	protected $surveyTrainingPlanModel;
 	protected $questionModel;
 	protected $userDetailModel;
 	protected $usersInstitutionsModel;
@@ -32,6 +34,7 @@ class Survey extends BaseController
 		$this->model = new SurveyModel();
 		$this->surveyDetailModel = new SurveyDetailModel();
 		$this->respondentDetailModel = new RespondentDetailModel();
+		$this->surveyTrainingPlanModel = new SurveyTrainingPlanModel();
 		$this->questionModel = new QuestionModel();
 		$this->usersInstitutionsModel = new UsersInstitutionsModel();
 	}
@@ -124,7 +127,7 @@ class Survey extends BaseController
 
 		return view('survey/index', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'questionnaire_type' => QuestionnaireModel::listType('individu'),
+			'questionnaire_type' => QuestionnaireModel::listType(),
 			'title' => 'Daftar Assessment / Penilaian',
 		]);
 	}
@@ -134,7 +137,8 @@ class Survey extends BaseController
 		$builder = \Config\Database::connect();
 		// Fetch survey header
 		$data = $builder->table('survey s')
-			->select('s.*, questionnaire_type, i.category AS institution_group, i.type AS institution_type, i.name AS institution_name, u.front_title, u.fullname, u.back_title')
+			->select('s.*, questionnaire_type, i.category AS institution_group, i.type AS institution_type,
+				i.name AS institution_name, u.front_title, u.fullname, u.back_title')
 			->join('users_detail u', 's.respondent_id = u._id_users')
 			->join('master_institutions i', 's.institution_id = i.id')
 			->join('questionnaire q', 's.questionnaire_id = q.questionnaire_id')
@@ -150,21 +154,17 @@ class Survey extends BaseController
 		// Fetch competence
 		$competence = $this->respondentDetailModel->getRespondentCompetence($id);
 		// Fetch survey detail
-		$detail = $this->surveyDetailModel->getDetail($id);
-		$answer = [];
-		foreach ($detail as $key => $each) {
-			$temp = json_decode($each['answer']);
-			$answer[$key] = (array) $temp;
-		}
+		$detail = $this->surveyDetailModel->getData($id);
+		$training_plan = $this->surveyTrainingPlanModel->getData($id);
 
 		return view('survey/show', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'data' => $data,
 			'approval_history' => $approval_history,
 			'detail' => $detail,
-			'answer' => $answer,
+			'training_plan' => $training_plan,
 			'competence' => $competence,
-			'is_institution' => in_array($data->questionnaire_type, [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]),
+			'is_institution' => !in_array($data->questionnaire_type, QuestionnaireModel::listIndividual()),
 			'title' => 'Detail Assessment',
 		]);
 	}
@@ -246,26 +246,31 @@ class Survey extends BaseController
 		$dbtrans->transBegin();
 		try {
 			$post = $this->request->getPost();
-			$id = Uuid::uuid7()->toString();
+			$survey_id = Uuid::uuid7()->toString();
 
 			$user_id = session()->get('_id_users');
 			$user = $this->userDetailModel->getUserDetail();
 			$datetime = date('Y-m-d H:i:s');
-			$is_institution = in_array($post['type'], [QuestionnaireModel::TYPE_FASYANKES, QuestionnaireModel::TYPE_INSTITUTE]);
+			$is_institution = !in_array($post['type'], QuestionnaireModel::listIndividual());
+			$approval_remark = !$is_institution ? NULL : json_encode([
+				'datetime' => $datetime,
+				'user_id' => $user_id,
+				'remark' => 'Disetujui oleh sistem',
+			]);
 
 			// Insert into Survey Table
 			$data = [
-				'survey_id' => $id,
+				'survey_id' => $survey_id,
 				'questionnaire_id' => $post['questionnaire_id'],
 				'institution_id' => $post['institution_id'],
-				// 'group_type' => (isset($post['fasyankes'])) ? SurveyModel::GROUP_FASYANKES : SurveyModel::GROUP_NONFASYANKES,
-				'survey_status' => SurveyModel::STAT_ACTIVE,
+				'response_type' => $is_institution ? SurveyModel::RESPONDENT_TYPE_INSTITUTION : SurveyModel::RESPONDENT_TYPE_INDIVIDUAL,
+				'survey_status' => $is_institution ? SurveyModel::STAT_ACTIVE : SurveyModel::STAT_OPEN,
 				'respondent_id' => $user_id,
 				'jenjang_pendidikan' => $user['jenjang_pendidikan'],
 				'jurusan_profesi' => $user['jurusan_profesi'],
 				'created_at' => date('Y-m-d H:i:s'),
 				'approved_by' => $is_institution ? $user_id : NULL,
-				'approval_remark' => $is_institution ? 'Disetujui oleh sistem' : NULL,
+				'approval_remark' => $approval_remark,
 				'approved_at' => $is_institution ? date('Y-m-d H:i:s') : NULL,
 			];
 			if (!$this->model->insert($data)) {
@@ -273,15 +278,18 @@ class Survey extends BaseController
 			}
 
 			// Insert into Survey Detail Table
+			// BINGUNG! Woiiiii ini kalau yang jawabannya > 1 begimane? Au ah, sementara biarin text dulu ye. Mian~
 			$data = [];
 			foreach ($post['question'] as $key => $value) {
-				$value = is_array($value) ? implode('; ', $value) : $value;
-				$answer = [$datetime => $value ?? ''];
+				$value = is_array($value) ? implode('; ', $value) : $value; // BINGUNG! Enaknya jadi dipakek kagak ya???? Duh sementara biarin dulu deh
+				// $answer = [$datetime => $value ?? ''];
 				$data[] = [
 					'detail_id' => Uuid::uuid7()->toString(),
-					'survey_id' => $id,
+					'survey_id' => $survey_id,
 					'question_id' => $key,
-					'answer' => json_encode($answer),
+					'answer_text' => $value,
+					'created_at' => $datetime,
+					'is_approved' => $is_institution ? 1 : 0,
 				];
 			}
 			if (!$this->surveyDetailModel->insertBatch($data)) {
@@ -295,13 +303,35 @@ class Survey extends BaseController
 				foreach ((new UsersCompetenceModel())->getCompetence($user_id) as $each) {
 					$data[] = [
 						'detail_id' => Uuid::uuid7()->toString(),
-						'survey_id' => $id,
-						'competence_id' => $each['id'],
+						'survey_id' => $survey_id,
+						'jobdesc_id' => $each['_id_users_jobdesc'],		// BINGUNG! ini kayaknya gaperlu, langsung pakai job description aja gak sih? Takutnya nanti data aslinya dihapus
+						'training_id' => $each['_id_master_training'],
+						'job_description' => $each['job_description'],
+						'status' => $each['status'],
 					];
 				}
 				if (!$this->respondentDetailModel->insertBatch($data)) {
 					throw new \Exception('Gagal menyimpan detail responden: ' . json_encode($this->respondentDetailModel->db->error()));
 				}
+			}
+
+			// Insert into Survey Training Plan
+			$data = [];
+			foreach ($post['training_plan'] as $each) {
+				$data[] = [
+					'plan_id' => Uuid::uuid7()->toString(),
+					'survey_id' => $survey_id,
+					'user_id' => $user_id,
+					'training_id' => $each,
+					'plan_year' => $post['training_plan_year'],
+					'plan_month' => $post['training_plan_month'],
+					'plan_status' => $is_institution ? SurveyTrainingPlanModel::STAT_ACTIVE : SurveyTrainingPlanModel::STAT_INACTIVE,
+					'created_at' => $datetime,
+				];
+			}
+			if (!$this->surveyTrainingPlanModel->insertBatch($data)) {
+				dd($data, $this->surveyTrainingPlanModel->db->error());
+				throw new \Exception('Gagal menyimpan rencana pengembangan kompetensi: ' . json_encode($this->surveyTrainingPlanModel->db->error()));
 			}
 
 			$dbtrans->transCommit();

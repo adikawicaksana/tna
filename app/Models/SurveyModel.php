@@ -13,7 +13,7 @@ class SurveyModel extends Model
 		'survey_id',
 		'questionnaire_id',
 		'institution_id',
-		'institution_type',
+		'response_type',
 		'survey_status',
 		'respondent_id',
 		'jenjang_pendidikan',
@@ -31,8 +31,8 @@ class SurveyModel extends Model
 	const STAT_ACTIVE = 2;
 	const STAT_DECLINED = 3;
 
-	const GROUP_FASYANKES = 1;
-	const GROUP_NONFASYANKES = 2;
+	const RESPONDENT_TYPE_INDIVIDUAL = 1;
+	const RESPONDENT_TYPE_INSTITUTION = 2;
 
 	public static function listStatus()
 	{
@@ -44,25 +44,11 @@ class SurveyModel extends Model
 		];
 	}
 
-	public static function listGroupType()
+	public static function listRespondentType()
 	{
 		return [
-			self::GROUP_FASYANKES => 'Fasyankes',
-			self::GROUP_NONFASYANKES => 'Non Fasyankes',
-		];
-	}
-
-	public static function getGroupTypes()
-	{
-		return [
-			self::GROUP_FASYANKES => [
-				QuestionnaireModel::TYPE_FASYANKES,
-				QuestionnaireModel::TYPE_INDIVIDUAL_FASYANKES,
-			],
-			self::GROUP_NONFASYANKES => [
-				QuestionnaireModel::TYPE_INSTITUTE,
-				QuestionnaireModel::TYPE_INDIVIDUAL_INSTITUTE,
-			],
+			self::RESPONDENT_TYPE_INDIVIDUAL => 'Individu',
+			self::RESPONDENT_TYPE_INSTITUTION => 'Instansi',
 		];
 	}
 

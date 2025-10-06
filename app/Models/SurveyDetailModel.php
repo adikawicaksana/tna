@@ -8,7 +8,7 @@ class SurveyDetailModel extends Model
 {
 	protected $table = 'survey_detail';
 	protected $primaryKey = 'detail_id';
-	protected $allowedFields = ['detail_id', 'survey_id', 'question_id', 'answer'];
+	protected $allowedFields = ['detail_id', 'survey_id', 'question_id', 'answer_text', 'option_id', 'created_at', 'is_approved'];
 	protected $useAutoIncrement = false;
 	protected $useTimestamps = false;
 
@@ -25,5 +25,30 @@ class SurveyDetailModel extends Model
 			->getResultArray();
 		return $builder;
 		// echo $builder->getCompiledSelect();die;
+	}
+
+	public function getData($survey_id)
+	{
+		$builder = \Config\Database::connect();
+		$result = $builder->table('survey_detail d')
+			->select('q.question,
+				MAX(
+					CASE WHEN d.is_approved = 1 THEN COALESCE(o.option_name, d.answer_text) END
+				) AS approved_answer,
+				STRING_AGG(
+					CASE WHEN d.is_approved = 0
+						THEN \'<b>\' || d.created_at || \'</b><br> \' || COALESCE(o.option_name, d.answer_text)
+						ELSE NULL END,
+					\' <br><br> \'
+					ORDER BY d.created_at DESC
+				) AS history')
+			->join('question q', 'q.question_id = d.question_id')
+			->join('question_option o', 'o.option_id = d.option_id', 'left')
+			->where('d.survey_id', $survey_id)
+			->groupBy('q.question')
+			->get()
+			->getResultArray();
+
+		return $result;
 	}
 }

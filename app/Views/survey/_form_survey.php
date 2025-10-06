@@ -69,6 +69,15 @@ use App\Models\QuestionnaireModel;
 
 	<div class="row mb-3">
 		<div class="col-sm-4">
+			<label class="col-form-label">Rencana Pengembangan Kompetensi<span class="text-danger">*</span></label>
+		</div>
+		<div class="col-sm-8">
+			<select id="training_plan" name="training_plan[]" class="form-select select2 field-select" multiple></select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<div class="col-sm-4">
 			<label class="col-form-label">Tahun Rencana Pengembangan Kompetensi<span class="text-danger">*</span></label>
 		</div>
 		<div class="col-sm-8">
@@ -148,6 +157,7 @@ use App\Models\QuestionnaireModel;
 	$(document).ready(function() {
 		let tableJobdesc;
 		initJobdescTable();
+		getTrainingPlanDropdown();
 
 		function initJobdescTable() {
 			tableJobdesc = $('#tableUraianTugas').DataTable({
@@ -212,8 +222,12 @@ use App\Models\QuestionnaireModel;
 								id,
 								status: newStatus
 							}, function(res) {
-								if (res.success) tableJobdesc.ajax.reload(null, false);
-								else alert('Gagal update status');
+								if (res.success) {
+									tableJobdesc.ajax.reload(null, false);
+									getTrainingPlanDropdown();
+								} else {
+									alert('Gagal update status');
+								}
 							}, 'json').fail(() => alert('Terjadi kesalahan server'));
 						}
 					})
@@ -231,8 +245,12 @@ use App\Models\QuestionnaireModel;
 							$.post('/profile/delete-competence', {
 								id
 							}, function(res) {
-								if (res.success) tableJobdesc.ajax.reload(null, false);
-								else showSwal('error', 'Gagal', res.message);
+								if (res.success) {
+									tableJobdesc.ajax.reload(null, false);
+									getTrainingPlanDropdown();
+								} else {
+									showSwal('error', 'Gagal', res.message);
+								}
 							}, 'json').fail(() => showSwal('error', 'Gagal', 'Terjadi kesalahan server'));
 						}
 					});
@@ -318,6 +336,7 @@ use App\Models\QuestionnaireModel;
 						showSwal('success', 'Berhasil', response.message);
 						tableJobdesc.ajax.reload(null, false);
 						$('#modalUraianTugas').modal('hide');
+						getTrainingPlanDropdown();
 					} else {
 						showSwal('warning', 'Gagal', response.message);
 					}
@@ -335,6 +354,29 @@ use App\Models\QuestionnaireModel;
 				title,
 				text
 			});
+		}
+
+		function getTrainingPlanDropdown() {
+			let trainingPlan = $('#training_plan');
+			trainingPlan.html('');
+			$.get({
+				url: "<?= route_to('user.getIncompleteCompetence') ?>",
+				data: {
+					_id_users: "<?= session()->get('_id_users') ?>"
+				},
+				dataType: 'json',
+				success: function(response) {
+					let option = `<option value=''></option>`;
+					response.forEach(each => {
+						option += `<option value="${each.training_id}">${each.nama_pelatihan}</option>`;
+					});
+					trainingPlan.html(option);
+				},
+				error: function(xhr) {
+					showSwal('error', 'Terjadi Kesalahan', 'Silakan coba lagi');
+					console.error(xhr.responseText);
+				}
+			})
 		}
 
 		$('#verification').change(function() {

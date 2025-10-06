@@ -86,7 +86,7 @@ class Profile extends BaseController
             'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
         ];
 
-        
+
         if ($userDetailModel->where('_id_users', $session->get('_id_users'))->set($data)->update() || $userModel->where('id', $session->get('_id_users'))->set($datauser)->update()) {
             return redirect()->back()->with('update_profil', ['type' => 'success', 'message' => 'Profil berhasil diperbarui']);
         } else {
@@ -111,7 +111,7 @@ class Profile extends BaseController
             $fasyankesData = $this->institutions
                 ->where('code', $fasyankes_code)
                 ->first();
-            
+
             $existing = $this->userInstitutions
                 ->where('_id_users', $_id_users)
                 ->where('_id_master_institutions', $fasyankesData['id'])
@@ -133,7 +133,7 @@ class Profile extends BaseController
                         'message' => 'Data fasyankes berhasil disimpan.'
                     ]);
                 }
-            }            
+            }
 
             $idUsersFasyankes = Uuid::uuid7()->toString();
 
@@ -161,7 +161,8 @@ class Profile extends BaseController
         $category = $this->request->getGet('c') ?? 'fasyankes';
         $session = session();
         $_id_users = $session->get('_id_users');
-        if($category=='nonfasyankes') $classbutton = 'non-fasyankes'; else $classbutton = 'fasyankes';
+        if ($category == 'nonfasyankes') $classbutton = 'non-fasyankes';
+        else $classbutton = 'fasyankes';
 
         $fasyankes  =  $this->userInstitutions->getInstitutionsByUser($_id_users, $category);
         $data = [];
@@ -176,22 +177,22 @@ class Profile extends BaseController
             ])->setStatusCode(200);
         }
 
-            foreach ($fasyankes as $row) {
-                $data[] = [
-                    'no'       => $no++,
-                    'name'     => strtoupper($row['type'] . ' ' . $row['name']),
-                    'address'   => $row['address'],
-                    'action'     => '<button class="btn rounded-pill btn-danger btn-sm delete-'.$classbutton.'" data-id="' . $row['id_usersinstitutions'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
-                ];
-            }
+        foreach ($fasyankes as $row) {
+            $data[] = [
+                'no'       => $no++,
+                'name'     => strtoupper($row['type'] . ' ' . $row['name']),
+                'address'   => $row['address'],
+                'action'     => '<button class="btn rounded-pill btn-danger btn-sm delete-' . $classbutton . '" data-id="' . $row['id_usersinstitutions'] . '"><i class="icon-base ti tabler-trash icon-sm"></i></button>'
+            ];
+        }
 
-            return $this->response->setJSON([
-                'status'  => true,
-                'code'    => 200,
-                'type'    => 'success',
-                'message' => 'Data ditemukan',                
-                'data'    => $data
-            ])->setStatusCode(200);
+        return $this->response->setJSON([
+            'status'  => true,
+            'code'    => 200,
+            'type'    => 'success',
+            'message' => 'Data ditemukan',
+            'data'    => $data
+        ])->setStatusCode(200);
     }
 
     public function deleteUserInstitutions($id = null)
@@ -205,17 +206,15 @@ class Profile extends BaseController
 
             $this->userInstitutions->delete($id);
 
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Institusi berhasil dihapus'
-                ]);
-           
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Institusi berhasil dihapus'
+            ]);
         } catch (\Throwable $e) {
             log_message('error', 'Gagal menghapus fasyankes');
             return $this->response->setStatusCode(500)
                 ->setJSON(['error' => $e->getMessage()]);
         }
-        
     }
 
     public function storeUserNonFasyankes()
@@ -271,64 +270,64 @@ class Profile extends BaseController
         }
     }
 
-    
-    
-public function storeJobdescCompetence()
-{
-    $session = session();
 
-    $_id_users      = $session->get('_id_users');
-    $jobdescModel   = new UsersJobdescModel();
-    $competenceModel= new UsersCompetenceModel();
 
-    $jobDescription = $this->request->getPost('user_uraiantugas');
-    $trainings      = $this->request->getPost('user_pelatihan'); 
+    public function storeJobdescCompetence()
+    {
+        $session = session();
 
-    $jobdesc = $jobdescModel
-        ->where('_id_users', $_id_users)
-        ->where('job_description', $jobDescription)
-        ->first();
+        $_id_users      = $session->get('_id_users');
+        $jobdescModel   = new UsersJobdescModel();
+        $competenceModel = new UsersCompetenceModel();
 
-    if (!$jobdesc) {
-        $newJobdescId = Uuid::uuid7()->toString();
+        $jobDescription = $this->request->getPost('user_uraiantugas');
+        $trainings      = $this->request->getPost('user_pelatihan');
 
-        $jobdescModel->insert([
-            'id'              => $newJobdescId,
-            '_id_users'       => $_id_users,
-            'job_description' => $jobDescription
-        ]);
+        $jobdesc = $jobdescModel
+            ->where('_id_users', $_id_users)
+            ->where('job_description', $jobDescription)
+            ->first();
 
-        $idUsersJobdesc = $newJobdescId;
-    } else {
-        $idUsersJobdesc = $jobdesc['id'];
-    }
+        if (!$jobdesc) {
+            $newJobdescId = Uuid::uuid7()->toString();
 
-    if (is_array($trainings)) {
-        foreach ($trainings as $training) {
-            $trainingData = explode("&&", $training);
+            $jobdescModel->insert([
+                'id'              => $newJobdescId,
+                '_id_users'       => $_id_users,
+                'job_description' => $jobDescription
+            ]);
 
-            $exists = $competenceModel
-                ->where('_id_users_jobdesc', $idUsersJobdesc)
-                ->where('_id_master_training', $trainingData[0])
-                ->first();
+            $idUsersJobdesc = $newJobdescId;
+        } else {
+            $idUsersJobdesc = $jobdesc['id'];
+        }
 
-            if (!$exists) {
-                $newCompetenceId = Uuid::uuid7()->toString();
-                $competenceModel->insert([
-                    'id'                  => $newCompetenceId,
-                    '_id_users_jobdesc'   => $idUsersJobdesc,
-                    '_id_master_training' => $trainingData[0],
-                    'status'              => $trainingData[1]
-                ]);
+        if (is_array($trainings)) {
+            foreach ($trainings as $training) {
+                $trainingData = explode("&&", $training);
+
+                $exists = $competenceModel
+                    ->where('_id_users_jobdesc', $idUsersJobdesc)
+                    ->where('_id_master_training', $trainingData[0])
+                    ->first();
+
+                if (!$exists) {
+                    $newCompetenceId = Uuid::uuid7()->toString();
+                    $competenceModel->insert([
+                        'id'                  => $newCompetenceId,
+                        '_id_users_jobdesc'   => $idUsersJobdesc,
+                        '_id_master_training' => $trainingData[0],
+                        'status'              => $trainingData[1]
+                    ]);
+                }
             }
         }
-    }
 
-    return $this->response->setJSON([
-        'success' => true,
-        'message' => 'Data berhasil disimpan.'
-    ], ResponseInterface::HTTP_OK);
-}
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Data berhasil disimpan.'
+        ], ResponseInterface::HTTP_OK);
+    }
 
     public function listJobDescCompetence()
     {
@@ -354,11 +353,11 @@ public function storeJobdescCompetence()
         if (!empty($search)) {
             $totalFiltered = $jobdescModel
                 ->like('job_description', $search, 'both', null, true)
-                ->countAllResults(false); 
+                ->countAllResults(false);
         } else {
             $totalFiltered = $totalRecords;
         }
-        $no=1;
+        $no = 1;
         $data = [];
         foreach ($jobdescs as $jd) {
             $kompetensi = $competenceModel
@@ -451,6 +450,21 @@ public function storeJobdescCompetence()
         ]);
     }
 
+    public function getIncompleteCompetence()
+    {
+        $_id_users = $this->request->getGet('_id_users') ?? session()->get('_id_users');
+        $builder = \Config\Database::connect();
+        $result = $builder->table('users_competence c')
+            ->join('users_jobdesc j', 'c._id_users_jobdesc = j.id')
+            ->join('master_training t', 'c._id_master_training = t.id')
+            ->select('DISTINCT(c._id_master_training) AS training_id, t.nama_pelatihan')
+            ->where([
+                'c.status' => 0,
+                'j._id_users' => $_id_users
+            ])
+            ->get()
+            ->getResult();
 
-
+        return $this->response->setJSON($result);
+    }
 }

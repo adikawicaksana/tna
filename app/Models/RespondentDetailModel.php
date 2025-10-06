@@ -11,7 +11,10 @@ class RespondentDetailModel extends Model
 	protected $allowedFields = [
 		'detail_id',
 		'survey_id',
-		'competence_id',
+		'jobdesc_id',
+		'training_id',
+		'job_description',
+		'status',
 	];
 	protected $useAutoIncrement = false;
 
@@ -19,10 +22,10 @@ class RespondentDetailModel extends Model
 	{
 		$builder = \Config\Database::connect();
 		return $builder->table('respondent_detail h')
-			->select('job_description, nama_pelatihan, c.status')
-			->join('users_competence c', 'h.competence_id = c.id')
-			->join('users_jobdesc j', 'c._id_users_jobdesc = j.id')
-			->join('master_training t', 'c._id_master_training = t.id')
+			->select('h.*, nama_pelatihan')
+			// ->join('users_competence c', 'h.competence_id = c.id')
+			// ->join('users_jobdesc j', 'c._id_users_jobdesc = j.id')
+			->join('master_training t', 'h.training_id = t.id')
 			->where('survey_id', $survey_id)
 			->get()
 			->getResultArray();

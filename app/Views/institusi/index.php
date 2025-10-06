@@ -64,45 +64,64 @@
             <div class="col-xl-12 col-md-12">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between">
-                <!-- <h5 class="card-title mb-0">Statistics</h5>
-                <small class="text-body-secondary">Updated 1 month ago</small> -->
+                <h5 class="card-title mb-0">Statistics</h5>
+                <small class="text-body-secondary"></small>
                 </div>
                 <div class="card-body d-flex align-items-end">
-                <div class="w-100">
-                    <div class="row gy-3">
-                    <div class="col-md-4 col-6">
-                        <div class="d-flex align-items-center">
-                        <div class="badge rounded bg-label-primary me-4 p-2"><i class="icon-base ti tabler-users icon-lg"></i></div>
-                        <div class="card-info">
-                            <h5 class="mb-0"><?= esc($data['jumlah_user_institusi']) ?></h5>
-                            <small>Terdaftar</small>
+                    <div class="w-100">
+                        <div class="row gy-3">
+                        <div class="col-md-4 col-6">
+                            <div class="d-flex align-items-center">
+                            <div class="badge rounded bg-label-primary me-4 p-2"><i class="icon-base ti tabler-users icon-lg"></i></div>
+                            <div class="card-info">
+                                <h5 class="mb-0"><?= esc($data['jumlah_user_institusi']) ?></h5>
+                                <small>Terdaftar</small>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="d-flex align-items-center">
+                            <div class="badge rounded bg-label-info me-4 p-2"><i class="icon-base ti tabler-user icon-lg"></i></div>
+                            <div class="card-info">
+                                <h5 class="mb-0">25</h5>
+                                <small>Sudah Assessment</small>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <div class="d-flex align-items-center">
+                            <div class="badge rounded bg-label-danger me-4 p-2"><i class="icon-base ti tabler-user icon-lg"></i></div>
+                            <div class="card-info">
+                                <h5 class="mb-0">25</h5>
+                                <small>Belum Assessment</small>
+                            </div>
+                            </div>
                         </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-6">
-                        <div class="d-flex align-items-center">
-                        <div class="badge rounded bg-label-info me-4 p-2"><i class="icon-base ti tabler-user icon-lg"></i></div>
-                        <div class="card-info">
-                            <h5 class="mb-0">25</h5>
-                            <small>Sudah Assessment</small>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-6">
-                        <div class="d-flex align-items-center">
-                        <div class="badge rounded bg-label-danger me-4 p-2"><i class="icon-base ti tabler-user icon-lg"></i></div>
-                        <div class="card-info">
-                            <h5 class="mb-0">25</h5>
-                            <small>Belum Assessment</small>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
                 </div>
             </div>
             </div>
             <!--/ Statistics -->
+
+            
+
+        <div class="row">
+            <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
+				<thead>
+					<tr>
+						<th class="text-center">No</th>
+						<th>Tanggal</th>
+						<th>Grup</th>
+						<th>Instansi</th>
+						<th>Nama</th>
+						<th>Status</th>
+						<th>Tanggal Disetujui</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+			</table>
+        </div>
 
         <div class="row">
             <div class="col-md-6 mb-6">
@@ -133,6 +152,30 @@
             window.location.href = `${baseUrl}/${id}`;
         }
     });
+
+    $('#dataTable').DataTable({
+			processing: true,
+			serverSide: true,
+			searching: false,
+			ajax: {
+				url: "<?= current_url() ?>",
+				type: "GET"
+			},
+			columns: [
+				{ data: "no", name: "no", orderable: false, searchable: false },
+				{ data: "created_at" },
+				{ data: "institution_category" },
+				{ data: "institution_name" },
+				{ data: "fullname" },
+				{ data: "survey_status" },
+				{ data: "approved_at" },
+				{ data: "action", orderable: false, searchable: false }
+			],
+			columnDefs: [{
+				targets: [0],
+				className: 'text-center',
+			}],
+		});
     </script>
     
 <?= $this->endSection() ?>

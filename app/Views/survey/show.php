@@ -205,7 +205,7 @@ use App\Models\SurveyModel;
 							<tr>
 								<td><?= $key + 1 ?></td>
 								<td><?= $each['question'] ?></td>
-								<td><?= nl2br($each['approved_answer']) ?? '-' ?></td>
+								<td><?= !empty($each['approved_answer']) ? nl2br($each['approved_answer']) : '-' ?></td>
 								<td><?= nl2br($each['history']) ?></td>
 							</tr>
 						<?php endforeach; ?>

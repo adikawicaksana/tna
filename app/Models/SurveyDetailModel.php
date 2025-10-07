@@ -31,7 +31,7 @@ class SurveyDetailModel extends Model
 	{
 		$builder = \Config\Database::connect();
 		$result = $builder->table('survey_detail d')
-			->select('q.question,
+			->select('q.question_id, q.question,
 				MAX(
 					CASE WHEN d.is_approved = 1 THEN COALESCE(o.option_name, d.answer_text) END
 				) AS approved_answer,
@@ -45,7 +45,7 @@ class SurveyDetailModel extends Model
 			->join('question q', 'q.question_id = d.question_id')
 			->join('question_option o', 'o.option_id = d.option_id', 'left')
 			->where('d.survey_id', $survey_id)
-			->groupBy('q.question')
+			->groupBy('q.question_id, q.question')
 			->get()
 			->getResultArray();
 

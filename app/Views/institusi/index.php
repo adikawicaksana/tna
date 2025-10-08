@@ -13,6 +13,8 @@
     <?php if($data['institusi_detail']) {?>
 	<div class="card">
         <div class="card-header">
+            <div class="row mb-3">
+                    <div class="col-sm-9">                        
              <select name="institusi" id="institusi" class="form-select select2">
                 <?php foreach ($data['institusi'] as $i): ?>
                     <option value="<?= esc($i['id']) ?>"
@@ -22,6 +24,19 @@
                     </option>
                 <?php endforeach; ?>
                 </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <select name="training_plan_year" class="form-select select2">
+                            <option value="" disabled selected hidden>Pilih Tahun</option>
+                            <?php foreach ($data['years'] as $key => $each):
+                                $selected = ((old('training_plan_year') ?? NULL) == $key) ? 'selected' : ''; ?>
+                                <option value="<?= esc($key) ?>" <?= $selected ?>>
+                                    <?= esc($each) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    </div>
         </div>  
 		<div class="card-body">
 

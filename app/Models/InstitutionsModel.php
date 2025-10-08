@@ -10,7 +10,7 @@ class InstitutionsModel extends Model
     protected $table            = 'master_institutions';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;
-    protected $allowedFields    = ['id', 'code', 'category', 'type', 'name', 'address','_id_villages', '_id_districts', '_id_regencies', '_id_provinces','latitude', 'longitude'];
+    protected $allowedFields    = ['id', 'code', 'category', 'type', 'name', 'address','_id_villages', '_id_districts', '_id_regencies', '_id_provinces','latitude', 'longitude','model','parent'];
     protected $useTimestamps    = true;
     protected $returnType       = 'array';
 

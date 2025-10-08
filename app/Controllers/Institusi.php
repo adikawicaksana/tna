@@ -4,16 +4,17 @@ namespace App\Controllers;
 
 use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
+use App\Helpers\CommonHelper;
 use App\Models\UserDetailModel;
 use App\Models\InstitutionsModel;
 use App\Models\UsersInstitutionsModel;
-use App\Models\UsersFasyankesModel;
 use App\Models\ReferenceDataModel;
 use App\Models\UsersJobdescModel;
 use App\Models\UsersCompetenceModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\QuestionnaireModel;
+use App\Models\UsersManagerModel;
 
 class Institusi extends BaseController
 {
@@ -22,6 +23,7 @@ class Institusi extends BaseController
     protected $userDetailModel;
     protected $institutions;
     protected $userInstitutions;
+    protected $managerInstitution;
 
 
     public function __construct()
@@ -30,19 +32,23 @@ class Institusi extends BaseController
         $this->userInstitutions = new UsersInstitutionsModel;
         $this->userModel = new UserModel();
         $this->userDetailModel = new UserDetailModel();
+        $this->managerInstitution = new UsersManagerModel();
 
     }
 
    public function index($id = null)
     {
         $userDetail = $this->userDetailModel->getUserDetail();
+		$session = session();
+        $institusi=[];
+        
+		$m_institutions = (new UsersManagerModel())->where('_id_users', $session->get('_id_users'))->findAll();
 
         if (!empty($userDetail['mobile']) && str_starts_with($userDetail['mobile'], '62')) {
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
-$institusi=[];
-        if($userDetail['p_institusi']){
-            $p_institusi = json_decode($userDetail['p_institusi'], true);
+        if(array_column($m_institutions, '_id_institutions')){
+            $p_institusi = array_column($m_institutions, '_id_institutions');
 
         $institusi = $this->institutions
             ->whereIn('id', $p_institusi)
@@ -68,6 +74,7 @@ $institusi=[];
                 'institusi_detail'   => $institusiDetail,
                 'jumlah_user_institusi'=> $jumlahUserInstitusi,
                 'questionnaire_type' => QuestionnaireModel::listType('institusi'),
+                'years' => CommonHelper::years(date('Y')),
             ],
         ]);
     }

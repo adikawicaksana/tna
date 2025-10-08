@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Filters\RoleFilter;
 use App\Models\QuestionModel;
 use App\Models\UserModel;
+use App\Models\UsersManagerModel;
 
 class CommonHelper
 {
@@ -16,8 +17,11 @@ class CommonHelper
 
 		// Ambil data user
 		$user = (new UserModel())->find($session->get('_id_users'));
+		$m_institutions = (new UsersManagerModel())->where('_id_users', $session->get('_id_users'))->findAll();
+		$m_regencies = (new UsersManagerModel())->where('_id_users', $session->get('_id_users'))->findAll();
+		$m_provinces = (new UsersManagerModel())->where('_id_users', $session->get('_id_users'))->findAll();
 
-		$p_institusi = json_decode($user['p_institusi'] ?? '[]', true) ?? [];
+		$p_institusi = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
 		$p_kabkota   = json_decode($user['p_kabkota'] ?? '[]', true) ?? [];
 		$p_provinsi  = json_decode($user['p_provinsi'] ?? '[]', true) ?? [];
 

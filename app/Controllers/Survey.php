@@ -15,6 +15,7 @@ use App\Models\SurveyTrainingPlanModel;
 use App\Models\UserModel;
 use App\Models\UsersCompetenceModel;
 use App\Models\UsersInstitutionsModel;
+use App\Models\UsersManagerModel;
 use Ramsey\Uuid\Uuid;
 use Exception;
 
@@ -27,6 +28,7 @@ class Survey extends BaseController
 	protected $questionModel;
 	protected $userDetailModel;
 	protected $usersInstitutionsModel;
+	protected $usersManager;
 
 	public function __construct()
 	{
@@ -37,10 +39,12 @@ class Survey extends BaseController
 		$this->surveyTrainingPlanModel = new SurveyTrainingPlanModel();
 		$this->questionModel = new QuestionModel();
 		$this->usersInstitutionsModel = new UsersInstitutionsModel();
+		$this->usersManager = new UsersManagerModel();
 	}
 
 	public function index()
 	{
+		$m_institutions = (new UsersManagerModel())->where('_id_users', session()->get('_id_users'))->findAll();
 		if ($this->request->isAJAX()) {
 			$status = SurveyModel::listStatus();
 			$request = $this->request->getGet();
@@ -60,10 +64,10 @@ class Survey extends BaseController
 			// Filter by user access
 			$user_id = session()->get('_id_users');
 			if (session()->get('user_role') == UserModel::ROLE_USER) {
-				$user = (new UserModel())->find($user_id);
-				$p_institusi = json_decode($user['p_institusi']) ?? [];
-				$p_kabkota = json_decode($user['p_kabkota']) ?? [];
-				$p_provinsi = json_decode($user['p_provinsi']) ?? [];
+				$user = (new UserModel())->find($user_id);				
+				$p_institusi = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
+				$p_kabkota = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
+				$p_provinsi = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
 				$p_access = array_merge($p_institusi, $p_kabkota, $p_provinsi);
 
 				if (!empty($p_access)) {

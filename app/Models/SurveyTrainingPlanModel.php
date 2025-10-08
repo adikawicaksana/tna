@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Helpers\CommonHelper;
 use CodeIgniter\Model;
 
+// user_id: reference to respondent ID
 class SurveyTrainingPlanModel extends Model
 {
 	protected $table = 'survey_training_plan';
 	protected $primaryKey = 'plan_id';
-	protected $allowedFields = ['plan_id', 'survey_id', 'user_id', 'training_id', 'plan_year', 'plan_month', 'plan_status', 'created_at'];
+	protected $allowedFields = ['plan_id', 'survey_id', 'user_id', 'training_id',
+		'plan_year', 'plan_month', 'plan_status', 'created_at'];
 	protected $useAutoIncrement = false;
 	protected $useTimestamps = false;
 
@@ -45,18 +47,21 @@ class SurveyTrainingPlanModel extends Model
 			}
 
 			// Handle history
-			if ($key == 0 || $each['created_at'] != $data[$key - 1]['created_at']) {
-				$temp_training .= "\n<b>{$each['created_at']}</b> \n- {$each['nama_pelatihan']}";
-			} else {
-				$temp_training .= "\n- {$each['nama_pelatihan']}\n";
-			}
+			else {
+				if ($key == 0 || $each['created_at'] != $data[$key - 1]['created_at']) {
 
-			if ($key == 0 || $each['created_at'] != $data[$key - 1]['created_at']) {
-				$temp_year .= "\n<b>{$each['created_at']}</b> \n{$each['plan_year']}\n";
-			}
+					$temp_training .= "\n<b>{$each['created_at']}</b> \n- {$each['nama_pelatihan']}";
+				} else {
+					$temp_training .= "\n- {$each['nama_pelatihan']}\n";
+				}
 
-			if ($key == 0 || $each['created_at'] != $data[$key - 1]['created_at']) {
-				$temp_month .= "\n<b>{$each['created_at']}</b> \n{$months[$each['plan_month']]}\n";
+				if ($key == 0 || $each['created_at'] != $data[$key - 1]['created_at']) {
+					$temp_year .= "\n<b>{$each['created_at']}</b> \n{$each['plan_year']}\n";
+				}
+
+				if ($key == 0 || $each['created_at'] != $data[$key - 1]['created_at']) {
+					$temp_month .= "\n<b>{$each['created_at']}</b> \n{$months[$each['plan_month']]}\n";
+				}
 			}
 		}
 

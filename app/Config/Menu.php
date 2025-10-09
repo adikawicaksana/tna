@@ -37,7 +37,7 @@ class Menu
                 'icon'  => 'ti tabler-building',
                 'url' => route_to('institusi.index'),
                 'active' => 'institusi',
-                'access' => ['Institusi', 'index'],
+                'access' => ['institusi', 'index'],
             ],
             [
                 'label' => 'Dinas',
@@ -48,13 +48,13 @@ class Menu
                         'label' => 'Kabupaten/Kota',
                         'url'   => route_to('kabkota.index'),
                         'active' => 'kabkota',
-                        'access' => ['Kabkota', 'index'],
+                        'access' => ['kabkota', 'index'],
                     ],
                     [
                         'label' => 'Provinsi',
                         'url'   => route_to('provinsi.index'),
                        'active' => 'provinsi',
-                        'access' => ['Provinsi', 'index'],
+                        'access' => ['provinsi', 'index'],
                     ],
                 ]
             ],

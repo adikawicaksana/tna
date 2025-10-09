@@ -42,7 +42,7 @@ class Institusi extends BaseController
 		$session = session();
         $institusi=[];
         
-		$m_institutions = (new UsersManagerModel())->where('_id_users', $session->get('_id_users'))->findAll();
+        $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'institusi');
 
         if (!empty($userDetail['mobile']) && str_starts_with($userDetail['mobile'], '62')) {
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);

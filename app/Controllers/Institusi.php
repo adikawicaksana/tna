@@ -36,8 +36,9 @@ class Institusi extends BaseController
 
     }
 
-   public function index($id = null)
+   public function index()
     {
+        $id = $this->request->getGet('i') ?? null;
         $userDetail = $this->userDetailModel->getUserDetail();
 		$session = session();
         $institusi=[];

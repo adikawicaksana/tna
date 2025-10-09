@@ -28,7 +28,6 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 
 $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($routes) {
 	$routes->get('institusi', 'Institusi::index', ['as' => 'institusi.index']);
-	$routes->get('institusi/(:segment)', 'Institusi::index/$1', ['as' => 'institusi.detail']);
 
 	$routes->get('kabkota', 'Kabkota::index', ['as' => 'kabkota.index']);
 	$routes->get('kabkota/(:segment)', 'Kabkota::index/$1', ['as' => 'kabkota.detail']);

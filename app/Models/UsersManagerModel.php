@@ -76,8 +76,6 @@ class UsersManagerModel extends Model
             log_message('error', '[UsersManagerModel::searchByIDusers] ' . $e->getMessage());
             return [];
         }
-
-           
     }
 
 

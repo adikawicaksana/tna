@@ -70,4 +70,15 @@ class SurveyModel extends Model
 
 		return $result;
 	}
+	
+	public static function surveyByInstitusi($id_institusi, $year)
+	{
+
+		$result = (new self())
+        ->where('institution_id', $id_institusi)
+        ->where("EXTRACT(YEAR FROM created_at) =", $year, false)
+        ->findAll();
+
+		return $result;
+	}
 }

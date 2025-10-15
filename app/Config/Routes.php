@@ -81,6 +81,9 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 		$routes->post('survey/postApproval', 'Survey::postApproval', ['as' => 'survey.postApproval']);
 		$routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);
 	});
+
+	// Report
+	$routes->get('report/trainingNeedsSummary', 'Report::trainingNeedsSummary', ['as' => 'report.trainingNeedsSummary']);
 });
 
 

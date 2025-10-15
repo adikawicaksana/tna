@@ -1,0 +1,50 @@
+<?= $this->extend('layout/main') ?>
+<?= $this->section('content'); ?>
+<div class="container">
+	<h1><?= $title ?></h1>
+	<div class="card">
+		<div class="card-header">
+		</div>
+		<div class="card-body">
+			<div class="table-responsive">
+				<table class="table table-sm table-bordered table-bordered">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>Nama</th>
+							<th>NIP</th>
+							<th>Pendidikan Terakhir</th>
+							<th>Jabatan</th>
+							<th>Bidang/Seksi/Subbag</th>
+							<th>SKP / Uraian Tugas</th>
+							<th>Kompetensi (Pelatihan / Peningkatan Kompetensi) yang sudah diikuti</th>
+							<th>Kompetensi (Pelatihan / Peningkatan Kompetensi) yg belum diikuti</th>
+							<th>Analisa Kesenjangan Kompetensi</th>
+							<th>Rencana Pengembangan Kompetensi yang Dibutuhkan</th>
+							<th>Tahun Usulan</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($data as $key => $each): ?>
+							<tr>
+								<td><?= $key + 1 ?></td>
+								<td><?= $each['fullname'] ?></td>
+								<td><?= $each['nip'] ?></td>
+								<td><?= $each['jenjang_pendidikan'] ?></td>
+								<td><?= $each['jurusan_profesi'] ?></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td><?= $each['plan_year'] ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<?= $this->endSection() ?>

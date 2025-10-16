@@ -129,7 +129,7 @@ use App\Models\SurveyModel;
 		$.get({
 			url: "<?= route_to('user.getIncompleteCompetence') ?>",
 			data: {
-				_id_users: "<?= session()->get('_id_users') ?>"
+				_id_users: "<?= $data->respondent_id ?>"
 			},
 			dataType: 'json',
 			success: function(response) {

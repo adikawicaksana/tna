@@ -9,52 +9,53 @@ use App\Models\UsersManagerModel;
 
 class CommonHelper
 {
-	public static function hasAccess(string $controller, string $method, bool $checkAdministration = false): bool
+	public static function hasAccess(string $controller, string $method, bool $checkAdministration = true): bool
 	{
 		$session = session();
 		$role    = $session->get('user_role');
 		$result  = RoleFilter::manualCheck($controller, $method);
 
-		$m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'));
+		if ($checkAdministration) {
+			$m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'));
 
-		if ($role == UserModel::ROLE_USER) {
+			if ($role == UserModel::ROLE_USER) {
+				if (is_array($m_institutions) && !empty($m_institutions)) {
 
-			if (is_array($m_institutions) && !empty($m_institutions)) {
-
-				if (isset($m_institutions['type'])) {
-					$m_institutions = [$m_institutions];
-				}
-
-				$p_institusi = [];
-				$p_kabkota   = [];
-				$p_provinsi  = [];
-
-				foreach ($m_institutions as $inst) {
-					$type = strtolower($inst['type'] ?? '');
-					$id_institusi = $inst['_id_institutions'] ?? null;
-
-					if (!$id_institusi) continue;
-
-					if ($type === 'kabkota') {
-						$p_kabkota[] = $id_institusi;
-					} elseif ($type === 'provinsi') {
-						$p_provinsi[] = $id_institusi;
-					} else {
-						$p_institusi[] = $id_institusi;
+					if (isset($m_institutions['type'])) {
+						$m_institutions = [$m_institutions];
 					}
-				}
-				$map = [
-					'institusi' => $p_institusi,
-					'kabkota'   => $p_kabkota,
-					'provinsi'  => $p_provinsi,
-				];
-				if (isset($map[$controller])) {
-					$result = $result && !empty($map[$controller]);
+
+					$p_institusi = [];
+					$p_kabkota   = [];
+					$p_provinsi  = [];
+
+					foreach ($m_institutions as $inst) {
+						$type = strtolower($inst['type'] ?? '');
+						$id_institusi = $inst['_id_institutions'] ?? null;
+
+						if (!$id_institusi) continue;
+
+						if ($type === 'kabkota') {
+							$p_kabkota[] = $id_institusi;
+						} elseif ($type === 'provinsi') {
+							$p_provinsi[] = $id_institusi;
+						} else {
+							$p_institusi[] = $id_institusi;
+						}
+					}
+					$map = [
+						'institusi' => $p_institusi,
+						'kabkota'   => $p_kabkota,
+						'provinsi'  => $p_provinsi,
+					];
+					if (isset($map[$controller])) {
+						$result = $result && !empty($map[$controller]);
+					} else {
+						$result = $result && true;
+					}
 				} else {
-					$result = $result && true;
+					$result = false;
 				}
-			} else {
-				$result = false;
 			}
 		}
 

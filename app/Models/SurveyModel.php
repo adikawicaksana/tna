@@ -57,7 +57,7 @@ class SurveyModel extends Model
 		$model = (new self())->find($id);
 		$result = in_array($model['survey_status'], [self::STAT_OPEN, self::STAT_DECLINED]);
 		$result &= (session()->get('_id_users') == $model['respondent_id']);
-		$result &= (CommonHelper::hasAccess('Survey', 'update'));
+		$result &= (CommonHelper::hasAccess('Survey', 'update', false));
 
 		return $result;
 	}
@@ -70,7 +70,7 @@ class SurveyModel extends Model
 
 		return $result;
 	}
-	
+
 	public static function surveyByInstitusi($id_institusi, $year)
 	{
 

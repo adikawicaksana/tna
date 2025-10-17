@@ -9,6 +9,10 @@
 
 <?= $this->section('content') ?>
 
+<?php
+$selectedYear = $_GET['y'] ?? date('Y');
+?>
+
 <!-- Content -->
            <div class="container">
 	<h1><?= $title ?></h1>
@@ -30,8 +34,8 @@
                     </div>
                     <div class="col-xl-3">
                         <select name="survey_year" id="survey_year" class="form-select">
-                            <?php foreach ($data['years'] as $key => $each):
-                                $selected = ((old('survey_year') ?? NULL) == $key) ? 'selected' : ''; ?>
+                            <?php foreach ($data['years'] as $key => $each): ?>
+                                <?php $selected = ($key == $selectedYear) ? 'selected' : ''; ?>
                                 <option value="<?= esc($key) ?>" <?= $selected ?>>
                                     <?= esc($each) ?>
                                 </option>
@@ -50,25 +54,35 @@
                             <div class="col-md-4 mb-4">
                                 <table class="table-borderless m-0">
                                     <tr>
-                                        <td><i class="menu-icon icon-base ti tabler-building"></i></td>
-                                        <td><?= $data['institusi_detail']['name'] ?></td>
+                                        <td class="align-top"><i class="menu-icon icon-base ti tabler-building"></i></td>
+                                        <td class="align-top"><?= $data['institusi_detail']['name'] ?></td>
                                     </tr>
                                     <?php if (!empty($data['institusi_detail']['type'])): ?>
                                     <tr>
-                                        <td><i class="menu-icon icon-base ti tabler-category-plus"></i></td>
-                                        <td><?= $data['institusi_detail']['type'] === 'rumahsakit' ? 'RUMAH SAKIT' : strtoupper($data['institusi_detail']['type']) ?></td>
+                                        <td class="align-top"><i class="menu-icon icon-base ti tabler-category-plus"></i></td>
+                                        <td class="align-top"><?= $data['institusi_detail']['type'] === 'rumahsakit' ? 'RUMAH SAKIT' : strtoupper($data['institusi_detail']['type']) ?></td>
                                     </tr>
                                     <?php endif; ?>
                                     <tr>
-                                        <td><i class="menu-icon icon-base ti tabler-map-pin"></i></td>
-                                        <td><?= $data['institusi_detail']['address'].", Kec.".$data['institusi_detail']['district_name'].", ".$data['institusi_detail']['regencies_name'].", ".$data['institusi_detail']['provinces_name'] ?></td>
+                                        <td class="align-top"><i class="menu-icon icon-base ti tabler-map-pin"></i></td>
+                                        <td class="align-top"><?= $data['institusi_detail']['address'].", Kec.".$data['institusi_detail']['district_name'].", ".$data['institusi_detail']['regencies_name'].", ".$data['institusi_detail']['provinces_name'] ?></td>
                                     </tr>
                                     <tr>
-                                        <td><i class="menu-icon icon-base ti tabler-map"></i></td>
-                                        <td>
+                                        <td class="align-top"><i class="menu-icon icon-base ti tabler-map"></i></td>
+                                        <td class="align-top">
                                             <a href="https://www.google.com/maps?q=<?= $data['institusi_detail']['latitude'] ?>,<?= $data['institusi_detail']['longitude'] ?>" target="_blank" rel="noopener noreferrer">
                                                 <?= "Latitude: ".$data['institusi_detail']['latitude']."; Longitude: ".$data['institusi_detail']['longitude']; ?>
                                             </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-top"><i class="menu-icon icon-base ti tabler-user"></i></td>
+                                        <td class="align-top">Pengelola Data:<br>
+                                            <ul>
+                                            <?php foreach ($data['pengelola'] as $key => $each): ?>                                               
+                                                   <li> <?= $each['fullname'] ?> </li>
+                                            <?php endforeach; ?>
+                                            </ul>
                                         </td>
                                     </tr>
                                 </table>
@@ -156,10 +170,11 @@
             serverSide: true,
             searching: false,
             ajax: {
-                url: "<?= current_url() ?>", // cukup current_url(), id dikirim terpisah
+                url: "<?= current_url() ?>", 
                 type: "GET",
                 data: function (d) {
                     d.id = $('#institusi').val();
+                    d.year = $('#survey_year').val();
                 },
                 error: function (xhr, error, code) {
                     console.error("AJAX Error:", xhr.responseText);
@@ -187,7 +202,14 @@
     $('#institusi').on('change', function () {
         const id = $(this).val();  
         if (id) {
-            window.location.href = `${baseUrl}?i=${id}&y=2025`;
+            window.location.href = `${baseUrl}?i=${id}&y=${$('#survey_year').val()}`;
+        }
+    });
+    
+    $('#survey_year').on('change', function () {
+        const year = $(this).val();  
+        if (year) {
+            window.location.href = `${baseUrl}?i=${$('#institusi').val()}&y=${year}`;
         }
     });
 
@@ -210,7 +232,7 @@ if (doughnutChart) {
     data: {
       labels: ['Belum Asesmen', 'Sudah Asesmen'],
       datasets: [{
-        data: [<?= $data['total_users_survey']; ?>,<?= ($data['total_users_institusi']-$data['total_users_survey']); ?>],
+        data: [<?= ($data['total_users_institusi']-$data['total_users_survey']); ?>,<?= $data['total_users_survey']; ?>],
         backgroundColor: [danger, info],
         borderWidth: 0,
         pointStyle: 'rectRounded'

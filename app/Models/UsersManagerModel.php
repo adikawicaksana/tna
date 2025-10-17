@@ -78,5 +78,26 @@ class UsersManagerModel extends Model
         }
     }
 
+     public function searchByIDInstitution($_id_institution, $filterType = 'all')
+    {
+        try {
+            $builder = $this->select('users_manager.*, master_institutions.*, users_detail.*')
+                ->join('master_institutions','master_institutions.id = users_manager._id_institutions','left')
+                ->join('users_detail','users_detail._id_users = users_manager._id_users','left')
+                ->where('users_manager._id_institutions', $_id_institution);            
+
+            $result = $builder->findAll();
+
+            if (!is_array($result) || empty($result)) {
+                return [];
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            log_message('error', '[UsersManagerModel::searchByIDusers] ' . $e->getMessage());
+            return [];
+        }
+    }
+
 
 }

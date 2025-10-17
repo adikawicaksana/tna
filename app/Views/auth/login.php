@@ -105,7 +105,13 @@
           <div class="w-px-400 mx-auto mt-12 pt-5">
             <h4 class="mb-1">Selamat datang! 👋</h4>
             <p class="mb-6">di Kawah Candradimuka Insan Kesehatan Indonesia</p>
-
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                    <i class="menu-icon icon-base ti tabler-currency-xrp"></i>
+                    <div><?= session()->getFlashdata('error') ?></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
             <form id="formAuthentication" class="mb-6" action="./login" method="POST">
               <?= csrf_field() ?>
               <div class="mb-6 form-control-validation">
@@ -131,15 +137,15 @@
                   <span class="input-group-text cursor-pointer"><i class="icon-base ti tabler-eye-off"></i></span>
                 </div>
               </div>
-              <div class="my-8">
+              <!-- <div class="my-8">
                 <div class="d-flex justify-content-between">
                   <div class="form-check mb-0 ms-2">
                   </div>
-                  <a href="auth-forgot-password-cover.html">
+                  <a href="#">
                     <p class="mb-0">Lupa Password?</p>
                   </a>
                 </div>
-              </div>
+              </div> -->
               <button class="btn btn-primary d-grid w-100">Sign in</button>
             </form>
 

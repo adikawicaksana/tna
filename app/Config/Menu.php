@@ -40,19 +40,6 @@ class Menu
                 'access' => ['institusi', 'index'],
             ],
             [
-                'label' => 'Laporan',
-                'icon'  => 'ti tabler-report-search',
-                'active' => 'report',
-                'children' => [
-                    [
-                        'label' => 'Rekapitulasi Kebutuhan Pelatihan Fasyankes',
-                        'url'   => route_to('report.trainingNeedsSummary'),
-                        'active' => 'report.',
-                        'access' => ['Report', 'trainingNeedsSummary'],
-                    ],
-                ]
-            ],
-            [
                 'label' => 'Dinas',
                 'icon'  => 'ti tabler-building-skyscraper',
                 'active' => 'master',
@@ -68,6 +55,19 @@ class Menu
                         'url'   => route_to('provinsi.index'),
                        'active' => 'provinsi',
                         'access' => ['provinsi', 'index'],
+                    ],
+                ]
+            ],
+            [
+                'label' => 'Laporan',
+                'icon'  => 'ti tabler-report-search',
+                'active' => 'report',
+                'children' => [
+                    [
+                        'label' => 'Rekapitulasi Kebutuhan Pelatihan Fasyankes',
+                        'url'   => route_to('report.trainingNeedsSummary'),
+                        'active' => 'report.',
+                        'access' => ['Report', 'trainingNeedsSummary'],
                     ],
                 ]
             ],

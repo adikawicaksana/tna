@@ -151,29 +151,37 @@
     const baseUrl = "<?= base_url('institusi') ?>";
 
     	$(document).ready(function () {
-		$('#dataTable').DataTable({
-			processing: true,
-			serverSide: true,
-			searching: false,
-			ajax: {
-				url: "<?= current_url() ?>",
-				type: "GET"
-			},
-			columns: [
-				{ data: "no", name: "no", orderable: false, searchable: false },
-				{ data: "created_at" },
-				{ data: "institution_category" },
-				{ data: "institution_name" },
-				{ data: "fullname" },
-				{ data: "survey_status" },
-				{ data: "approved_at" },
-				{ data: "action", orderable: false, searchable: false }
-			],
-			columnDefs: [{
-				targets: [0],
-				className: 'text-center',
-			}],
-		});
+            var table = $('#dataTable').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: false,
+            ajax: {
+                url: "<?= current_url() ?>", // cukup current_url(), id dikirim terpisah
+                type: "GET",
+                data: function (d) {
+                    d.id = $('#institusi').val();
+                },
+                error: function (xhr, error, code) {
+                    console.error("AJAX Error:", xhr.responseText);
+                }
+            },
+            columns: [
+                { data: "no", name: "no", orderable: false, searchable: false },
+                { data: "created_at" },
+                { data: "institution_category" },
+                { data: "institution_name" },
+                { data: "fullname" },
+                { data: "survey_status" },
+                { data: "approved_at" },
+                { data: "action", orderable: false, searchable: false }
+            ],
+            columnDefs: [
+                {
+                    targets: [0],
+                    className: 'text-center',
+                }
+            ],
+        });
 	});
 
     $('#institusi').on('change', function () {

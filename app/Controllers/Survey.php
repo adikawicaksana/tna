@@ -131,7 +131,7 @@ class Survey extends BaseController
 
 		return view('survey/index', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'questionnaire_type' => QuestionnaireModel::listType(),
+			'questionnaire_type' => QuestionnaireModel::listType('individu'),
 			'title' => 'Daftar Assessment / Penilaian',
 		]);
 	}

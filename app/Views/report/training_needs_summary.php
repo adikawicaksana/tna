@@ -1,5 +1,9 @@
 <?= $this->extend('layout/main') ?>
 <?= $this->section('content'); ?>
+<?php
+$params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
+?>
+
 <div class="container">
 	<h1><?= $title ?></h1>
 	<div class="card">
@@ -31,6 +35,7 @@
 	<div class="card">
 		<div class="card-header">
 			<h5>Laporan Rekapitulasi</h5>
+			<a href="<?= route_to('report.xlsTrainingNeedsSummary') . $params ?>" class="btn btn-sm btn-primary">Export Data</a>
 		</div>
 		<div class="card-body">
 			<div class="table-responsive">

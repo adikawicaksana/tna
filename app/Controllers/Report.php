@@ -35,6 +35,61 @@ class Report extends BaseController
 		]);
 	}
 
+	public function xlsTrainingNeedsSummary()
+	{
+		$result = $this->_getTrainingNeedsSummary();
+		extract($result);
+		$title = 'REKAPITULASI KEBUTUHAN PELATIHAN DI FASYANKES ';
+		$title .= !empty($_GET['institution_id']) ? strtoupper($data[0]['institution_name']) : '';
+
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+		$lastRow = $sheet->getHighestRow();
+
+		// Set title
+		$sheet->setCellValue('A' . $lastRow, $title);
+		$sheet->getStyle('A1:L1')->getFont()->setBold(true);
+		$temp = 'Institusi: ';
+		$temp .= !empty($_GET['institution_id']) ? $data[0]['insitution_name'] : '-';
+		$sheet->setCellValue('A' . ++$lastRow, $temp);
+		$temp = 'Tahun Usulan: ';
+		$temp .= !empty($_GET['plan_year']) ? $data[0]['plan_year'] : '-';
+		$sheet->setCellValue('A' . ++$lastRow, $temp);
+
+		// Set header
+		++$lastRow;
+		$header = ['Instansi', 'Nama', 'NIP', 'Pendidikan Terakhir', 'Jabatan', 'Bidang / Seksi / Subbag',
+			'SKP / Uraian Tugas', 'Kompetensi (Pelatihan / Peningkatan Kompetensi) yang Sudah Diikuti',
+			'Kompetensi (Pelatihan / Peningkatan Kompetensi) yang Belum Diikuti', 'Analisa Kesenjangan Kompetensi',
+			'Rencana Pengembangan Kompetensi yang Dibutuhkan', 'Tahun Usulan'];
+		$sheet->fromArray($header, null, 'A' . ++$lastRow);
+		$sheet->getStyle('A5:L5')->getFont()->setBold(true);
+
+		// Set data rows
+		foreach ($data as $each) {
+			$row = [
+				$each['institution_name'], $each['fullname'], $each['nip'],
+				$each['jenjang_pendidikan'], $each['jurusan_profesi'],
+				$detail[$each['survey_id']]['work_unit'],
+				"- " . str_replace("<br>", "\n", trim($competence[$each['survey_id']]['job_description'])),
+				"- " . str_replace("<br>", "\n", trim($competence[$each['survey_id']]['training_complete'])),
+				"- " . str_replace("<br>", "\n", trim($competence[$each['survey_id']]['training_incomplete'])),
+				$detail[$each['survey_id']]['gap_competency'],
+				$each['nama_pelatihan'], $each['plan_year'],
+			];
+			$sheet->fromArray($row, null, 'A' . ++$lastRow);
+		}
+
+		$sheet->getStyle('G:I')->getAlignment()->setWrapText(true);
+		$writer = new Xlsx($spreadsheet);
+		$fileName = 'Rekapitulasi Kebutuhan Pelatihan di Fasyankes ' . time() . '.xlsx';
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="' . $fileName . '"');
+		header('Cache-Control: max-age=0');
+		$writer->save('php://output');
+		exit();
+	}
+
 	public function _getTrainingNeedsSummary()
 	{
 		// Fetch survey data

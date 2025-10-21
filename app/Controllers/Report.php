@@ -21,8 +21,22 @@ class Report extends BaseController
 	public function trainingNeedsSummary()
 	{
 		$get = $this->request->getGet();
-		$data = [];
+		$data = $this->_getTrainingNeedsSummary();
 
+		$title = 'Rekapitulasi Kebutuhan Pelatihan di Fasyankes ';
+		$title .= !empty($get['institution_name']) ? $data[0]['institution_name'] : '';
+		return view('report/training_needs_summary', [
+			'userDetail' => $this->userDetailModel->getUserDetail(),
+			'data' => $data['data'],
+			'detail' => $data['detail'],
+			'competence' => $data['competence'],
+			'title' => $title,
+			'years' => CommonHelper::years('2025'),
+		]);
+	}
+
+	public function _getTrainingNeedsSummary()
+	{
 		// Fetch survey data
 		$builder = \Config\Database::connect();
 		$builder = $builder->table('survey s')
@@ -37,11 +51,11 @@ class Report extends BaseController
 				'survey_status' => SurveyModel::STAT_ACTIVE,
 				'plan_status' => 1,
 			]);
-		if (!empty($get['institution_id'])) {
-			$builder->where(['institution_id' => $get['institution_id']]);
+		if (!empty($_GET['institution_id'])) {
+			$builder->where(['institution_id' => $_GET['institution_id']]);
 		}
-		if (!empty($get['plan_year'])) {
-			$builder->where(['plan_year' => $get['plan_year']]);
+		if (!empty($_GET['plan_year'])) {
+			$builder->where(['plan_year' => $_GET['plan_year']]);
 		}
 		$builder->orderBy('institution_name', 'ASC')
 			->orderBy('fullname', 'ASC');
@@ -67,46 +81,25 @@ class Report extends BaseController
 			}
 
 			// Fetch competence data
-			$competence = [];
-			$temp_jobdesc = '';
 			$builder = \Config\Database::connect();
 			$builder = $builder->table('respondent_detail rd')
-				->select('rd.*, nama_pelatihan')
+				->select("survey_id, STRING_AGG(DISTINCT job_description, '<br>- ') AS job_description,
+					STRING_AGG(DISTINCT CASE WHEN status = 0 THEN t.nama_pelatihan END, '<br>- ') AS training_incomplete,
+					STRING_AGG(DISTINCT CASE WHEN status = 1 THEN t.nama_pelatihan END, '<br>- ') AS training_complete")
 				->join('master_training t', 'rd.training_id = t.id')
 				->whereIn('survey_id', $survey_id)
-				->orderBy('survey_id');
-			foreach ($temp = $builder->get()->getResultArray() as $key => $each) {
-				if (isset($competence['survey_id'])) {
-					$competence[$each['survey_id']]['job_description'] .= "\n - {$each['job_description']}";
-					echo 'ada ' . $each['survey_id'];
-					echo '<pre>'.print_r($competence, true);
-				} else {
-					$competence[$each['survey_id']] = [
-						'job_description' => "\n - {$each['job_description']}",
-					];
-					echo 'gak ' . $each['survey_id'];
-					echo '<pre>'.print_r($competence, true);
-				}
-
-
-			}
-				dd($temp);
+				->groupBy('survey_id')
+				->get()->getResultArray();
+			$competence = array_column($builder, null, 'survey_id');
 		}
-
-
 
 		// dd($builder->getCompiledSelect());
 		// dd($data);
-
-		$title = 'Rekapitulasi Kebutuhan Pelatihan di Fasyankes ';
-		$title .= !empty($get['institution_name']) ? $data[0]['institution_name'] : '';
-		return view('report/training_needs_summary', [
-			'userDetail' => $this->userDetailModel->getUserDetail(),
+		return [
 			'data' => $data,
 			'detail' => $detail,
-			'title' => $title,
-			'years' => CommonHelper::years('2025'),
-		]);
+			'competence' => $competence,
+		];
 	}
 
 	public function trainingNeedsSummary2()

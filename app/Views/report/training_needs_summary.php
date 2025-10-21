@@ -60,9 +60,9 @@
 								<td><?= $each['jenjang_pendidikan'] ?></td>
 								<td><?= $each['jurusan_profesi'] ?></td>
 								<td><?= $detail[$each['survey_id']]['work_unit'] ?></td>
-								<td></td>
-								<td></td>
-								<td></td>
+								<td>- <?= trim($competence[$each['survey_id']]['job_description']) ?></td>
+								<td>- <?= trim($competence[$each['survey_id']]['training_complete']) ?></td>
+								<td>- <?= trim($competence[$each['survey_id']]['training_incomplete']) ?></td>
 								<td><?= $detail[$each['survey_id']]['gap_competency'] ?></td>
 								<td><?= $each['nama_pelatihan'] ?></td>
 								<td><?= $each['plan_year'] ?></td>

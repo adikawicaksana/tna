@@ -66,8 +66,14 @@ class Menu
                     [
                         'label' => 'Rekapitulasi Kebutuhan Pelatihan Fasyankes',
                         'url'   => route_to('report.trainingNeedsSummary'),
-                        'active' => 'report.',
+                        'active' => 'report',
                         'access' => ['Report', 'trainingNeedsSummary'],
+                    ],
+                    [
+                        'label' => 'Rekapitulasi Pelatihan atau Peningkatan Kompetensi yang Dibutuhkan Pegawai Fasyankes',
+                        'url'   => route_to('report.trainingNeedsSummary2'),
+                        'active' => 'report.trainingNeedsSummary2',
+                        'access' => ['Report', 'trainingNeedsSummary2'],
                     ],
                 ]
             ],

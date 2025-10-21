@@ -6,6 +6,8 @@ use App\Controllers\BaseController;
 use App\Helpers\CommonHelper;
 use App\Models\SurveyModel;
 use App\Models\UserDetailModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Report extends BaseController
 {
@@ -106,5 +108,85 @@ class Report extends BaseController
 			'years' => CommonHelper::years('2025'),
 		]);
 	}
-}
 
+	public function trainingNeedsSummary2()
+	{
+		$data = $this->_getTrainingNeedsSummary2();
+		$title = 'Rekapitulasi Pelatihan atau Peningkatan Kompetensi yang Dibutuhkan Pegawai Fasyankes ';
+		$title .= !empty($_GET['institution_id']) ? $data[0]['institution_name'] : '';
+		return view('report/training_needs_summary2', [
+			'userDetail' => $this->userDetailModel->getUserDetail(),
+			'data' => $data,
+			'title' => $title,
+			'years' => CommonHelper::years('2025'),
+		]);
+	}
+
+	public function xlsTrainingNeedsSummary2()
+	{
+		$data = $this->_getTrainingNeedsSummary2();
+		$title = 'REKAPITULASI PELATIHAN ATAU PENINGKATAN KOMPETENSI YANG DIBUTUHKAN PEGAWAI FASYANKES ';
+		$title .= !empty($_GET['institution_id']) ? strtoupper($data[0]['institution_name']) : '';
+
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+		$lastRow = $sheet->getHighestRow();
+
+		// Set title
+		$sheet->setCellValue('A' . $lastRow, $title);
+		$sheet->getStyle('A1:D1')->getFont()->setBold(true);
+		$temp = 'Institusi: ';
+		$temp .= !empty($_GET['institution_id']) ? $data[0]['insitution_name'] : '-';
+		$sheet->setCellValue('A' . ++$lastRow, $temp);
+		$temp = 'Tahun Usulan: ';
+		$temp .= !empty($_GET['plan_year']) ? $data[0]['plan_year'] : '-';
+		$sheet->setCellValue('A' . ++$lastRow, $temp);
+
+		// Set header
+		++$lastRow;
+		$header = ['Instansi', 'Nama Pelatihan', 'Pegawai yang Membutuhkan', 'Tahun Usulan'];
+		$sheet->fromArray($header, null, 'A' . ++$lastRow);
+		$sheet->getStyle('A5:D5')->getFont()->setBold(true);
+
+		// Set data rows
+		foreach ($data as $each) {
+			$row = [
+				$each['institution_name'], $each['nama_pelatihan'], $each['fullname'], $each['plan_year'],
+			];
+			$sheet->fromArray($row, null, 'A' . ++$lastRow);
+		}
+
+		$writer = new Xlsx($spreadsheet);
+		$fileName = 'Rekapitulasi Pelatihan yang Dibutuhkan Pegawai ' . time() . '.xlsx';
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="' . $fileName . '"');
+		header('Cache-Control: max-age=0');
+		$writer->save('php://output');
+		exit();
+	}
+
+	private function _getTrainingNeedsSummary2()
+	{
+		// Fetch survey data
+		$builder = \Config\Database::connect();
+		$builder = $builder->table('survey_training_plan tp')
+			->select('i.name AS institution_name, t.nama_pelatihan, ud.fullname, plan_year')
+			->join('survey s', 'tp.survey_id = s.survey_id')
+			->join('master_institutions i', 's.institution_id = i.id')
+			->join('users_detail ud', 'tp.user_id = ud._id_users')
+			->join('master_training t', 'tp.training_id = t.id')
+			->where([
+				'plan_status' => 1,
+			]);
+
+		if (!empty($_GET['institution_id'])) {
+			$builder->where('institution_id', $_GET['institution_id']);
+		}
+		if (!empty($_GET['plan_year'])) {
+			$builder->where('plan_year', $_GET['plan_year']);
+		}
+
+		return $builder->orderBy('institution_name', 'nama_pelatihan', 'plan_year')
+			->get()->getResultArray();
+	}
+}

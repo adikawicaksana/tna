@@ -37,7 +37,7 @@ class Menu
                 'icon'  => 'ti tabler-building',
                 'url' => route_to('institusi.index'),
                 'active' => 'institusi',
-                'access' => ['Institusi', 'index'],
+                'access' => ['institusi', 'index'],
             ],
             [
                 'label' => 'Dinas',
@@ -48,13 +48,32 @@ class Menu
                         'label' => 'Kabupaten/Kota',
                         'url'   => route_to('kabkota.index'),
                         'active' => 'kabkota',
-                        'access' => ['Kabkota', 'index'],
+                        'access' => ['kabkota', 'index'],
                     ],
                     [
                         'label' => 'Provinsi',
                         'url'   => route_to('provinsi.index'),
                        'active' => 'provinsi',
-                        'access' => ['Provinsi', 'index'],
+                        'access' => ['provinsi', 'index'],
+                    ],
+                ]
+            ],
+            [
+                'label' => 'Laporan',
+                'icon'  => 'ti tabler-report-search',
+                'active' => 'report',
+                'children' => [
+                    [
+                        'label' => 'Rekapitulasi Kebutuhan Pelatihan Fasyankes',
+                        'url'   => route_to('report.trainingNeedsSummary'),
+                        'active' => 'report',
+                        'access' => ['Report', 'trainingNeedsSummary'],
+                    ],
+                    [
+                        'label' => 'Rekapitulasi Pelatihan atau Peningkatan Kompetensi yang Dibutuhkan Pegawai Fasyankes',
+                        'url'   => route_to('report.trainingNeedsSummary2'),
+                        'active' => 'report.trainingNeedsSummary2',
+                        'access' => ['Report', 'trainingNeedsSummary2'],
                     ],
                 ]
             ],

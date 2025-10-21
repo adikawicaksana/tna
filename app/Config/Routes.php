@@ -28,7 +28,6 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 
 $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($routes) {
 	$routes->get('institusi', 'Institusi::index', ['as' => 'institusi.index']);
-	$routes->get('institusi/(:segment)', 'Institusi::index/$1', ['as' => 'institusi.detail']);
 
 	$routes->get('kabkota', 'Kabkota::index', ['as' => 'kabkota.index']);
 	$routes->get('kabkota/(:segment)', 'Kabkota::index/$1', ['as' => 'kabkota.detail']);
@@ -49,6 +48,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 	$routes->get('/profile/listjobdesc-competence', 'Profile::listJobDescCompetence');
 	$routes->post('/profile/update-status-competence', 'Profile::updateStatusCompetence');
 	$routes->post('/profile/delete-competence', 'Profile::deleteCompetence');
+	$routes->get('/profile/incomplete-competence', 'Profile::getIncompleteCompetence', ['as' => 'user.getIncompleteCompetence']);
 
 	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile']);
 
@@ -81,6 +81,11 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 		$routes->post('survey/postApproval', 'Survey::postApproval', ['as' => 'survey.postApproval']);
 		$routes->get('survey/(:any)', 'Survey::show/$1', ['as' => 'survey.show']);
 	});
+
+	// Report
+	$routes->get('report/trainingNeedsSummary', 'Report::trainingNeedsSummary', ['as' => 'report.trainingNeedsSummary']);
+	$routes->get('report/trainingNeedsSummary2', 'Report::trainingNeedsSummary2', ['as' => 'report.trainingNeedsSummary2']);
+	$routes->get('report/xlsTrainingNeedsSummary2', 'Report::xlsTrainingNeedsSummary2', ['as' => 'report.xlsTrainingNeedsSummary2']);
 });
 
 

@@ -51,5 +51,8 @@ class Access
 			'approval' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 			'postApproval' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
 		],
+		'Report' => [
+			'trainingNeedsSummary' => [UserModel::ROLE_ADMIN, UserModel::ROLE_USER],
+		]
 	];
 }

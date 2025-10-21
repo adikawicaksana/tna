@@ -23,7 +23,7 @@ class UsersCompetenceModel extends Model
     public static function getCompetence($user_id = '')
     {
         return (new UsersCompetenceModel())
-            ->select('users_competence.id, users_jobdesc._id_users')
+            // ->select('users_competence.id, users_jobdesc._id_users')
             ->join('users_jobdesc', 'users_jobdesc.id = users_competence._id_users_jobdesc')
             ->where('_id_users', $user_id)
             ->orderBy('users_competence.id', 'ASC')

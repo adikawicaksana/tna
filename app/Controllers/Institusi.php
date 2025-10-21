@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Ramsey\Uuid\Uuid;
 use App\Models\UserModel;
+use App\Helpers\CommonHelper;
 use App\Models\UserDetailModel;
 use App\Models\InstitutionsModel;
 use App\Models\UsersInstitutionsModel;
@@ -13,9 +14,8 @@ use App\Models\UsersCompetenceModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\QuestionnaireModel;
-use App\Helpers\CommonHelper;
+use App\Models\UsersManagerModel;
 use App\Models\SurveyModel;
-use App\Models\ManagerInstitutionModel;
 
 class Institusi extends BaseController
 {
@@ -25,6 +25,8 @@ class Institusi extends BaseController
     protected $userDetailModel;
     protected $institutions;
     protected $userInstitutions;
+    protected $managerInstitution;
+    protected $survey;
 
 
     public function __construct()
@@ -34,106 +36,100 @@ class Institusi extends BaseController
         $this->userInstitutions = new UsersInstitutionsModel;
         $this->userModel = new UserModel();
         $this->userDetailModel = new UserDetailModel();
+        $this->managerInstitution = new UsersManagerModel();
+        $this->survey = new SurveyModel();
 
     }
 
-   public function index($id = null)
+   public function index()
     {
-        $m_institutions = (new ManagerInstitutionModel())->where('_id_users', session()->get('_id_users'))->findAll();
 
-        if ($this->request->isAJAX()) {
-			$status = SurveyModel::listStatus();
-			$request = $this->request->getGet();
-			$draw = (int) $request['draw'];
-			$start = (int) $request['start'];
-			$length = (int) $request['length'];
-			$search = $request['search']['value'];
 
-			$builder = \Config\Database::connect();
-			$builder = $builder->table('survey s')
-				->select('survey_id, s.created_at, institution_id, i.category AS institution_category,
-					respondent_id, front_title, fullname, back_title, survey_status, approved_at');
-			$builder->select("CONCAT(i.type, ' ', i.name) AS institution_name", false)
-				->join('users_detail u', 's.respondent_id = u._id_users')
-				->join('master_institutions i', 's.institution_id = i.id');
+		if ($this->request->isAJAX()) {
+            $status = SurveyModel::listStatus();
+            $request = $this->request->getGet();
 
-			// Filter by user access
-			$user_id = session()->get('_id_users');
-			if (session()->get('user_role') == UserModel::ROLE_USER) {
-				$user = (new UserModel())->find($user_id);
+            $id = isset($request['id']) ? $request['id'] : null;
+            $year = isset($request['year']) ? $request['year'] : date('Y');
+            $draw = isset($request['draw']) ? (int)$request['draw'] : 1;
+            $start = isset($request['start']) ? (int)$request['start'] : 0;
+            $length = isset($request['length']) ? (int)$request['length'] : 10;
+            $search = isset($request['search']['value']) ? $request['search']['value'] : '';
 
-		        $p_institusi = array_column($m_institutions ?? [], '_id_institutions');
-				$p_kabkota = json_decode($user['p_kabkota']) ?? [];
-				$p_provinsi = json_decode($user['p_provinsi']) ?? [];
-				$p_access = array_merge($p_institusi, $p_kabkota, $p_provinsi);
+            $builder = \Config\Database::connect();
+            $builder = $builder->table('survey s')
+                ->select('survey_id, s.created_at, institution_id, i.category AS institution_category, respondent_id, front_title, fullname, back_title, survey_status, approved_at');
+            $builder->select("CONCAT(i.type, ' ', i.name) AS institution_name", false)
+                ->join('users_detail u', 's.respondent_id = u._id_users')
+                ->join('master_institutions i', 's.institution_id = i.id')
+                ->where("EXTRACT(YEAR FROM s.created_at) =", $year, false)
+                ->where('s.institution_id', $id);
 
-				if (!empty($p_access)) {
-					$builder->groupStart()
-						->whereIn('s.institution_id', $p_access)
-						->orWhere('respondent_id', $user_id)
-						->groupEnd();
-				} else {
-					$builder->where('respondent_id', $user_id);
-				}
-			}
+            // Filtering
+            if (!empty($search)) {
+                $builder->groupStart()
+                    ->like('institution_name', $search)
+                    ->orLike('fullname', $search)
+                    ->groupEnd();
+            }
 
-			// Filtering
-			if (!empty($search)) {
-				$builder->groupStart()
-					->like('institution_name', $search)
-					->orLike('fullname', $search)
-					->groupEnd();
-			}
-			// Sorting
-			$columns = ['created_at', 'institution_category', 'institution_name', 'fullname', 'survey_status', 'approved_at']; // allow sorting
-			if (isset($request['order'][0])) {
-				$columnIndex = $request['order'][0]['column'];
-				$columnName = $request['columns'][$columnIndex]['data'];
-				$columnSortOrder = $request['order'][0]['dir'];
+            // Sorting
+            $columns = ['created_at', 'institution_category', 'institution_name', 'fullname', 'survey_status', 'approved_at'];
+            if (isset($request['order'][0])) {
+                $columnIndex = $request['order'][0]['column'];
+                $columnName = $request['columns'][$columnIndex]['data'];
+                $columnSortOrder = $request['order'][0]['dir'];
 
-				if (in_array($columnName, $columns)) {
-					$builder->orderBy("$columnName", "$columnSortOrder");
-				}
-			}
-			// echo $builder->getCompiledSelect();die;
-			// Count total
-			$builderClone = clone $builder;
-			$totalRecords = $this->model->countAll();
-			$totalFiltered = $builder->countAllResults(false);
-			// Pagination
-			$builderClone->limit($length, $start);
-			$data = $builderClone->get()->getResultArray();
-			// Set data
-			$rows = [];
-			foreach ($data as $index => $each) {
-				$rows[] = [
-					'no' => $start + $index + 1,
-					'created_at' => CommonHelper::formatDate($each['created_at']),
-					'institution_category' => $each['institution_category'],
-					'institution_name' => ucwords($each['institution_name']),
-					'fullname' => $each['fullname'],
-					'survey_status' => $status[$each['survey_status']],
-					'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-					'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
-				];
-			}
+                if (in_array($columnName, $columns)) {
+                    $builder->orderBy($columnName, $columnSortOrder);
+                }
+            }
 
-			return $this->response->setJSON([
-				'draw' => intval($draw),
-				'recordsTotal' => $totalRecords,
-				'recordsFiltered' => $totalFiltered,
-				'data' => $rows,
-			]);
-		}
+            $builderClone = clone $builder;
+            $totalRecords = $this->survey->countAll();
+            $totalFiltered = $builder->countAllResults(false);
 
+            // Pagination
+            $builderClone->limit($length, $start);
+            $data = $builderClone->get()->getResultArray();
+
+            // Set data
+            $rows = [];
+            foreach ($data as $index => $each) {
+                $rows[] = [
+                    'no' => $start + $index + 1,
+                    'created_at' => CommonHelper::formatDate($each['created_at']),
+                    'institution_category' => $each['institution_category'],
+                    'institution_name' => ucwords($each['institution_name']),
+                    'fullname' => $each['fullname'],
+                    'survey_status' => $status[$each['survey_status']],
+                    'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
+                    'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+                ];
+            }
+
+            return $this->response->setJSON([
+                'draw' => $draw,
+                'recordsTotal' => $totalRecords,
+                'recordsFiltered' => $totalFiltered,
+                'data' => $rows,
+            ]);
+        }
+
+        $id = $this->request->getGet('i') ?? null;
+        $year = $this->request->getGet('y') ?? date("Y");
         $userDetail = $this->userDetailModel->getUserDetail();
+		$session = session();
+        $institusi=[];
+
+        $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'institusi');
 
         if (!empty($userDetail['mobile']) && str_starts_with($userDetail['mobile'], '62')) {
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
-        $institusi=[];
+
         if(array_column($m_institutions, '_id_institutions')){
-            $p_institusi =array_column($m_institutions ?? [], '_id_institutions');
+            $p_institusi = array_column($m_institutions, '_id_institutions');
 
         $institusi = $this->institutions
             ->whereIn('id', $p_institusi)
@@ -143,12 +139,15 @@ class Institusi extends BaseController
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
 
         $institusiDetail = $selectedId ? $this->institutions->detail($selectedId) : null;
-        
-        $jumlahUserInstitusi = 0;
+
         if ($institusiDetail) {
             $jumlahUserInstitusi = $this->userInstitutions
-                ->countByInstitution($institusiDetail['id']);
+                ->countByInstitution($institusiDetail['id']) ?? 0;
+            $totalSurvey = count($this->survey->surveyByInstitusi($institusiDetail['id'], $year)) ?? 0;
+
+            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
         }
+
 
         return view('institusi/index', [
             'title'      => 'Institusi',
@@ -157,8 +156,11 @@ class Institusi extends BaseController
                 'institusi'         => $institusi,
                 'institusi_selected' => $selectedId,
                 'institusi_detail'   => $institusiDetail,
-                'jumlah_user_institusi'=> $jumlahUserInstitusi,
+                'total_users_institusi'=> $jumlahUserInstitusi,
+                'total_users_survey' => $totalSurvey,
                 'questionnaire_type' => QuestionnaireModel::listType('institusi'),
+                'years' => CommonHelper::years(date('Y')),
+                'pengelola' => $pengelola
             ],
         ]);
     }
@@ -194,7 +196,7 @@ class Institusi extends BaseController
             'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
         ];
 
-        
+
         if ($userDetailModel->where('_id_users', $session->get('_id_users'))->set($data)->update() || $userModel->where('id', $session->get('_id_users'))->set($datauser)->update()) {
             return redirect()->back()->with('update_profil', ['type' => 'success', 'message' => 'Profil berhasil diperbarui']);
         } else {
@@ -219,7 +221,7 @@ class Institusi extends BaseController
             $fasyankesData = $this->institutions
                 ->where('code', $fasyankes_code)
                 ->first();
-            
+
             $existing = $this->userInstitutions
                 ->where('_id_users', $_id_users)
                 ->where('_id_master_institutions', $fasyankesData['id'])
@@ -241,7 +243,7 @@ class Institusi extends BaseController
                         'message' => 'Data fasyankes berhasil disimpan.'
                     ]);
                 }
-            }            
+            }
 
             $idUsersFasyankes = Uuid::uuid7()->toString();
 
@@ -297,7 +299,7 @@ class Institusi extends BaseController
                 'status'  => true,
                 'code'    => 200,
                 'type'    => 'success',
-                'message' => 'Data ditemukan',                
+                'message' => 'Data ditemukan',
                 'data'    => $data
             ])->setStatusCode(200);
     }
@@ -317,13 +319,13 @@ class Institusi extends BaseController
                     'success' => true,
                     'message' => 'Institusi berhasil dihapus'
                 ]);
-           
+
         } catch (\Throwable $e) {
             log_message('error', 'Gagal menghapus fasyankes');
             return $this->response->setStatusCode(500)
                 ->setJSON(['error' => $e->getMessage()]);
         }
-        
+
     }
 
     public function storeUserNonFasyankes()
@@ -379,8 +381,8 @@ class Institusi extends BaseController
         }
     }
 
-    
-    
+
+
 public function storeJobdescCompetence()
 {
     $session = session();
@@ -390,7 +392,7 @@ public function storeJobdescCompetence()
     $competenceModel= new UsersCompetenceModel();
 
     $jobDescription = $this->request->getPost('user_uraiantugas');
-    $trainings      = $this->request->getPost('user_pelatihan'); 
+    $trainings      = $this->request->getPost('user_pelatihan');
 
     $jobdesc = $jobdescModel
         ->where('_id_users', $_id_users)
@@ -462,7 +464,7 @@ public function storeJobdescCompetence()
         if (!empty($search)) {
             $totalFiltered = $jobdescModel
                 ->like('job_description', $search, 'both', null, true)
-                ->countAllResults(false); 
+                ->countAllResults(false);
         } else {
             $totalFiltered = $totalRecords;
         }

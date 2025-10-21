@@ -65,6 +65,12 @@ writable/debugbar/*
 
 php_errors.log
 
+# Ignore semua isi folder writable
+/writable/*
+
+# Tapi tetap simpan file .gitkeep agar folder tetap ada di repo
+!/writable/.gitkeep
+
 #-------------------------
 # User Guide Temp Files
 #-------------------------

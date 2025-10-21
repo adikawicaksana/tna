@@ -158,22 +158,7 @@
       });
     }
 
-    // select2
-    if (select2.length) {
-      select2.each(function () {
-        var $this = $(this);
-        $this.wrap('<div class="position-relative"></div>');
-        $this
-          .select2({
-            placeholder: 'Select an country',
-            dropdownParent: $this.parent()
-          })
-          .on('change', function () {
-            // Revalidate the color field when an option is chosen
-            FormValidation2.revalidateField('formValidationCountry');
-          });
-      });
-    }
+   
 
     // Social links
     const FormValidation3 = FormValidation.formValidation(wizardValidationFormStep3, {

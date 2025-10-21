@@ -45,6 +45,10 @@ use App\Models\SurveyModel;
 		z-index: 12;
 		width: 400px;
 	}
+
+	table#survey_detail tr td {
+		vertical-align: top;
+	}
 </style>
 
 <div class="container">
@@ -184,40 +188,51 @@ use App\Models\SurveyModel;
 		</div>
 		<div class="card-body">
 			<div class="table-container">
-				<div class="x-scroll fixed-column-table">
-					<table class="table table-bordered table-responsive" width="100%">
-						<thead>
+				<!-- <div class="x-scroll fixed-column-table"> -->
+				<table class="table table-bordered table-responsive" id="survey_detail" width="100%">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th width="30%">Pertanyaan</th>
+							<?php if (!$is_institution): ?>
+								<th width="25%">Disetujui</th>
+							<?php endif; ?>
+							<th>Jawaban</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($detail as $key => $each): ?>
 							<tr>
-								<th class="sticky-col first-col">No</th>
-								<th class="sticky-col second-col">Pertanyaan</th>
-								<?php if (!$is_institution): ?>
-									<th class="sticky-col third-col">Disetujui</th>
-								<?php endif; ?>
-								<th>Jawaban</th>
+								<td><?= $key + 1 ?></td>
+								<td><?= $each['question'] ?></td>
+								<td><?= !empty($each['approved_answer']) ? nl2br($each['approved_answer']) : '-' ?></td>
+								<td><?= nl2br($each['history']) ?></td>
 							</tr>
-						</thead>
-						<tbody>
-							<?php foreach ($detail as $key => $each):
-								$temp = $answer[$key];
-								krsort($temp);
-								$max_key = max(array_keys($temp));
-								$bg_color = ($each['approved_answer'] != NULL) && ($each['approved_answer'] != $temp[$max_key]) ? 'pink !important' : 'white !important' ?>
-								<tr>
-									<td class="sticky-col first-col"><?= $key + 1 ?></td>
-									<td class="sticky-col second-col"><?= $each['question'] ?></td>
-									<?php if (!$is_institution): ?>
-										<td class="sticky-col third-col" style="background-color: <?= $bg_color ?>;"><?= $each['approved_answer'] ?? '-' ?></td>
-									<?php endif; ?>
-									<?php foreach ($temp as $datetime => $value): ?>
-										<td>
-											<b><?= CommonHelper::formatDate($datetime, 2) . '</b><br>' . esc($value) ?>
-										</td>
-									<?php endforeach; ?>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
-				</div>
+						<?php endforeach; ?>
+
+						<tr>
+							<td><?= ++$key + 1 ?></td>
+							<td>Rencana Pengembangan Kompetensi</td>
+							<td><?= isset($training_plan['approved']['nama_pelatihan']) ? nl2br($training_plan['approved']['nama_pelatihan']) : '-' ?></td>
+							<td><?= nl2br($training_plan['history']['nama_pelatihan']) ?></td>
+						</tr>
+
+						<tr>
+							<td><?= ++$key + 1 ?></td>
+							<td>Tahun Rencana Pengembangan Kompetensi</td>
+							<td><?= $training_plan['approved']['plan_year'] ?? '-' ?></td>
+							<td><?= nl2br($training_plan['history']['plan_year']) ?></td>
+						</tr>
+
+						<tr>
+							<td><?= ++$key + 1 ?></td>
+							<td>Bulan Rencana Pengembangan Kompetensi</td>
+							<td><?= $training_plan['approved']['plan_month'] ?? '-' ?></td>
+							<td><?= nl2br($training_plan['history']['plan_month']) ?></td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- </div> -->
 			</div>
 		</div>
 	</div>

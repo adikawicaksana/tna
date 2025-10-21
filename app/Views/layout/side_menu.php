@@ -9,6 +9,12 @@ $currentRoute = $routeOptions['as'] ?? null;
 $menus = Menu::getSidebar();
 ?>
 
+<style>
+  .menu-vertical .menu-item .menu-link > div:not(.badge) {
+    white-space: normal;
+  }
+</style>
+
 <body>
   <!-- Layout wrapper -->
   <div class="layout-wrapper layout-content-navbar">

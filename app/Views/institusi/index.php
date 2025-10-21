@@ -65,7 +65,12 @@ $selectedYear = $_GET['y'] ?? date('Y');
                                     <?php endif; ?>
                                     <tr>
                                         <td class="align-top"><i class="menu-icon icon-base ti tabler-map-pin"></i></td>
-                                        <td class="align-top"><?= $data['institusi_detail']['address'].", Kec.".$data['institusi_detail']['district_name'].", ".$data['institusi_detail']['regencies_name'].", ".$data['institusi_detail']['provinces_name'] ?></td>
+                                        <td class="align-top">
+                                            <?= trim(($data['institusi_detail']['address'] ? $data['institusi_detail']['address'] . ', ' : '') .
+                                                    ($data['institusi_detail']['district_name'] ? 'Kec. ' . $data['institusi_detail']['district_name'] . ', ' : '') .
+                                                    ($data['institusi_detail']['regencies_name'] ? $data['institusi_detail']['regencies_name'] . ', ' : '') .
+                                                    ($data['institusi_detail']['provinces_name'] ?? ''), ', ') ?>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="align-top"><i class="menu-icon icon-base ti tabler-map"></i></td>

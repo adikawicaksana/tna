@@ -20,7 +20,6 @@ use App\Models\SurveyModel;
 class Institusi extends BaseController
 {
 
-    protected $model;
     protected $userModel;
     protected $userDetailModel;
     protected $institutions;
@@ -32,7 +31,6 @@ class Institusi extends BaseController
     public function __construct()
     {
         $this->institutions = new InstitutionsModel();
-		$this->model = new SurveyModel();
         $this->userInstitutions = new UsersInstitutionsModel;
         $this->userModel = new UserModel();
         $this->userDetailModel = new UserDetailModel();

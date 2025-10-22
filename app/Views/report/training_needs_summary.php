@@ -43,6 +43,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 					<thead>
 						<tr>
 							<th>No</th>
+							<th>Fasyankes</th>
 							<th>Nama</th>
 							<th>NIP</th>
 							<th>Pendidikan Terakhir</th>
@@ -60,6 +61,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 						<?php foreach ($data as $key => $each): ?>
 							<tr>
 								<td><?= $key + 1 ?></td>
+								<td><?= $each['institution_name'] ?></td>
 								<td><?= $each['fullname'] ?></td>
 								<td><?= $each['nip'] ?></td>
 								<td><?= $each['jenjang_pendidikan'] ?></td>

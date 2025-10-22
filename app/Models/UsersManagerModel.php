@@ -44,8 +44,10 @@ class UsersManagerModel extends Model
                     'master_institutions',
                     'master_institutions.id = users_manager._id_institutions',
                     'left'
-                )
-                ->where('users_manager._id_users', $_id_users);
+                );
+
+                if (session()->get('user_role') == UserModel::ROLE_USER) $builder->where('users_manager._id_users', $_id_users);
+                
 
             if ($filterType !== 'all') {
                 if (is_array($filterType)) {

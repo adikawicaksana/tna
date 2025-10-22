@@ -558,18 +558,18 @@
       };
 
       const getInstitutionDetail = (id, type = "fasyankes", cb) => {
-  const mappings = {
-    fasyankes: {
-      fasyankes_type: "type",
-      fasyankes_name: "name",
-      fasyankes_address: "address"
-    },
-    nonfasyankes: {
-      nonfasyankes_id: "id",
-      nonfasyankes_name: "name",
-      nonfasyankes_address: "address"
-    }
-  };
+      const mappings = {
+        fasyankes: {
+          fasyankes_type: "type",
+          fasyankes_name: "name",
+          fasyankes_address: "address"
+        },
+        nonfasyankes: {
+          nonfasyankes_id: "id",
+          nonfasyankes_name: "name",
+          nonfasyankes_address: "address"
+        }
+      };
 
   if (!mappings[type]) {
     console.error(`Unknown institution type: ${type}`);

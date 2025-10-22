@@ -29,14 +29,31 @@ class InstitutionsModel extends Model
                 ');
 
             if ($category === 'fasyankes') {
-                $builder->where('category', 'fasyankes')->like('master_institutions.code', $safeKeyword, 'both');
-            } elseif ($category === 'fasyankesname') {
-                $builder->where('category', 'fasyankes')->like('LOWER(master_institutions.name)', $safeKeyword, 'both');
-            } elseif (!empty($category)) {
-                $builder->where('category', strtolower($category))->like('LOWER(master_institutions.name)', $safeKeyword, 'both');
+                $builder->where('category', 'fasyankes')
+                        ->like('master_institutions.code', $safeKeyword, 'both');
             } else {
-                $builder->like('LOWER(master_institutions.name)', $safeKeyword, 'both', false);
+                if ($category === 'fasyankesname' || !empty($category)) {
+                    $builder->where('category', $category === 'fasyankesname' ? 'fasyankes' : strtolower($category));
+                }
+
+                $keywords = explode(' ', strtolower($safeKeyword));
+
+                $builder->groupStart();
+                foreach ($keywords as $word) {
+                    $wordNoSpace = str_replace(' ', '', $word);
+
+                    $builder->groupStart()
+                        ->like('LOWER(master_institutions.name)', $word, 'both')
+                        ->orLike('LOWER(master_institutions.type)', $wordNoSpace, 'both')
+                        ->orLike('LOWER(master_institutions.address)', $word, 'both')
+                        ->orLike('LOWER(master_area_districts.name)', $word, 'both')
+                        ->orLike('LOWER(master_area_regencies.name)', $word, 'both')
+                        ->orLike('LOWER(master_area_provinces.name)', $word, 'both')
+                    ->groupEnd();
+                }
+                $builder->groupEnd();
             }
+
 
             $builder->join('master_area_districts','master_area_districts.id = master_institutions._id_districts','left' )
                     ->join('master_area_regencies','master_area_regencies.id = master_institutions._id_regencies','left' )

@@ -271,30 +271,7 @@
                             </div>
                           </div>
                         </div>
-                        
-                        <!--<div class="col-sm-12 ">-->
-                        <!--  <label class="form-label">Nama Fasyankes</label>-->
-                        <!--  <input type="text" id="fasyankes_name" name="fasyankes_name" class="form-control" />-->
-                        <!--  <style>-->
-                        <!--      .autocomplete-overlay .item {-->
-                        <!--        padding: 8px 16px;-->
-                        <!--        cursor: pointer;-->
-                        <!--        border-bottom: 1px solid #eee;-->
-                        <!--      }-->
 
-                        <!--      .autocomplete-overlay .item:last-child {-->
-                        <!--        border-bottom: none;-->
-                        <!--      }-->
-
-                        <!--      .autocomplete-overlay .item:hover {-->
-                        <!--        background-color: #f8f9fa;-->
-                        <!--      }-->
-                        <!--    </style>-->
-                            <!-- Dropdown suggestion -->
-                        <!--    <div id="suggestions_fasyankes_name" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"-->
-                        <!--      style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">-->
-                        <!--    </div>-->
-                        <!--</div>-->
                         <div class="col-sm-12  form-control-validation mt-2">
                           <label class="form-label" for="multiStepsConfirmPass">Alamat</label>
                           <textarea id="fasyankes_address" name="fasyankes_address" class="form-control"

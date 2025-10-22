@@ -295,8 +295,38 @@
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label">Nama Fasyankes</label>
-            <input type="text" name="fasyankes_name" id="fasyankes_name" class="form-control" readonly>
+            <div class="row">
+                  <div class="col-sm-6">
+                    <label class="form-label">Nama Fasyankes</label>
+                    <div class="position-relative">
+                      <input type="text" name="fasyankes_name" id="fasyankes_name" class="form-control"
+                        placeholder="Cth.: RS Gxxx xxxx" autocomplete="off" />
+                      <style>
+                        .autocomplete-overlay .item {
+                          padding: 8px 16px;
+                          cursor: pointer;
+                          border-bottom: 1px solid #eee;
+                        }
+
+                        .autocomplete-overlay .item:last-child {
+                          border-bottom: none;
+                        }
+
+                        .autocomplete-overlay .item:hover {
+                          background-color: #f8f9fa;
+                        }
+                      </style>
+                      <!-- Dropdown suggestion -->
+                      <div id="suggestions_fasyankes_name" class="autocomplete-overlay border bg-white rounded-bottom shadow-sm"
+                        style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; display: none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                          <label class="form-label">Tipe Fasyankes</label>
+                          <input type="text" id="fasyankes_type" name="fasyankes_type" class="form-control" readonly />
+                  </div>
+            </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Alamat</label>
@@ -421,6 +451,27 @@
 
     <?php endif; ?>
 
+    
+    const ajaxGet = (url, successCb, errorCb) => {
+        $.ajax({
+          url,
+          method: 'GET',
+          dataType: 'json',
+          success: successCb,
+          error: xhr => errorCb && errorCb(xhr)
+        });
+      };
+
+        const showAlert = (type, message, redirect = null) => {
+          Swal.fire({
+            text: message,
+            icon: type,
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            if (redirect && result.isConfirmed) window.location.href = redirect;
+          });
+        };
+
   $(document).ready(function () {
 
   const base_url = "<?= base_url() ?>";
@@ -505,44 +556,159 @@
 
   const loadDetail = (url, params, onSuccess) => ajaxRequest(`${api_url}/${url}?${new URLSearchParams(params)}`, 'GET', null, res => onSuccess(res.code === 200 ? res.data[0] : {}));
 
+  // === Detail Handlers ===
+      const fillForm = (res, fields) => {
+        if (res.code === 200) {
+           Object.entries(fields).forEach(([key, val]) => $(`#${key}`).val(val));
+        } else {
+          Object.keys(fields).forEach(key => $(`#${key}`).val(""));
+        }
+        showAlert(res.type, res.message);
+      };
 
-  const FasyankesDetail = code => loadDetail('institution', { k: code }, r => {
-    $('#fasyankes_type').val(r.type?.toUpperCase()||'');
-    $('#fasyankes_name').val(r.name||'');
-    $('#fasyankes_address').val(r.address||'');
-  });
+const getInstitutionDetail = (id, type = "fasyankes", cb) => {
+      const mappings = {
+        fasyankes: {
+          fasyankes_type: "type",
+          fasyankes_name: "name",
+          fasyankes_address: "address"
+        },
+        nonfasyankes: {
+          nonfasyankes_id: "id",
+          nonfasyankes_name: "name",
+          nonfasyankes_address: "address"
+        }
+      };
 
-  const NonFasyankesDetail = id => loadDetail('institution', { k: id }, r => {
-    $('#nonfasyankes_id').val(r.id||'');
-    $('#nonfasyankes_name').val(r.name||'');
-    $('#nonfasyankes_address').val(r.address||'');
-  });
-
-  $('#fasyankes_code').on('keypress', e => { if(e.which===13){ e.preventDefault(); FasyankesDetail($(e.target).val()); } });
-  $('#nonfasyankes_name').on('keypress', e => { if(e.which===13) e.preventDefault(); });
-
- $('#fasyankes_code, #nonfasyankes_name').on('keyup', function () {
-  const isFasy = $(this).attr('id') === 'fasyankes_code';
-  const query = $(this).val();
-  if (query.length > 1) {
-    const url = `${api_url}/institution?k=${encodeURIComponent(query)}${isFasy ? '' : '&c=nonfasyankes'}`;
-    ajaxRequest(url, 'GET', null, res => {
-      renderSuggestions(
-        isFasy ? '#suggestions' : '#nonfasyankes_suggestions',
-        res.data,
-        item => isFasy
-          ? `<div class="item" data-code="${item.code}">${item.code} - ${item.name}</div>`
-          : `<div class="item" data-id="${item.id}">${item.name}</div>`,
-        'Tidak ditemukan'
-      );
-    });
-  } else {
-    $(isFasy ? '#suggestions' : '#nonfasyankes_suggestions').slideUp(150);
+  if (!mappings[type]) {
+    console.error(`Unknown institution type: ${type}`);
+    return;
   }
-});
 
-  $(document).on('click','#suggestions .item', function(){ const code=$(this).data('code'); $('#fasyankes_code').val(code); FasyankesDetail(code); $('#suggestions').fadeOut(); });
-  $(document).on('click','#nonfasyankes_suggestions .item', function(){ NonFasyankesDetail($(this).data('id')); $('#nonfasyankes_suggestions').fadeOut(); });
+  ajaxGet(`${api_url}/institution?k=${encodeURIComponent(id)}`, res => {
+    const mapping = mappings[type];
+    const detail = res.status && res.data?.length > 0 ? res.data[0] : null;
+
+    const filled = {};
+    Object.entries(mapping).forEach(([formField, dataKey]) => {
+      let value = detail?.[dataKey] || "";
+
+      if (formField === "fasyankes_type") {
+        if (type === "fasyankes" && value.toLowerCase() === "rumahsakit") {
+          value = "RUMAH SAKIT"; 
+        } else {
+          value = value.toUpperCase();
+        }
+      }
+
+      filled[formField] = value;
+    });
+
+    fillForm(res, filled);
+    if (typeof cb === "function") cb(res, filled);
+  });
+};
+
+ 
+
+ // === Search live ===
+      const liveSearch = (selector, category, container, template) => {
+      $(selector).on('keyup', function () {
+        const q = $(this).val();
+        if (q.length > 1) {
+          ajaxGet(`${api_url}/institution?k=${encodeURIComponent(q)}&c=${category}`, res => {
+            const list = Array.isArray(res.data) ? res.data : [];
+            $(container).html(
+              list.length
+                ? list.map(template).join('')
+                : `<div class="item text-muted">Tidak ditemukan</div>`
+            ).slideDown(150);
+          });
+        } else {
+          $(container).slideUp(150);
+        }
+      });
+    
+      // Tutup suggestion saat klik di luar
+      $(document).on('click', function(e) {
+        if (!$(e.target).closest(selector).length && !$(e.target).closest(container).length) {
+          $(container).slideUp(150);
+        }
+      });
+    };
+
+
+      liveSearch('#nonfasyankes_name', 'nonfasyankes', '#nonfasyankes_suggestions',
+        item => `<div class="item" data-id="${item.id}">${item.name}</div>`);
+
+      liveSearch('#fasyankes_code', 'fasyankes', '#suggestions',
+          item => `<div class="item" data-code="${item.code}" data-id="${item.id}">
+            ${item.code} - ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name}- 
+            ${item.address}${[
+              item.district_name,
+              item.regencies_name,
+              item.provinces_name
+            ].filter(Boolean).map(v => `, ${v}`).join('')}
+          </div>`
+        );
+        
+        liveSearch('#fasyankes_name', 'fasyankesname', '#suggestions_fasyankes_name',
+        item => `
+          <div class="item" data-code="${item.code}" data-id="${item.id}">
+            ${item.code} -
+            ${item.type === 'puskesmas' ? item.type.toUpperCase() + ' ' : ''}${item.name} - 
+            ${item.address}${[
+              item.district_name,
+              item.regencies_name,
+              item.provinces_name
+            ].filter(Boolean).map(v => `, ${v}`).join('')}
+          </div>
+        `
+      );
+      
+      $('#fasyankes_code').on('keydown', function (e) {
+        if (e.key === "Enter" || e.which === 13) {
+          e.preventDefault();
+          getInstitutionDetail($(this).val(),'fasyankes');
+        }
+      });
+      
+      $('#fasyankes_name').on('keydown', function (e) {
+        if (e.key === "Enter" || e.which === 13) {
+          e.preventDefault();
+          getInstitutionDetail($(this).val(),'fasyankes');
+        }
+      });
+
+      $('#nonfasyankes_name').on('keydown', function (e) {
+        if (e.key === "Enter" || e.which === 13) {
+          e.preventDefault();
+        }
+      });
+
+      $(document).on('click', '#suggestions .item', function () {
+        const code = $(this).data('code');
+        const id = $(this).data('id');
+        $('#fasyankes_code').val(code);
+        getInstitutionDetail(id,'fasyankes');
+        
+         $('#suggestions').fadeOut();
+      });
+      
+      $(document).on('click', '#suggestions_fasyankes_name .item', function () {
+        const code = $(this).data('code');
+        const id = $(this).data('id');
+        $('#fasyankes_code').val(code);
+        getInstitutionDetail(id,'fasyankes');
+        
+         $('#suggestions_fasyankes_name').fadeOut();
+      });
+      
+      $(document).on('click', '#nonfasyankes_suggestions .item', function () {       
+          getInstitutionDetail($(this).data('id'),'nonfasyankes');
+          $('#nonfasyankes_suggestions').fadeOut();
+      });
+
 
   $('#jurusanProfesi').on('change', function(){
     const val = $(this).val();
@@ -625,7 +791,6 @@
   });
 
 });
-
 
  let tableJobdesc;
 

@@ -4,14 +4,18 @@ class NotificationService
 {
     protected $waApiUrl;
     protected $waApiKey;
+    protected $waSender;
+    protected $waApiUrlSendText;
+    protected $waApiUrlSendMedia;
     protected $mailConfig;
-
+    protected $waApiUrlCheckNumber;
     public function __construct()
     {
         $this->waApiKey = env('notif.wa.apiKey');
         $this->waSender = env('notif.wa.sender');
         $this->waApiUrlSendText = env('notif.wa.apiUrl.sendText');
         $this->waApiUrlSendMedia = env('notif.wa.apiUrl.sendMedia');
+        $this->waApiUrlCheckNumber = env('notif.wa.apiUrl.CheckNumber');
 
         $this->mailConfig = [
             'host'     => env('notif.mail.host'),
@@ -34,11 +38,9 @@ public function sendWhatsApp(string $receiver, string $message,  string $footer,
 {
     $client = \Config\Services::curlrequest();
 
-    // default type ke text jika kosong / tidak valid
     $isMedia = ($type === 'media' && !empty($mediaUrl));
     $apiUrl  = $isMedia ? $this->waApiUrlSendMedia : $this->waApiUrlSendText;
 
-    // payload dasar
     $payload = [
         'api_key'   => $this->waApiKey,
         'sender'    => $this->waSender,
@@ -48,7 +50,6 @@ public function sendWhatsApp(string $receiver, string $message,  string $footer,
     ];
 
 
-    // tambahkan URL media jika type media valid
     if ($isMedia) {
         $payload['media_url'] = $mediaUrl;
     }
@@ -56,7 +57,6 @@ public function sendWhatsApp(string $receiver, string $message,  string $footer,
     try {
         $response = $client->post($apiUrl, [
             'headers' => [
-                // 'Authorization' => 'Bearer ' . $this->waApiKey,
                 'Content-Type'  => 'application/x-www-form-urlencoded'
             ],
             'form_params' => $payload,
@@ -69,6 +69,35 @@ public function sendWhatsApp(string $receiver, string $message,  string $footer,
            'status' => (!empty($body['status']) && $body['status'] === true) ? 'success' : 'error',
             'message' => $body['msg'] ?? 'Gagal mengirim WhatsApp'
         ];
+    } catch (\Exception $e) {
+        return ['status' => false, 'message' => 'Error: ' . $e->getMessage()];
+    }
+}
+
+public function checkNumberWhatsApp(string $receiver): array
+{
+    $client = \Config\Services::curlrequest();
+    
+    $apiUrl  = $this->waApiUrlCheckNumber;
+
+    $payload = [
+        'api_key'   => $this->waApiKey,
+        'sender'    => $this->waSender,
+        'number'    => $receiver,
+    ];
+
+    try {
+        $response = $client->post($apiUrl, [
+            'headers' => [
+                'Content-Type'  => 'application/x-www-form-urlencoded'
+            ],
+            'form_params' => $payload,
+            'timeout'     => 10
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+
+        return $body['msg'];
     } catch (\Exception $e) {
         return ['status' => false, 'message' => 'Error: ' . $e->getMessage()];
     }

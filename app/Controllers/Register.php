@@ -93,6 +93,17 @@ class Register extends BaseController
             ]);
         }
         $session->remove('captcha');
+        
+       $checknumber = $this->notifService->checkNumberWhatsApp($mobile);
+       if(empty($checknumber['jid'])){
+            return $this->response->setJSON([
+                'status'  => false,
+                'code'    => 400,
+                'type'    => 'warning',
+                'message' => 'Nomor yang anda masukan tidak terdaftar sebagai Nomor WhatsApp, Masukan nomor WhatsApp anda',
+                'data'    => []
+            ]);
+        }
 
         $userModel   = new UserModel();
         $detailModel = new UserDetailModel();
@@ -164,13 +175,14 @@ class Register extends BaseController
 
         $this->generateOtpAndResponse($session, $mobile, $email, $newIDUser);
 
+        
        
 
         return $this->response->setJSON([
                 'status'    => true,
                 'code'      => 200,
                 'type'      => 'success',
-                'message'   => 'Registrasi diterima, dan OTP telah dikirim.',
+                'message'   => 'Registrasi diterima, dan OTP telah dikirim.'.$checknumber,
                 'data'      => $detail_user
             ])->setStatusCode(200);
 

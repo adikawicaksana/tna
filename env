@@ -54,6 +54,7 @@ notif.wa.apiKey = tXLAumexPkuWwx5TrvQ9zSgfP7HwZM
 notif.wa.sender = 6285755668811
 notif.wa.apiUrl.sendText = https://wa.adikawicaksana.my.id/send-message
 notif.wa.apiUrl.sendMedia = https://wa.adikawicaksana.my.id/send-media
+notif.wa.apiUrl.CheckNumber = https://wa.adikawicaksana.my.id/check-number
 
 # Email (SMTP)
 notif.mail.host = smtp.gmail.com

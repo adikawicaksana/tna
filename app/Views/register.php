@@ -372,7 +372,7 @@
                     </div>
 
                     <div class="col-sm-6">
-                      <label class="form-label" for="MobileNumber">Nomor Telepon</label>
+                      <label class="form-label" for="MobileNumber">Nomor WhatsApp</label>
                       <div class="input-group">
                         <span class="input-group-text">(+62)</span>
                         <input type="text" id="MobileNumber" name="user_mobilenumber"

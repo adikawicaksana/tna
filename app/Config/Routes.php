@@ -84,6 +84,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 
 	// Report
 	$routes->get('report/trainingNeedsSummary', 'Report::trainingNeedsSummary', ['as' => 'report.trainingNeedsSummary']);
+	$routes->get('report/xlsTrainingNeedsSummary', 'Report::xlsTrainingNeedsSummary', ['as' => 'report.xlsTrainingNeedsSummary']);
 	$routes->get('report/trainingNeedsSummary2', 'Report::trainingNeedsSummary2', ['as' => 'report.trainingNeedsSummary2']);
 	$routes->get('report/xlsTrainingNeedsSummary2', 'Report::xlsTrainingNeedsSummary2', ['as' => 'report.xlsTrainingNeedsSummary2']);
 });

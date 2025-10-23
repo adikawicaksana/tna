@@ -363,7 +363,12 @@
                     </div>
                     <div class="col-md-12">
                       <label class="form-label" for="user_password">Password</label>
-                      <input type="password" id="user_password" name="user_password" class="form-control" />
+                      <div class="input-group input-group-merge">
+                            <input type="password" id="user_password" name="user_password" class="form-control" />
+                              <span id="togglePassword" class="input-group-text cursor-pointer">
+                                <i class="icon-base ti tabler-eye-off"></i>
+                              </span>
+                      </div>
                     </div>
                     <div class="col-sm-12 d-flex flex-column align-items-center">
                       <label class="form-label">Captcha</label>
@@ -441,6 +446,19 @@
 
   <script>
     window.Helpers.initCustomOptionCheck();
+    document.addEventListener('click', function(e) {
+  const toggle = e.target.closest('#togglePassword');
+  if (!toggle) return;
+
+  const input = document.getElementById('user_password');
+  const icon = toggle.querySelector('i');
+  if (!input) return;
+
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  icon.classList.toggle('ti-eye-off', !isHidden);
+  icon.classList.toggle('ti-eye', isHidden);
+});
   </script>
 
   <!-- Core JS -->

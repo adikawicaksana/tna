@@ -71,7 +71,7 @@
 
     <div class="authentication-wrapper authentication-cover">
       <!-- Logo -->
-      <a href="index.html" class="app-brand auth-cover-brand">
+      <a href="./" class="app-brand auth-cover-brand">
         <span class="app-brand-logo demo">
           <span class="text-primary">
             <img src="<?= base_url('assets/img/front-pages/landing-page/logo_provinsi_jatim.png') ?>" height="50">

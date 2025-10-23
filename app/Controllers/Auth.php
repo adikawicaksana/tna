@@ -43,7 +43,7 @@ class Auth extends BaseController
             $payload = [
                 'sub'       => $user['id'],
                 '_id_users' => $user['id'],
-                'ip'        => $ip,
+                // 'ip'        => $ip,
                 'ua'        => $ua,
                 'jti'       => bin2hex(random_bytes(8)),
                 'iat'       => time(),
@@ -55,7 +55,7 @@ class Auth extends BaseController
             $refreshPayload = [
                 'sub' => $user['id'],
                 'type' => 'refresh',
-                'ip'  => $ip,
+                // 'ip'  => $ip,
                 'ua'  => $ua,
                 'jti' => bin2hex(random_bytes(8)),
                 'iat' => time(),
@@ -111,14 +111,17 @@ class Auth extends BaseController
             }
 
             // Validasi IP & UA
-            if ($decoded->ip !== $this->request->getIPAddress() || $decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
+            // if ($decoded->ip !== $this->request->getIPAddress() || $decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
+            //     throw new \Exception('Device mismatch');
+            // }
+            if ($decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
                 throw new \Exception('Device mismatch');
             }
 
             // Buat access token baru
             $accessPayload = [
                 'sub' => $decoded->sub,
-                'ip'  => $this->request->getIPAddress(),
+                // 'ip'  => $this->request->getIPAddress(),
                 'ua'  => $_SERVER['HTTP_USER_AGENT'],
                 'jti' => bin2hex(random_bytes(8)),
                 'iat' => time(),

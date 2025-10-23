@@ -5,7 +5,9 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index', ['filter' => 'redirectIfAuth']);
+// $routes->get('/', 'Home::index', ['filter' => 'redirectIfAuth']);
+$routes->get('/', 'Auth::login', ['filter' => 'redirectIfAuth']);
+
 $routes->get('/login', 'Auth::login', ['filter' => 'redirectIfAuth']);
 $routes->post('/login', 'Auth::loginPost');
 $routes->post('/refresh-token', 'Auth::refreshWebToken');

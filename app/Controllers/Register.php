@@ -182,7 +182,7 @@ class Register extends BaseController
                 'status'    => true,
                 'code'      => 200,
                 'type'      => 'success',
-                'message'   => 'Registrasi diterima, dan OTP telah dikirim.'.$checknumber,
+                'message'   => 'Registrasi diterima, dan OTP telah dikirim.',
                 'data'      => $detail_user
             ])->setStatusCode(200);
 

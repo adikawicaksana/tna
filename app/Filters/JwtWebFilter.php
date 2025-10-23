@@ -25,7 +25,11 @@ class JwtWebFilter implements FilterInterface
         try {
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
 
-            if ($decoded->ip !== $request->getIPAddress() || $decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
+            // if ($decoded->ip !== $request->getIPAddress() || $decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
+            //     return redirect()->to(base_url('login'))->with('error', 'Token tidak sah (device mismatch)');
+            // }
+
+            if ($decoded->ua !== $_SERVER['HTTP_USER_AGENT']) {
                 return redirect()->to(base_url('login'))->with('error', 'Token tidak sah (device mismatch)');
             }
 
@@ -44,12 +48,12 @@ class JwtWebFilter implements FilterInterface
                     $decodedRefresh = JWT::decode($refreshToken, new Key($key, 'HS256'));
                     if ($decodedRefresh->type === 'refresh'
                         && $decodedRefresh->exp > time()
-                        && $decodedRefresh->ip === $request->getIPAddress()
+                        // && $decodedRefresh->ip === $request->getIPAddress()
                         && $decodedRefresh->ua === $_SERVER['HTTP_USER_AGENT']) {
 
                         $newPayload = [
                             'sub' => $decodedRefresh->sub,
-                            'ip'  => $request->getIPAddress(),
+                            // 'ip'  => $request->getIPAddress(),
                             'ua'  => $_SERVER['HTTP_USER_AGENT'],
                             'jti' => bin2hex(random_bytes(8)),
                             'iat' => time(),

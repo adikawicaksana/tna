@@ -75,7 +75,11 @@ class Profile extends BaseController
             '_id_villages' => $this->request->getPost('user_villages'),
             'jenjang_pendidikan' => $this->request->getPost('user_jenjang_pendidikan'),
             'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
+            
         ];
+        
+        $data['jurusan_profesi_others'] = $this->request->getPost('user_jurusan_profesi_manual') ?? null;
+
 
 
         if ($userDetailModel->where('_id_users', $session->get('_id_users'))->set($data)->update() || $userModel->where('id', $session->get('_id_users'))->set($datauser)->update()) {

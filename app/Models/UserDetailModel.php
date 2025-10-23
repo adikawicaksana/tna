@@ -11,7 +11,7 @@ class UserDetailModel extends Model
     protected $allowedFields = [
         'id','_id_users','nik','nip','front_title','fullname','back_title','pangkatgolongan','jabatan','mobile','address',
         '_id_provinces','_id_regencies','_id_districts','_id_villages',
-        'jenjang_pendidikan','jurusan_profesi'
+        'jenjang_pendidikan','jurusan_profesi','jurusan_profesi_others'
     ];
     protected $useTimestamps = true;
 

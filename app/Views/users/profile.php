@@ -164,7 +164,7 @@
                 <div id="jurusanManualWrapper" class="mb-3" style="display:none;">
                   <br>
                   <label for="jurusanManual" class="form-label">Masukkan Jurusan / Profesi</label>
-                  <input type="text" id="jurusanManual" name="jurusan_profesi_manual" class="form-control" placeholder="Ketik jurusan/profesi">
+                  <input type="text" id="jurusanManual" name="user_jurusan_profesi_manual" class="form-control" placeholder="Ketik jurusan/profesi">
                 </div>
             </div>
           </div>

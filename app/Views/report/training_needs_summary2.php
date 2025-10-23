@@ -17,23 +17,12 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 						<label class="form-label">Instansi</label>
 						<select class="select2 form-select" name="institution_id" id="institution_id" data-allow-clear="true">
 							<option value=""></option>
+							<?php foreach ($institution as $each): ?>
+								<option value="<?= $each['id'] ?>" <?= ($each['id'] == ($_GET['institution_id'] ?? '')) ? 'selected' : ''; ?>>
+									<?= $each['name'] ?>
+								</option>
+							<?php endforeach; ?>
 						</select>
-
-						<!-- <select id="select2Basic" class="select2 form-select" data-allow-clear="true">
-							<option value="AK">Alaska</option>
-							<option value="HI">Hawaii</option>
-							<option value="CA">California</option>
-							<option value="NV">Nevada</option>
-							<option value="NY">New York</option>
-							<option value="NC">North Carolina</option>
-							<option value="OH">Ohio</option>
-							<option value="PA">Pennsylvania</option>
-							<option value="RI">Rhode Island</option>
-							<option value="SC">South Carolina</option>
-							<option value="VT">Vermont</option>
-							<option value="VA">Virginia</option>
-							<option value="WV">West Virginia</option>
-						</select> -->
 					</div>
 					<div class="col-6">
 						<label class="form-label">Tahun Usulan</label>
@@ -88,6 +77,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 	</div>
 </div>
 
+<?php /*
 <script>
 	$(document).ready(function() {
 		const url_institution = 'http://localhost/api/institution2';
@@ -138,4 +128,5 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 		})
 	})
 </script>
+*/ ?>
 <?= $this->endSection() ?>

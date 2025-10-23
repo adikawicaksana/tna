@@ -15,13 +15,24 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 				<div class="col-12 row">
 					<div class="col-6">
 						<label class="form-label">Instansi</label>
-						<select class="form-select" name="institution_id" id="institution_id"></select>
+						<select class="select2 form-select" name="institution_id" id="institution_id">
+							<option value="">Pilih Instansi</option>
+							<?php foreach ($institution as $each): ?>
+								<option value="<?= $each['id'] ?>" <?= ($each['id'] == ($_GET['institution_id'] ?? '')) ? 'selected' : ''; ?>>
+									<?= $each['name'] ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
 					</div>
 					<div class="col-6">
 						<label class="form-label">Tahun</label>
 						<select class="form-select" name="plan_year">
+							<option value="">Pilih Tahun</option>
 							<?php foreach ($years as $each): ?>
-								<option value="<?= $each ?>"><?= $each ?></option>
+								<option value="<?= $each ?>"
+								<?= (isset($_GET['plan_year']) && $_GET['plan_year'] == $each) ? 'selected' : '' ?>>
+								<?= $each ?>
+							</option>
 							<?php endforeach; ?>
 						</select>
 						<button type="submit" class="btn btn-sm btn-primary">Cari</button>
@@ -57,6 +68,13 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 							<th>Tahun Usulan</th>
 						</tr>
 					</thead>
+					<?php if (empty($data)): ?>
+						<tr>
+							<td colspan="13" class="text-center">
+								<i>Tidak ada data</i>
+							</td>
+						</tr>
+					<?php endif; ?>
 					<tbody>
 						<?php foreach ($data as $key => $each): ?>
 							<tr>

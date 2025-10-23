@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Helpers\CommonHelper;
 use App\Models\SurveyModel;
 use App\Models\UserDetailModel;
+use App\Models\UsersManagerModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -23,15 +24,28 @@ class Report extends BaseController
 		$get = $this->request->getGet();
 		$data = $this->_getTrainingNeedsSummary();
 
+		// Fetch institution list
+		$institution = [];
+		$m_institutions = (new UsersManagerModel())->searchByIDusers(session()->get('_id_users'), 'institusi');
+		if(array_column($m_institutions, '_id_institutions')){
+			$p_institusi = array_column($m_institutions, '_id_institutions');
+			$institution = \Config\Database::connect()
+				->table('master_institutions')
+				->whereIn('id', $p_institusi)
+				->whereIn('type', ['puskesmas', 'rumahsakit'])
+				->get()->getResultArray();
+		}
+
 		$title = 'Rekapitulasi Kebutuhan Pelatihan di Fasyankes ';
 		$title .= !empty($get['institution_name']) ? $data[0]['institution_name'] : '';
 		return view('report/training_needs_summary', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'data' => $data['data'],
-			'detail' => $data['detail'],
-			'competence' => $data['competence'],
+			'data' => $data['data'] ?? [],
+			'detail' => $data['detail'] ?? [],
+			'competence' => $data['competence'] ?? [],
 			'title' => $title,
 			'years' => CommonHelper::years('2025'),
+			'institution' => $institution,
 		]);
 	}
 
@@ -118,6 +132,7 @@ class Report extends BaseController
 		$data = $builder->get()->getResultArray();
 		$survey_id = array_column($data, 'survey_id');
 
+		$detail = $competence = [];
 		if (!empty($survey_id)) {
 			// Fetch survey detail
 			$detail = [];
@@ -161,12 +176,26 @@ class Report extends BaseController
 	{
 		$data = $this->_getTrainingNeedsSummary2();
 		$title = 'Rekapitulasi Pelatihan atau Peningkatan Kompetensi yang Dibutuhkan Pegawai Fasyankes ';
-		$title .= !empty($_GET['institution_id']) ? $data[0]['institution_name'] : '';
+		// $title .= !empty($_GET['institution_id']) ? $data[0]['institution_name'] : '';
+
+		// Fetch institution list
+		$institution = [];
+		$m_institutions = (new UsersManagerModel())->searchByIDusers(session()->get('_id_users'), 'institusi');
+		if(array_column($m_institutions, '_id_institutions')){
+			$p_institusi = array_column($m_institutions, '_id_institutions');
+			$institution = \Config\Database::connect()
+				->table('master_institutions')
+				->whereIn('id', $p_institusi)
+				->whereIn('type', ['puskesmas', 'rumahsakit'])
+				->get()->getResultArray();
+		}
+
 		return view('report/training_needs_summary2', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'data' => $data,
 			'title' => $title,
 			'years' => CommonHelper::years('2025'),
+			'institution' => $institution,
 		]);
 	}
 

@@ -55,17 +55,17 @@
         <form action="<?= base_url('profile') ?>" method="POST">
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-nip">NIP</label>
+              <label class="form-label" for="basic-default-nip">NIP<span class="text-danger">*</span></label>
               <input type="text" name="user_nip" class="form-control" id="basic-default-nip" value="<?= esc($data['nip']) ?>"/>
             </div>
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-nik">NIK</label>
+              <label class="form-label" for="basic-default-nik">NIK<span class="text-danger">*</span></label>
               <input type="text" name="user_nik" class="form-control" id="basic-default-nik" value="<?= esc($data['nik']) ?>"/>
             </div>
           </div>
           <div class="row">
             <div class="col-md-12 mb-6">
-              <label class="form-label" for="basic-default-fullname">Nama Lengkap (tanpa gelar)</label>
+              <label class="form-label" for="basic-default-fullname">Nama Lengkap (tanpa gelar)<span class="text-danger">*</span></label>
               <input type="text" name="user_fullname" class="form-control" id="basic-default-fullname" value="<?= esc($data['fullname']) ?>" />
             </div>
           </div>
@@ -81,17 +81,17 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-front-title">Pangkat/Golongan</label>
+              <label class="form-label" for="basic-default-front-title">Pangkat/Golongan<span class="text-danger">*</span></label>
               <input type="text" name="user_pangkatgolongan" class="form-control" id="basic-default-front-title" value="<?= esc($data['pangkatgolongan']) ?>"/>
             </div>
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-back-title">Jabatan</label>
+              <label class="form-label" for="basic-default-back-title">Jabatan<span class="text-danger">*</span></label>
               <input type="text" name="user_jabatan" class="form-control" id="basic-default-back-title" value="<?= esc($data['jabatan']) ?>"/>
             </div>
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="MobileNumber">Nomor Telepon</label>
+              <label class="form-label" for="MobileNumber">Nomor Telepon<span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text">(+62)</span>
                         <input type="text" id="MobileNumber" name="user_mobilenumber"
@@ -99,25 +99,25 @@
                       </div>
             </div>
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-email">E-mail</label>
+              <label class="form-label" for="basic-default-email">E-mail<span class="text-danger">*</span></label>
               <input type="email" name="user_email" class="form-control" id="basic-default-email" value="<?= esc($data['email']) ?>"/>
             </div>
           </div>
           <div class="row">
             <div class="col-md-12 mb-6">
-          <label class="form-label" for="address">Alamat Rumah</label>
+          <label class="form-label" for="address">Alamat Rumah<span class="text-danger">*</span></label>
               <textarea name="user_address" class="form-control" ><?= esc($data['address']) ?></textarea>
           </div>
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="Provinsi">Provinsi</label>
+              <label class="form-label" for="Provinsi">Provinsi<span class="text-danger">*</span></label>
               <select name="user_provinces" id="provinsi" class="form-control">
                 <? if($data['_id_provinces']){ ?><option value="<?= esc($data['_id_provinces']) ?>" selected><?= esc($data['users_provinsi']) ?></option><? } ?>
               </select>
             </div>
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="Kabupaten">Kabupaten / Kota</label>
+              <label class="form-label" for="Kabupaten">Kabupaten / Kota<span class="text-danger">*</span></label>
               <select name="user_regencies" id="kabupaten" class="form-select">
                 <? if($data['_id_regencies']){ ?><option value="<?= esc($data['_id_regencies']) ?>" selected><?= esc($data['users_kabkota']) ?></option><? } ?>
               </select>
@@ -125,13 +125,13 @@
           </div>
           <div class="row">
               <div class="col-md-6 mb-6">
-                <label class="form-label" for="Kecamatan">Kecamatan</label>
+                <label class="form-label" for="Kecamatan">Kecamatan<span class="text-danger">*</span></label>
                 <select name="user_districts" id="kecamatan" class="form-control">
                 <? if($data['_id_districts']){ ?><option value="<?= esc($data['_id_districts']) ?>" selected><?= esc($data['users_kecamatan']) ?></option><? } ?>
               </select>
               </div>
               <div class="col-md-6 mb-6">
-                <label class="form-label" for="Kelurahan">Kelurahan / Desa</label>
+                <label class="form-label" for="Kelurahan">Kelurahan / Desa<span class="text-danger">*</span></label>
                 <select name="user_villages" id="kelurahan" class="form-select">
                 <? if($data['_id_villages']){ ?><option value="<?= esc($data['_id_villages']) ?>" selected><?= esc($data['users_kelurahan']) ?></option><? } ?>
               </select>
@@ -139,7 +139,7 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-jenjang">Pendidikan Terakhir</label>
+              <label class="form-label" for="basic-default-jenjang">Pendidikan Terakhir<span class="text-danger">*</span></label>
                 <select id="jenjangPendidikan" name="user_jenjang_pendidikan" class="form-select select2">
                    <option value=""></option>
                     <?php foreach ($jenjangPendidikan as $key => $label): ?>
@@ -151,7 +151,7 @@
                 </select>
             </div>
             <div class="col-md-6 mb-6">
-              <label class="form-label" for="basic-default-nik">Jurusan / Profesi</label>
+              <label class="form-label" for="basic-default-nik">Jurusan / Profesi<span class="text-danger">*</span></label>
               <select id="jurusanProfesi" name="user_jurusan_profesi" class="form-select select2">
                <option value=""></option>
                     <?php foreach ($jurusanProfesi as $key => $label): ?>
@@ -168,7 +168,7 @@
                 </div>
             </div>
           </div>
-
+          <span class="text-danger">*</span> Wajib diisi
           <div class="text-end">
           <!-- isi form -->
           <button type="submit" class="btn btn-primary">Simpan</button>
@@ -241,7 +241,7 @@
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h5>Uraian Tugas & Pelatihan</h5>
         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalUraianTugas">
-          <i class="icon-base ti tabler-plus icon-sm me-1_5"></i></button>
+          <i class="icon-base ti tabler-plus icon-sm me-1_5"></i> Uraian Tugas</button>
       </div>
       <div class="card-datatable table-responsive pt-0">
         <table id="tableUraianTugas" class="table table-bordered">

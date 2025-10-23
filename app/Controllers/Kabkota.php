@@ -119,13 +119,16 @@ class Kabkota extends BaseController
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
 
-        if(array_column($m_institutions, '_id_institutions')){
+        
+        if (!empty($m_institutions)) {
             $p_institusi = array_column($m_institutions, '_id_institutions');
-
-        $institusi = $this->institutions
-            ->whereIn('id', $p_institusi)
-            ->findAll();
+        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {
+            $surveyIds = $this->survey->findColumn('institution_id') ?? [];
+            $parentIds = $this->institutions->whereIn('id', $surveyIds)->findColumn('parent') ?? [];            
+            $p_institusi = $this->institutions->whereIn('id', $parentIds)->findColumn('id') ?? [];
         }
+        
+        $institusi = !empty($p_institusi) ? $this->institutions->whereIn('id', $p_institusi)->findAll(): [];
 
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
 
@@ -241,6 +244,7 @@ class Kabkota extends BaseController
         $userDetail = $this->userDetailModel->getUserDetail();
         $session = session();
         $institusi=[];
+        $p_institusi = [];
 
         $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'kabkota');
 
@@ -248,18 +252,23 @@ class Kabkota extends BaseController
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
 
-        if(array_column($m_institutions, '_id_institutions')){
+          if (!empty($m_institutions)) {
             $p_institusi = array_column($m_institutions, '_id_institutions');
-
-        $institusi = $this->institutions
-            ->whereIn('id', $p_institusi)
-            ->findAll();
+        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {
+            $p_institusi = $this->survey->findColumn('institution_id') ?? [];
         }
 
-        $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
+        if (!empty($p_institusi)) {
+            $institusi = $this->institutions->whereIn('id', $p_institusi)->findAll();
+        }
+
+        if (!empty($p_institusi)) {
+            $institusi = $this->institutions->whereIn('id', $p_institusi)->findAll();
+        }
+
+   $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
 
         $institusiDetail = $selectedId ? $this->institutions->detail($selectedId) : null;
-
         if ($institusiDetail) {
             $jumlahUserInstitusi = $this->userInstitutions
                 ->countByInstitution($institusiDetail['id']) ?? 0;

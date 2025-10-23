@@ -118,7 +118,8 @@ class Institusi extends BaseController
         $year = $this->request->getGet('y') ?? date("Y");
         $userDetail = $this->userDetailModel->getUserDetail();
 		$session = session();
-        $institusi=[];
+        $institusi = [];
+        $p_institusi = [];
 
         $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'institusi');
 
@@ -126,12 +127,14 @@ class Institusi extends BaseController
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
 
-        if(array_column($m_institutions, '_id_institutions')){
+        if (!empty($m_institutions)) {
             $p_institusi = array_column($m_institutions, '_id_institutions');
+        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {
+            $p_institusi = $this->survey->findColumn('institution_id') ?? [];
+        }
 
-        $institusi = $this->institutions
-            ->whereIn('id', $p_institusi)
-            ->findAll();
+        if (!empty($p_institusi)) {
+            $institusi = $this->institutions->whereIn('id', $p_institusi)->findAll();
         }
 
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
@@ -139,12 +142,12 @@ class Institusi extends BaseController
         $institusiDetail = $selectedId ? $this->institutions->detail($selectedId) : null;
 
         if ($institusiDetail) {
-            $jumlahUserInstitusi = $this->userInstitutions
-                ->countByInstitution($institusiDetail['id']) ?? 0;
-            $totalSurvey = count($this->survey->surveyByInstitusi($institusiDetail['id'], $year)) ?? 0;
-
-            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
+            $institusiId = $institusiDetail['id'];
+            $jumlahUserInstitusi = $this->userInstitutions->countByInstitution($institusiId) ?? 0;
+            $totalSurvey = count($this->survey->surveyByInstitusi($institusiId, $year)) ?? 0;
+            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiId) ?? 0;
         }
+
 
 
         return view('institusi/index', [

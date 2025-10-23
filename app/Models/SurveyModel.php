@@ -76,8 +76,7 @@ class SurveyModel extends Model
 
 		$result = (new self())
         ->where('institution_id', $id_institusi)
-        // ->where("EXTRACT(YEAR FROM created_at) =", $year, false)
-		 ->where('EXTRACT(YEAR FROM created_at) =', (int) $year, false)
+		->where('EXTRACT(YEAR FROM created_at) =', (int) $year, false)
         ->findAll();
 
 		return $result;

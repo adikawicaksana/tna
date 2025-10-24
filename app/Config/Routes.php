@@ -33,6 +33,9 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 
 	$routes->get('kabkota', 'Kabkota::index', ['as' => 'kabkota.index']);
 	$routes->get('kabkota/(:any)', 'Kabkota::index_child/$1', ['as' => 'kabkota.index_child']);
+	
+	$routes->get('provinsi', 'Provinsi::index', ['as' => 'provinsi.index']);
+	$routes->get('provinsi/(:any)', 'Provinsi::index_child/$1', ['as' => 'provinsi.index_child']);
 
 
 	$routes->get('/profile/institutions/data', 'Profile::getUserInstitutions');

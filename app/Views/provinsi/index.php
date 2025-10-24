@@ -127,17 +127,17 @@ $selectedYear = $_GET['y'] ?? date('Y');
                                <div class="d-flex flex-column align-items-center text-center">
                                     <div class="d-flex justify-content-center mb-3">
                                         <div class="card-info me-4">
-                                            <h5 class="mb-0"><?= count($data['child']['puskesmas']) ?></h5>
-                                            <small>Puskesmas</small>
+                                            <h5 class="mb-0"><?= count($data['child']['upt']) ?></h5>
+                                            <small>UPT</small>
+                                        </div>  
+                                        <div class="card-info me-4">
+                                            <h5 class="mb-0"><?= count($data['child']['fasyankes']) ?></h5>
+                                            <small>Fasyankes</small>
                                         </div>
                                         <div class="card-info me-4">
-                                            <h5 class="mb-0"><?= count($data['child']['rumahsakit']) ?></h5>
-                                            <small>Rumah Sakit</small>
-                                        </div>
-                                        <div class="card-info">
-                                            <h5 class="mb-0"><?= count($data['child']['institusi']) ?></h5>
-                                            <small>Institusi</small>
-                                        </div>
+                                            <h5 class="mb-0"><?= count($data['child']['dinas']) ?></h5>
+                                            <small>Dinas</small>
+                                        </div>                                      
                                     </div>
 
                                     <a href="#" class="btn btn-outline-primary rounded btn-sm w-100" id="btnDetail">
@@ -197,7 +197,7 @@ $selectedYear = $_GET['y'] ?? date('Y');
     <script src="<?= base_url('assets/vendor/libs/chartjs/chartjs.js') ?>"></script>
 
     <script>
-    const baseUrl = "<?= base_url('kabkota') ?>";
+    const baseUrl = "<?= base_url('provinsi') ?>";
 
     	$(document).ready(function () {
             var table = $('#dataTable').DataTable({

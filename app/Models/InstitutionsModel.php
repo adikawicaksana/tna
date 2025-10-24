@@ -124,7 +124,7 @@ class InstitutionsModel extends Model
         }
     }
 
-    public function searchByParent($parent, $type=null)
+    public function getByParentID($parent, $type=null)
     {
         try {
             $builder= $this->select('
@@ -147,6 +147,26 @@ class InstitutionsModel extends Model
         } catch (Exception $e) {
             log_message('error', '[InstitutionsModel::detail] ' . $e->getMessage());
             return null;
+        }
+    }
+
+    
+    public function getParentsBySurvey($type='fasyankes'){
+        try {
+            $query = $this->select('parent_institutions.id AS parent_id')
+                ->join('survey', 'survey.institution_id = master_institutions.id')
+                ->join('master_institutions AS parent_institutions', 'parent_institutions.id = master_institutions.parent', 'left')
+                ->where('parent_institutions.id IS NOT NULL')
+                ->where('parent_institutions.type', $type)
+                ->groupBy('parent_institutions.id')
+                ->get()
+                ->getResultArray();
+
+                return $query;
+            
+        } catch (\Exception $e) {
+            log_message('error', '[InstitutionsModel:getParentInstitusi] Query failed: ' . $e->getMessage());
+            return []; 
         }
     }
 }

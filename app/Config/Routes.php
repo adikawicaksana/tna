@@ -32,7 +32,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 	$routes->get('institusi', 'Institusi::index', ['as' => 'institusi.index']);
 
 	$routes->get('kabkota', 'Kabkota::index', ['as' => 'kabkota.index']);
-	$routes->get('kabkota/detail', 'Kabkota::index_child', ['as' => 'kabkota.detail']);
+	$routes->get('kabkota/(:any)', 'Kabkota::index_child/$1', ['as' => 'kabkota.index_child']);
 
 
 	$routes->get('/profile/institutions/data', 'Profile::getUserInstitutions');

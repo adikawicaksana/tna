@@ -127,10 +127,10 @@ class Institusi extends BaseController
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
 
-        if (!empty($m_institutions)) {
+        if (!empty($m_institutions) && $session->get('user_role') == UserModel::ROLE_USER) {
             $p_institusi = array_column($m_institutions, '_id_institutions');
-        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {
-            $p_institusi = $this->survey->findColumn('institution_id') ?? [];
+        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {          
+            $p_institusi = array_merge(array_column($m_institutions, '_id_institutions'),$this->survey->findColumn('institution_id') ?? []);
         }
 
         if (!empty($p_institusi)) {
@@ -147,8 +147,6 @@ class Institusi extends BaseController
             $totalSurvey = count($this->survey->surveyByInstitusi($institusiId, $year)) ?? 0;
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiId) ?? 0;
         }
-
-
 
         return view('institusi/index', [
             'title'      => 'Institusi',

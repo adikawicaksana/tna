@@ -10,6 +10,7 @@ use App\Models\UsersInstitutionsModel;
 use App\Models\UsersManagerModel;
 use App\Models\SurveyModel;
 use App\Models\QuestionnaireModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class Kabkota extends BaseController
 {
@@ -119,15 +120,12 @@ class Kabkota extends BaseController
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
 
-        
-        if (!empty($m_institutions)) {
+        if (!empty($m_institutions) && $session->get('user_role') == UserModel::ROLE_USER) {
             $p_institusi = array_column($m_institutions, '_id_institutions');
-        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {
-            $surveyIds = $this->survey->findColumn('institution_id') ?? [];
-            $parentIds = $this->institutions->whereIn('id', $surveyIds)->findColumn('parent') ?? [];            
-            $p_institusi = $this->institutions->whereIn('id', $parentIds)->findColumn('id') ?? [];
+        }elseif ($session->get('user_role') != UserModel::ROLE_USER) {
+            $p_institusi = array_merge(array_column($this->institutions->getParentsBySurvey('kabkota'), 'parent_id'),array_column($m_institutions, '_id_institutions'));
         }
-        
+       
         $institusi = !empty($p_institusi) ? $this->institutions->whereIn('id', $p_institusi)->findAll(): [];
 
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
@@ -135,15 +133,14 @@ class Kabkota extends BaseController
         $institusiDetail = $selectedId ? $this->institutions->detail($selectedId) : null;
 
         if ($institusiDetail) {
-            $jumlahUserInstitusi = $this->userInstitutions
-                ->countByInstitution($institusiDetail['id']) ?? 0;
+            $jumlahUserInstitusi = $this->userInstitutions->countByInstitution($institusiDetail['id']) ?? 0;
             $totalSurvey = count($this->survey->surveyByInstitusi($institusiDetail['id'], $year)) ?? 0;
 
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
 
-            $child['puskesmas'] = $this->institutions->searchByParent($institusiDetail['id'],'puskesmas');            
-            $child['rumahsakit'] = $this->institutions->searchByParent($institusiDetail['id'],'rumahsakit');       
-            $child['institusi'] = $this->institutions->searchByParent($institusiDetail['id'],'institusi');
+            $child['puskesmas'] = $this->institutions->getByParentID($institusiDetail['id'],'puskesmas');            
+            $child['rumahsakit'] = $this->institutions->getByParentID($institusiDetail['id'],'rumahsakit');       
+            $child['institusi'] = $this->institutions->getByParentID($institusiDetail['id'],'institusi');
         }
 
 
@@ -171,7 +168,7 @@ class Kabkota extends BaseController
             $status = SurveyModel::listStatus();
             $request = $this->request->getGet();
 
-            $id = isset($request['id']) ? $request['id'] : null;
+            $id_child = isset($request['id']) ? $request['id'] : null;
             $year = isset($request['year']) ? $request['year'] : date('Y');
             $draw = isset($request['draw']) ? (int)$request['draw'] : 1;
             $start = isset($request['start']) ? (int)$request['start'] : 0;
@@ -185,8 +182,8 @@ class Kabkota extends BaseController
                 ->join('users_detail u', 's.respondent_id = u._id_users')
                 ->join('master_institutions i', 's.institution_id = i.id')
                 ->where('EXTRACT(YEAR FROM s.created_at) =', $year, false)
-                ->where('i.type','kabkota')
-                ->where('s.institution_id', $id);
+                // ->where('i.type','kabkota')
+                ->where('s.institution_id', $id_child);
 
             // Filtering
             if (!empty($search)) {
@@ -239,36 +236,34 @@ class Kabkota extends BaseController
             ]);
         }
 
-        $id = $this->request->getGet('i') ?? null;
+        
+        $id_child = $this->request->getGet('ic') ?? null;
         $year = $this->request->getGet('y') ?? date("Y");
         $userDetail = $this->userDetailModel->getUserDetail();
         $session = session();
         $institusi=[];
         $p_institusi = [];
 
+        
         $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'kabkota');
+
+       if (!in_array($id, array_column($m_institutions, '_id_institutions')) && $session->get('user_role') == UserModel::ROLE_USER) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
+        $parent = $this->institutions->where('id', $id)->first();
 
         if (!empty($userDetail['mobile']) && str_starts_with($userDetail['mobile'], '62')) {
             $userDetail['mobile'] = substr($userDetail['mobile'], 2);
         }
 
-          if (!empty($m_institutions)) {
-            $p_institusi = array_column($m_institutions, '_id_institutions');
-        } elseif ($session->get('user_role') != UserModel::ROLE_USER) {
-            $p_institusi = $this->survey->findColumn('institution_id') ?? [];
-        }
+        $p_institusi = $this->survey->findColumn('institution_id') ?? [];
+        $institusi = $p_institusi ? $this->institutions->where('parent', $id)->findAll() : [];
 
-        if (!empty($p_institusi)) {
-            $institusi = $this->institutions->whereIn('id', $p_institusi)->findAll();
-        }
 
-        if (!empty($p_institusi)) {
-            $institusi = $this->institutions->whereIn('id', $p_institusi)->findAll();
-        }
-
-   $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
-
-        $institusiDetail = $selectedId ? $this->institutions->detail($selectedId) : null;
+        $selectedId = $id_child ?: $institusi[0]['id'];
+        $institusiDetail = $this->institutions->detail($selectedId);
+        
         if ($institusiDetail) {
             $jumlahUserInstitusi = $this->userInstitutions
                 ->countByInstitution($institusiDetail['id']) ?? 0;
@@ -276,15 +271,12 @@ class Kabkota extends BaseController
 
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
 
-            $child['puskesmas'] = $this->institutions->searchByParent($institusiDetail['id'],'puskesmas');            
-            $child['rumahsakit'] = $this->institutions->searchByParent($institusiDetail['id'],'rumahsakit');       
-            $child['institusi'] = $this->institutions->searchByParent($institusiDetail['id'],'institusi');
         }
 
 
 
         return view('kabkota/child', [
-            'title'      => 'Institusi Kabupaten / Kota',
+            'title'      => $parent['name'],
             'userDetail' => $userDetail,
             'data'       => [
                 'institusi'         => $institusi,
@@ -292,7 +284,6 @@ class Kabkota extends BaseController
                 'institusi_detail'   => $institusiDetail,
                 'total_users_institusi'=> $jumlahUserInstitusi,
                 'total_users_survey' => $totalSurvey,
-                'child' => $child,
                 'questionnaire_type' => QuestionnaireModel::listType('institusi'),
                 'years' => CommonHelper::years(date('Y')),
                 'pengelola' => $pengelola

@@ -14,19 +14,21 @@ $selectedYear = $_GET['y'] ?? date('Y');
 ?>
 
 <!-- Content -->
-           <div class="container">
-	<h1><?= $title ?></h1>
+           <div class="container-xxl flex-grow-1 container-p-y">
+            
     <?php if($data['institusi_detail']) {?>
 
 	<div class="card">
         <div class="card-header">
+            
+	            <h3><?= $title ?></h3>
             <div class="row">
                     <div class="col-xl-9 gap-2 mb-4">
              <select name="institusi" id="institusi" class="form-select select2">
                 <?php foreach ($data['institusi'] as $i): ?>
                     <option value="<?= esc($i['id']) ?>"
                         <?= $i['id'] === $data['institusi_selected'] ? 'selected' : '' ?>>
-                        <?= esc($i['name']) ?>
+                        <?=  $i['type'] !== 'rumahsakit' ? strtoupper($data['institusi_detail']['type']) : '' ?> <?= esc($i['name']) ?>
                     </option>
                 <?php endforeach; ?>
                 </select>
@@ -124,41 +126,7 @@ $selectedYear = $_GET['y'] ?? date('Y');
                             <!-- Tombol Survey -->
                             <div class="col-md-3 mb-4">
                                 
-                               <div class="d-flex flex-column align-items-center text-center">
-                                    <div class="d-flex justify-content-center mb-3">
-                                        <div class="card-info me-4">
-                                            <h5 class="mb-0"><?= count($data['child']['puskesmas']) ?></h5>
-                                            <small>Puskesmas</small>
-                                        </div>
-                                        <div class="card-info me-4">
-                                            <h5 class="mb-0"><?= count($data['child']['rumahsakit']) ?></h5>
-                                            <small>Rumah Sakit</small>
-                                        </div>
-                                        <div class="card-info">
-                                            <h5 class="mb-0"><?= count($data['child']['institusi']) ?></h5>
-                                            <small>Institusi</small>
-                                        </div>
-                                    </div>
-
-                                    <a href="#" class="btn btn-outline-primary rounded btn-sm w-100">
-                                        <i class="fas fa-eye me-1"></i> Detail
-                                    </a>
-                                </div>
-
-
-
-
-
-                                <div class="d-flex flex-column align-items-center text-center">
-                                    <h5 class="card-title mt-3 mb-2">Formulir Asesmen Institusi</h5>
-                                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                                        <?php foreach ($data['questionnaire_type'] as $key => $each): ?>
-                                            <a href="<?= url_to('survey.create', $key) ?>" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-plus me-1"></i> <?= $each ?>
-                                            </a>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
+                              
 
                             </div>
 
@@ -197,7 +165,7 @@ $selectedYear = $_GET['y'] ?? date('Y');
     <script src="<?= base_url('assets/vendor/libs/chartjs/chartjs.js') ?>"></script>
 
     <script>
-    const baseUrl = "<?= base_url('kabkota') ?>";
+    const baseUrl = window.location.href;
 
     	$(document).ready(function () {
             var table = $('#dataTable').DataTable({
@@ -236,15 +204,20 @@ $selectedYear = $_GET['y'] ?? date('Y');
 
     $('#institusi').on('change', function () {
         const id = $(this).val();
+        const year = $('#survey_year').val();
+        const baseUrl = window.location.origin + window.location.pathname; 
+
         if (id) {
-            window.location.href = `${baseUrl}?i=${id}&y=${$('#survey_year').val()}`;
+            window.location.href = `${baseUrl}?ic=${id}&yc=${year}`;
         }
     });
 
     $('#survey_year').on('change', function () {
-        const year = $(this).val();
+        const id = $(this).val();
+        const year = $('#survey_year').val();
+        const baseUrl = window.location.origin + window.location.pathname; 
         if (year) {
-            window.location.href = `${baseUrl}?i=${$('#institusi').val()}&y=${year}`;
+            window.location.href = `${baseUrl}?ic=${$('#institusi').val()}&yc=${year}`;
         }
     });
 

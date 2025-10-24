@@ -140,7 +140,7 @@ $selectedYear = $_GET['y'] ?? date('Y');
                                         </div>
                                     </div>
 
-                                    <a href="#" class="btn btn-outline-primary rounded btn-sm w-100">
+                                    <a href="#" class="btn btn-outline-primary rounded btn-sm w-100" id="btnDetail">
                                         <i class="fas fa-eye me-1"></i> Detail
                                     </a>
                                 </div>
@@ -299,6 +299,18 @@ if (doughnutChart) {
   });
 }
 
+document.getElementById('btnDetail').addEventListener('click', function (e) {
+    e.preventDefault(); // cegah reload halaman
+
+    const value = document.getElementById('institusi').value;
+    if (!value) {
+        alert('Silakan pilih institusi terlebih dahulu.');
+        return;
+    }
+
+    const baseUrl = window.location.origin + window.location.pathname;
+    window.location.href = baseUrl.replace(/\/$/, '') + '/' + value;
+});
     </script>
 
 <?= $this->endSection() ?>

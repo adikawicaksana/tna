@@ -14,12 +14,12 @@ $selectedYear = $_GET['y'] ?? date('Y');
 ?>
 
 <!-- Content -->
-           <div class="container">
-	<h1><?= $title ?></h1>
+           <div class="container-xxl flex-grow-1 container-p-y">
     <?php if($data['institusi_detail']) {?>
 
 	<div class="card">
         <div class="card-header">
+             <h3><?= $title ?></h3>
             <div class="row">
                     <div class="col-xl-9 gap-2 mb-4">
              <select name="institusi" id="institusi" class="form-select select2">
@@ -136,6 +136,36 @@ $selectedYear = $_GET['y'] ?? date('Y');
 
             <!--/ Statistics -->
 
+            <div class="row">
+            <div class="col-md-12 mb-6">
+                <table id="tbl_trainingrequest" class="table table-responsive table-bordered table-hover w-100">
+				<thead>
+					<tr>
+						<th class="text-center">No</th>
+						<th>Nama Pelatihan</th>
+						<th>Rencana Pelaksanaan</th>
+						<th>Jumlah Permintaan</th>
+					</tr>
+				</thead>
+                <tbody>
+                    <?php $i=1; foreach ($data['datapermintaan'] as $dp){?>
+                        <tr>
+                            <td><?= $i++; ?></td>
+                            <td><?= $dp['training_title'] ?></td>
+                            <td><?= $dp['plan_year'] ?></td>
+                            <td><?= $dp['total_request'] ?></td>
+                        </tr>
+                  <?php  } ?>
+                </tbody>
+			</table>
+            </div>
+        </div>
+        
+        <br>
+        <br>
+        <br>
+        <hr>
+
         <div class="row">
             <div class="col-md-12 mb-6">
                 <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
@@ -170,7 +200,43 @@ $selectedYear = $_GET['y'] ?? date('Y');
     const baseUrl = "<?= base_url('institusi') ?>";
 
     	$(document).ready(function () {
+        $('#tbl_trainingrequest').DataTable({            
+            dom:
+                    '<"row align-items-center mb-3"' +
+                    '<"col-md-4 d-flex align-items-center"l>' +
+                    '<"col-md-4 text-center"<"table-title-rencana fw-bold">>' +
+                    '<"col-md-4 d-flex justify-content-end"f>' +
+                    '>t' +
+                    '<"row mt-2"<"col-md-6"i><"col-md-6"p>>',
+
+                initComplete: function () {
+                    $('.table-title-rencana').html('Data Rencana Pelatihan');
+                },
+            responsive: true,
+            pageLength: 5,
+            lengthChange: false,
+            language: {
+                search: "Cari:",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                paginate: {
+                next: "›",
+                previous: "‹"
+                }
+            }});
+            
             var table = $('#dataTable').DataTable({
+            dom:
+                    '<"row align-items-center mb-3"' +
+                    '<"col-md-4 d-flex align-items-center"l>' +
+                    '<"col-md-4 text-center"<"table-title fw-bold">>' +
+                    '<"col-md-4 d-flex justify-content-end"f>' +
+                    '>t' +
+                    '<"row mt-2"<"col-md-6"i><"col-md-6"p>>',
+
+                initComplete: function () {
+                    $('.table-title').html('Data SDM yang mengisi Asesmen');
+                },
             processing: true,
             serverSide: true,
             searching: false,

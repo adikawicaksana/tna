@@ -81,4 +81,33 @@ class SurveyModel extends Model
 
 		return $result;
 	}
+
+	public function getTrainingSummaryByYear($year, $institutionId)
+    {
+        try {
+            $builder = $this->db->table('survey s');
+            $builder->select('
+                stp.training_id,
+                mt.nama_pelatihan as training_title,
+                stp.plan_year,
+                COUNT(stp.training_id) AS total_request
+            ');
+            $builder->join('survey_training_plan as stp', 'stp.survey_id = s.survey_id', 'left');
+            $builder->join('master_training as mt', 'mt.id = stp.training_id', 'left');
+            $builder->where("EXTRACT(YEAR FROM s.created_at) =", $year, false);
+            $builder->where('s.institution_id', $institutionId);
+            $builder->groupBy('stp.training_id, stp.plan_year, mt.nama_pelatihan');
+            $builder->orderBy('stp.plan_year', 'ASC');
+
+            $query = $builder->get();
+            return $query->getResultArray();
+
+        } catch (Exception $e) {
+            log_message('error', '[SurveyModel] Query failed: ' . $e->getMessage());
+            return [
+                'error' => true,
+                'message' => 'Gagal mengambil data pelatihan: ' . $e->getMessage()
+            ];
+        }
+    }
 }

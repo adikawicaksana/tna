@@ -146,7 +146,17 @@ class Institusi extends BaseController
             $jumlahUserInstitusi = $this->userInstitutions->countByInstitution($institusiId) ?? 0;
             $totalSurvey = count($this->survey->surveyByInstitusi($institusiId, $year)) ?? 0;
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiId) ?? 0;
+            $datapermintaan = $this->survey->getTrainingSummaryByYear($year, $institusiId);
+               
         }
+
+        
+
+      
+    //     $total = count($data);
+
+    //      return $this->response->setJSON(['total' => $total,
+    // 'data'  => $data]);
 
         return view('institusi/index', [
             'title'      => 'Institusi',
@@ -159,7 +169,8 @@ class Institusi extends BaseController
                 'total_users_survey' => $totalSurvey,
                 'questionnaire_type' => QuestionnaireModel::listType('institusi'),
                 'years' => CommonHelper::years(date('Y')),
-                'pengelola' => $pengelola
+                'pengelola' => $pengelola,
+                'datapermintaan' => $datapermintaan,
             ],
         ]);
     }

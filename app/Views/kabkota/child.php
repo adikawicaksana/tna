@@ -116,7 +116,7 @@ $selectedYear = $_GET['y'] ?? date('Y');
                                         <i class="icon-base ti <?= $s['icon'] ?> icon-lg"></i>
                                     </div>
                                     <div class="card-info">
-                                        <h5 class="mb-0"><?= $s['value'] ?></h5>
+                                        <h5 class="mb-0"><?= ($s['value'] < 0) ? 0 : $s['value'] ?></h5>
                                         <small><?= $s['label'] ?></small>
                                     </div>
                                 </div>

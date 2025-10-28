@@ -166,6 +166,36 @@ $selectedYear = $_GET['y'] ?? date('Y');
 
             <!--/ Statistics -->
 
+            <div class="row">
+            <div class="col-md-12 mb-6">
+                <table id="tbl_trainingrequest" class="table table-responsive table-bordered table-hover w-100">
+				<thead>
+					<tr>
+						<th class="text-center">No</th>
+						<th>Nama Pelatihan</th>
+						<th>Rencana Pelaksanaan</th>
+						<th>Jumlah Permintaan</th>
+					</tr>
+				</thead>
+                <tbody>
+                    <?php $i=1; foreach ($data['datapermintaan'] as $dp){?>
+                        <tr>
+                            <td><?= $i++; ?></td>
+                            <td><?= $dp['training_title'] ?></td>
+                            <td><?= $dp['plan_year'] ?></td>
+                            <td><?= $dp['total_request'] ?></td>
+                        </tr>
+                  <?php  } ?>
+                </tbody>
+			</table>
+            </div>
+        </div>
+        
+        <br>
+        <br>
+        <br>
+        <hr>
+
         <div class="row">
             <div class="col-md-12 mb-6">
                 <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">

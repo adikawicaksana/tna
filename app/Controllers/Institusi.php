@@ -150,14 +150,6 @@ class Institusi extends BaseController
                
         }
 
-        
-
-      
-    //     $total = count($data);
-
-    //      return $this->response->setJSON(['total' => $total,
-    // 'data'  => $data]);
-
         return view('institusi/index', [
             'title'      => 'Institusi',
             'userDetail' => $userDetail,

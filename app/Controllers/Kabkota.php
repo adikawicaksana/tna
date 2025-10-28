@@ -141,6 +141,8 @@ class Kabkota extends BaseController
             $child['puskesmas'] = $this->institutions->getByParentID($institusiDetail['id'],'puskesmas');            
             $child['rumahsakit'] = $this->institutions->getByParentID($institusiDetail['id'],'rumahsakit');       
             $child['institusi'] = $this->institutions->getByParentID($institusiDetail['id'],'institusi');
+            
+            $datapermintaan = $this->survey->getTrainingSummaryByYear($year, $institusiDetail['id']);
         }
 
 
@@ -157,7 +159,9 @@ class Kabkota extends BaseController
                 'child' => $child,
                 'questionnaire_type' => QuestionnaireModel::listType('institusi'),
                 'years' => CommonHelper::years(date('Y')),
-                'pengelola' => $pengelola
+                'pengelola' => $pengelola,
+                'datapermintaan' => $datapermintaan,
+                
             ],
         ]);
     }

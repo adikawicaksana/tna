@@ -135,55 +135,80 @@ $selectedYear = $_GET['y'] ?? date('Y');
                         </div> <!-- end row -->
 
             <!--/ Statistics -->
+            <div class="nav-align-top nav-tabs-shadow">
+                <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <button
+                                type="button"
+                                class="nav-link active"
+                                role="tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#navs-top-one"
+                                aria-controls="navs-top-one"
+                                aria-selected="true">
+                                Permintaan Rencana Pelatihan
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                                <button
+                                    type="button"
+                                    class="nav-link"
+                                    role="tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#navs-top-two"
+                                    aria-controls="navs-top-two"
+                                    aria-selected="false">
+                                    SDM Mengisi Asesmen
+                                </button>
+                            </li>
+                </ul>
 
-            <div class="row">
-            <div class="col-md-12 mb-6">
-                <table id="tbl_trainingrequest" class="table table-responsive table-bordered table-hover w-100">
-				<thead>
-					<tr>
-						<th class="text-center">No</th>
-						<th>Nama Pelatihan</th>
-						<th>Rencana Pelaksanaan</th>
-						<th>Jumlah Permintaan</th>
-					</tr>
-				</thead>
-                <tbody>
-                    <?php $i=1; foreach ($data['datapermintaan'] as $dp){?>
-                        <tr>
-                            <td><?= $i++; ?></td>
-                            <td><?= $dp['training_title'] ?></td>
-                            <td><?= $dp['plan_year'] ?></td>
-                            <td><?= $dp['total_request'] ?></td>
-                        </tr>
-                  <?php  } ?>
-                </tbody>
-			</table>
-            </div>
-        </div>
-        
-        <br>
-        <br>
-        <br>
-        <hr>
-
-        <div class="row">
-            <div class="col-md-12 mb-6">
-                <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
-				<thead>
-					<tr>
-						<th class="text-center">No</th>
-						<th>Tanggal</th>
-						<th>Grup</th>
-						<th>Instansi</th>
-						<th>Nama</th>
-						<th>Status</th>
-						<th>Tanggal Disetujui</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-			</table>
-            </div>
-        </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="navs-top-one" role="tabpanel">
+                        <div class="col-md-12 mb-6">
+                            <table id="tbl_trainingrequest" class="table table-responsive table-bordered table-hover w-100">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th>Nama Pelatihan</th>
+                                    <th>Rencana Pelaksanaan</th>
+                                    <th>Jumlah Permintaan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $i=1; foreach ($data['datapermintaan'] as $dp){?>
+                                    <tr>
+                                        <td><?= $i++; ?></td>
+                                        <td><?= $dp['training_title'] ?></td>
+                                        <td><?= $dp['plan_year'] ?></td>
+                                        <td><?= $dp['total_request'] ?></td>
+                                    </tr>
+                            <?php  } ?>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="navs-top-two" role="tabpanel">
+                        <div class="col-md-12 mb-6">
+                            <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th>Tanggal</th>
+                                    <th>Grup</th>
+                                    <th>Instansi</th>
+                                    <th>Nama</th>
+                                    <th>Status</th>
+                                    <th>Tanggal Disetujui</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        </div>
+                    </div>
+                    
+                    </div>
+                </div>
 
 
 		</div>
@@ -200,43 +225,15 @@ $selectedYear = $_GET['y'] ?? date('Y');
     const baseUrl = "<?= base_url('institusi') ?>";
 
     	$(document).ready(function () {
-        $('#tbl_trainingrequest').DataTable({            
-            dom:
-                    '<"row align-items-center mb-3"' +
-                    '<"col-md-4 d-flex align-items-center"l>' +
-                    '<"col-md-4 text-center"<"table-title-rencana fw-bold">>' +
-                    '<"col-md-4 d-flex justify-content-end"f>' +
-                    '>t' +
-                    '<"row mt-2"<"col-md-6"i><"col-md-6"p>>',
-
-                initComplete: function () {
-                    $('.table-title-rencana').html('Data Rencana Pelatihan');
-                },
+        $('#tbl_trainingrequest').DataTable({ 
             responsive: true,
-            pageLength: 5,
-            lengthChange: false,
             language: {
                 search: "Cari:",
                 zeroRecords: "Data tidak ditemukan",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                paginate: {
-                next: "›",
-                previous: "‹"
                 }
-            }});
+            });
             
-            var table = $('#dataTable').DataTable({
-            dom:
-                    '<"row align-items-center mb-3"' +
-                    '<"col-md-4 d-flex align-items-center"l>' +
-                    '<"col-md-4 text-center"<"table-title fw-bold">>' +
-                    '<"col-md-4 d-flex justify-content-end"f>' +
-                    '>t' +
-                    '<"row mt-2"<"col-md-6"i><"col-md-6"p>>',
-
-                initComplete: function () {
-                    $('.table-title').html('Data SDM yang mengisi Asesmen');
-                },
+            var table = $('#dataTable').DataTable({            
             processing: true,
             serverSide: true,
             searching: false,
@@ -267,6 +264,12 @@ $selectedYear = $_GET['y'] ?? date('Y');
                     className: 'text-center',
                 }
             ],
+            language: {
+                search: "Cari:",
+                zeroRecords: "Data tidak ditemukan",
+                },
+            searching: true,
+            serverSide: false,
         });
 	});
 

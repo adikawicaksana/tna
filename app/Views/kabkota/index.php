@@ -17,7 +17,7 @@ $selectedYear = $_GET['y'] ?? date('Y');
            <div class="container-xxl flex-grow-1 container-p-y">
     <?php if($data['institusi_detail']) {?>
 
-	<div class="card">
+	<div class="card mb-3">
         <div class="card-header">
              <h3><?= $title ?></h3>
             <div class="row">
@@ -166,58 +166,87 @@ $selectedYear = $_GET['y'] ?? date('Y');
 
             <!--/ Statistics -->
 
-            <div class="row">
-            <div class="col-md-12 mb-6">
-                <table id="tbl_trainingrequest" class="table table-responsive table-bordered table-hover w-100">
-				<thead>
-					<tr>
-						<th class="text-center">No</th>
-						<th>Nama Pelatihan</th>
-						<th>Rencana Pelaksanaan</th>
-						<th>Jumlah Permintaan</th>
-					</tr>
-				</thead>
-                <tbody>
-                    <?php $i=1; foreach ($data['datapermintaan'] as $dp){?>
-                        <tr>
-                            <td><?= $i++; ?></td>
-                            <td><?= $dp['training_title'] ?></td>
-                            <td><?= $dp['plan_year'] ?></td>
-                            <td><?= $dp['total_request'] ?></td>
-                        </tr>
-                  <?php  } ?>
-                </tbody>
-			</table>
+            <div class="nav-align-top nav-tabs-shadow">
+                <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <button
+                                type="button"
+                                class="nav-link active"
+                                role="tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#navs-top-one"
+                                aria-controls="navs-top-one"
+                                aria-selected="true">
+                                Permintaan Rencana Pelatihan
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                                <button
+                                    type="button"
+                                    class="nav-link"
+                                    role="tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#navs-top-two"
+                                    aria-controls="navs-top-two"
+                                    aria-selected="false">
+                                    SDM Mengisi Asesmen
+                                </button>
+                            </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="navs-top-one" role="tabpanel">
+                        <div class="col-md-12 mb-6">
+                            <table id="tbl_trainingrequest" class="table table-responsive table-bordered table-hover w-100">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th>Nama Pelatihan</th>
+                                    <th>Rencana Pelaksanaan</th>
+                                    <th>Jumlah Permintaan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $i=1; foreach ($data['datapermintaan'] as $dp){?>
+                                    <tr>
+                                        <td><?= $i++; ?></td>
+                                        <td><?= $dp['training_title'] ?></td>
+                                        <td><?= $dp['plan_year'] ?></td>
+                                        <td><?= $dp['total_request'] ?></td>
+                                    </tr>
+                            <?php  } ?>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+        
+                    <div class="tab-pane fade" id="navs-top-two" role="tabpanel">
+                        <div class="col-md-12 mb-6">
+                            <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th>Tanggal</th>
+                                    <th>Grup</th>
+                                    <th>Instansi</th>
+                                    <th>Nama</th>
+                                    <th>Status</th>
+                                    <th>Tanggal Disetujui</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        </div>
+                    </div>
+                    
             </div>
         </div>
         
-        <br>
-        <br>
-        <br>
-        <hr>
-
-        <div class="row">
-            <div class="col-md-12 mb-6">
-                <table id="dataTable" class="table table-responsive table-bordered table-hover w-100">
-				<thead>
-					<tr>
-						<th class="text-center">No</th>
-						<th>Tanggal</th>
-						<th>Grup</th>
-						<th>Instansi</th>
-						<th>Nama</th>
-						<th>Status</th>
-						<th>Tanggal Disetujui</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-			</table>
-            </div>
-        </div>
 
 
 		</div>
 	</div>
+
      <?php } ?>
 </div>
 <?= $this->endSection() ?>
@@ -230,7 +259,15 @@ $selectedYear = $_GET['y'] ?? date('Y');
     const baseUrl = "<?= base_url('kabkota') ?>";
 
     	$(document).ready(function () {
-            var table = $('#dataTable').DataTable({
+            $('#tbl_trainingrequest').DataTable({ 
+            responsive: true,
+            language: {
+                search: "Cari:",
+                zeroRecords: "Data tidak ditemukan",
+                }
+            });
+            
+             var table = $('#dataTable').DataTable({            
             processing: true,
             serverSide: true,
             searching: false,
@@ -261,6 +298,12 @@ $selectedYear = $_GET['y'] ?? date('Y');
                     className: 'text-center',
                 }
             ],
+            language: {
+                search: "Cari:",
+                zeroRecords: "Data tidak ditemukan",
+                },
+            searching: true,
+            serverSide: false,
         });
 	});
 

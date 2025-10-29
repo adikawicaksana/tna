@@ -273,7 +273,8 @@ class Kabkota extends BaseController
                 ->countByInstitution($institusiDetail['id']) ?? 0;
             $totalSurvey = count($this->survey->surveyByInstitusi($institusiDetail['id'], $year)) ?? 0;
 
-            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
+            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);            
+            $datapermintaan = $this->survey->getTrainingSummaryByYear($year, $institusiDetail['id']);
 
         }
 
@@ -290,7 +291,8 @@ class Kabkota extends BaseController
                 'total_users_survey' => $totalSurvey,
                 'questionnaire_type' => QuestionnaireModel::listType('institusi'),
                 'years' => CommonHelper::years(date('Y')),
-                'pengelola' => $pengelola
+                'pengelola' => $pengelola,
+                'datapermintaan' => $datapermintaan,
             ],
         ]);
     }

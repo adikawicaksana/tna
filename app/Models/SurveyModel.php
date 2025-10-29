@@ -75,8 +75,10 @@ class SurveyModel extends Model
 	{
 
 		$result = (new self())
+		->select('respondent_id, MIN(survey.created_at) AS created_at')
         ->where('institution_id', $id_institusi)
 		->where('EXTRACT(YEAR FROM created_at) =', (int) $year, false)
+		->groupBy('respondent_id')
         ->findAll();
 
 		return $result;

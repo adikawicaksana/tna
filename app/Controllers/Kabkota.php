@@ -269,8 +269,7 @@ class Kabkota extends BaseController
         $institusiDetail = $this->institutions->detail($selectedId);
         
         if ($institusiDetail) {
-            $jumlahUserInstitusi = $this->userInstitutions
-                ->countByInstitution($institusiDetail['id']) ?? 0;
+            $jumlahUserInstitusi = $this->userInstitutions->countByInstitution($institusiDetail['id']) ?? 0;
             $totalSurvey = count($this->survey->surveyByInstitusi($institusiDetail['id'], $year)) ?? 0;
 
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);            

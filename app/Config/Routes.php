@@ -23,6 +23,8 @@ $routes->get('/master-training', 'MasterTraining::index', ['as' => 'master-train
 
 $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
 	// $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
+	// $routes->get('/dashboard/getCompetencyPercentage', 'Dashboard::getCompetencyPercentage', ['as' => 'getCompetencyPercentage']);
+	// $routes->get('/dashboard/countIncompleteCompetence', 'Dashboard::countIncompleteCompetence', ['as' => 'countIncompleteCompetence']);
 	$routes->get('dashboard', 'Survey::index', ['as' => 'dashboard']);
 	$routes->get('/profile', 'Profile::index', ['as' => 'profile']);
 });
@@ -33,7 +35,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 
 	$routes->get('kabkota', 'Kabkota::index', ['as' => 'kabkota.index']);
 	$routes->get('kabkota/(:any)', 'Kabkota::index_child/$1', ['as' => 'kabkota.index_child']);
-	
+
 	$routes->get('provinsi', 'Provinsi::index', ['as' => 'provinsi.index']);
 	$routes->get('provinsi/(:any)', 'Provinsi::index_child/$1', ['as' => 'provinsi.index_child']);
 

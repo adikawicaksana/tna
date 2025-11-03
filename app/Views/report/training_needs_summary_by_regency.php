@@ -4,6 +4,14 @@
 $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 ?>
 
+<!-- <style>
+	.table-bordered th,
+	.table-bordered td {
+		border: 1px solid #dee2e6 !important;
+		padding-left: 5px;
+	}
+</style> -->
+
 <div class="container">
 	<h3><?= $title ?></h3>
 	<div class="card">
@@ -14,14 +22,9 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 			<form action="<?= current_url() ?>" method="get">
 				<div class="col-12 row">
 					<div class="col-6">
-						<label class="form-label">Instansi</label>
-						<select class="select2 form-select" name="institution_id" id="institution_id">
-							<option value="">Pilih Instansi</option>
-							<?php foreach ($institution as $each): ?>
-								<option value="<?= $each['id'] ?>" <?= ($each['id'] == ($_GET['institution_id'] ?? '')) ? 'selected' : ''; ?>>
-									<?= $each['name'] ?>
-								</option>
-							<?php endforeach; ?>
+						<label class="form-label">Dinas Kab/Kota</label>
+						<select name="institution_id" id="institution_id" class="form-control">
+							<option value="">Pilih Dinas Kab/Kota</option>
 						</select>
 					</div>
 					<div class="col-6">
@@ -30,7 +33,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 							<option value="">Pilih Tahun</option>
 							<?php foreach ($years as $each): ?>
 								<option value="<?= $each ?>"
-									<?= ((!isset($_GET['plan_year'])) && (date('Y') + 1 == $each)) ||
+									<?= ((!isset($_GET['plan_year'])) &&  (date('Y') + 1 == $each)) ||
 										(isset($_GET['plan_year']) && $_GET['plan_year'] == $each) ? 'selected' : '' ?>>
 									<?= $each ?>
 								</option>
@@ -49,7 +52,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 	<div class="card">
 		<div class="card-header">
 			<h5>Laporan Rekapitulasi</h5>
-			<a href="<?= route_to('report.xlsTrainingNeedsSummary') . $params ?>" class="btn btn-sm btn-primary">Export Data</a>
+			<a href="<?= route_to('report.xlsTrainingNeedsSummaryByRegency') . $params ?>" class="btn btn-sm btn-primary">Export Data</a>
 		</div>
 		<div class="card-body">
 			<div class="table-responsive">
@@ -102,4 +105,68 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 		</div>
 	</div>
 </div>
+<?= $this->section('scripts') ?>
+<script>
+	const base_url = "<?= base_url() ?>";
+	const selectedInstitutionId = "<?= $_GET['institution_id'] ?? '' ?>";
+	$(document).ready(function() {
+		<?php /*
+		$('#institution_id').select2({
+			placeholder: 'Pilih Dinas Kab/Kota',
+			allowClear: true,
+			width: '100%',
+			ajax: {
+				url: `${base_url}/listInstitution`,
+				dataType: 'json',
+				delay: 250,
+				data: params => ({
+					term: params.term,
+					type: 'kabkota',
+				}),
+				processResults: response => {
+					console.log(response)
+					const institutions = response.data.map(item => ({
+						id: item.id,
+						text: item.name
+					}));
+
+					return {
+						results: institutions
+					}
+				}
+			}
+		});
+		*/ ?>
+
+		$.ajax({
+			url: `${base_url}/listInstitution`, // Note: perlu ambil dari searchByIDusers. Tapi perlu dicek dulu functionnya, soalnya datanya gak muncul
+			type: 'GET',
+			dataType: 'json',
+			data: {
+				type: 'kabkota'
+			},
+			success: function(response) {
+				const institutions = response.data.map(item => ({
+					id: item.id,
+					text: item.name
+				}));
+
+				$('#institution_id').select2({
+					placeholder: 'Pilih Dinas Kab/Kota',
+					allowClear: true,
+					width: '100%',
+					data: institutions
+				});
+
+				if (selectedInstitutionId) {
+					$('#institution_id').val(selectedInstitutionId).trigger('change');
+				}
+			},
+			error: function(xhr, status, error) {
+				console.error('Gagal memuat data instansi:', error);
+			}
+		});
+	})
+</script>
+<?= $this->endSection() ?>
 <?= $this->endSection() ?>

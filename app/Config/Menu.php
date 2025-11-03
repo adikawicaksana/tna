@@ -53,7 +53,7 @@ class Menu
                     [
                         'label' => 'Provinsi',
                         'url'   => route_to('provinsi.index'),
-                       'active' => 'provinsi',
+                        'active' => 'provinsi',
                         'access' => ['provinsi', 'index'],
                     ],
                 ]
@@ -74,6 +74,12 @@ class Menu
                         'url'   => route_to('report.trainingNeedsSummary2'),
                         'active' => 'report.trainingNeedsSummary2',
                         'access' => ['Report', 'trainingNeedsSummary2'],
+                    ],
+                    [
+                        'label' => 'Rekapitulasi Kebutuhan Pelatihan di Kabupaten',
+                        'url'   => route_to('report.trainingNeedsSummaryByRegency'),
+                        'active' => 'report',
+                        'access' => ['Report', 'trainingNeedsSummaryByRegency'],
                     ],
                 ]
             ],

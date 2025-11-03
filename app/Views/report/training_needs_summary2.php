@@ -30,11 +30,14 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 							<option value="" <?= (!isset($_GET['plan_year']) || empty($_GET['plan_year'])) ? 'selected' : '' ?>>Pilih Tahun</option>
 							<?php foreach ($years as $each): ?>
 								<option value="<?= $each ?>"
-									<?= (isset($_GET['plan_year']) && $_GET['plan_year'] == $each) ? 'selected' : '' ?>>
+									<?= ((!isset($_GET['plan_year'])) && (date('Y') + 1 == $each)) ||
+										(isset($_GET['plan_year']) && $_GET['plan_year'] == $each) ? 'selected' : '' ?>>
 									<?= $each ?>
 								</option>
 							<?php endforeach; ?>
 						</select>
+					</div>
+					<div class="col-12 text-end mt-2">
 						<button type="submit" class="btn btn-sm btn-primary">Cari</button>
 					</div>
 				</div>
@@ -50,7 +53,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 		</div>
 		<div class="card-body">
 			<div class="table-responsive">
-				<table class="table table-sm table-bordered table-bordered">
+				<table class="table table-sm table-bordered">
 					<thead>
 						<tr>
 							<th>No</th>
@@ -64,7 +67,7 @@ $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
 						<?php foreach ($data as $key => $each): ?>
 							<tr>
 								<td><?= $key + 1 ?></td>
-								<td><?= $each['institution_name'] ?></td>
+								<td><?= ucwords(strtolower($each['institution_type'] . ' ' . $each['institution_name'])) ?></td>
 								<td><?= $each['nama_pelatihan'] ?></td>
 								<td><?= $each['fullname'] ?></td>
 								<td><?= $each['plan_year'] ?></td>

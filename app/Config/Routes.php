@@ -20,6 +20,7 @@ $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 $routes->get('/master-training', 'MasterTraining::index', ['as' => 'master-training.index']);
+$routes->get('/listInstitution', 'Institusi::listInstitution', ['as' => 'institution.listInstitution']);
 
 $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
 	// $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
@@ -94,6 +95,8 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 	$routes->get('report/xlsTrainingNeedsSummary', 'Report::xlsTrainingNeedsSummary', ['as' => 'report.xlsTrainingNeedsSummary']);
 	$routes->get('report/trainingNeedsSummary2', 'Report::trainingNeedsSummary2', ['as' => 'report.trainingNeedsSummary2']);
 	$routes->get('report/xlsTrainingNeedsSummary2', 'Report::xlsTrainingNeedsSummary2', ['as' => 'report.xlsTrainingNeedsSummary2']);
+	$routes->get('report/trainingNeedsSummaryByRegency', 'Report::trainingNeedsSummaryByRegency', ['as' => 'report.trainingNeedsSummaryByRegency']);
+	$routes->get('report/xlsTrainingNeedsSummaryByRegency', 'Report::xlsTrainingNeedsSummaryByRegency', ['as' => 'report.xlsTrainingNeedsSummaryByRegency']);
 });
 
 

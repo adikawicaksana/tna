@@ -162,4 +162,19 @@ class Institusi extends BaseController
             ],
         ]);
     }
+
+    public function listInstitution()
+    {
+        $builder = (new InstitutionsModel());
+        if (isset($_GET['type']) && !empty($_GET['type'])) {
+            $builder->where(['type' => $_GET['type']]);
+        }
+        if (isset($_GET['term']) & !empty($_GET['term'])) {
+            $builder->where("name ilike '%{$_GET['term']}%'");
+        }
+
+        $data = $builder->get()->getResultArray();
+
+        return $this->response->setJSON(['data' => $data]);
+    }
 }

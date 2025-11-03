@@ -56,6 +56,13 @@
   <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/select2/select2.css') ?>" />
   <link rel="stylesheet" href="<?= base_url('assets/vendor/libs/bootstrap-select/bootstrap-select.css') ?>" />
 
+  <style>
+    .table-bordered th,
+    .table-bordered td {
+      border: 1px solid #dee2e6 !important;
+    }
+  </style>
+
   <?= $this->renderSection('css') ?>
 
 

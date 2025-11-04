@@ -76,6 +76,11 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 		$routes->post('questionnaire/activate/(:any)', 'Admin\Questionnaire::activate/$1', ['as' => 'questionnaire.activate']);
 		$routes->post('questionnaire/deactivate/(:any)', 'Admin\Questionnaire::deactivate/$1', ['as' => 'questionnaire.deactivate']);
 		$routes->get('questionnaire/(:any)', 'Admin\Questionnaire::show/$1', ['as' => 'questionnaire.show']);
+
+		$routes->get('usersManager', 'Admin\UsersManager::index', ['as' => 'usersManager.index']);
+		$routes->get('usersManager/getManager', 'Admin\UsersManager::getManager', ['as' => 'usersManager.getManager']);
+		$routes->post('usersManager/delete', 'Admin\UsersManager::delete', ['as' => 'usersManager.delete']);
+		$routes->get('usersManager/(:any)', 'Admin\UsersManager::show/$1', ['as' => 'usersManager.show']);
 	});
 
 	// Survey

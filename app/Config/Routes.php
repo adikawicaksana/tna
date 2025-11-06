@@ -79,6 +79,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 
 		$routes->get('usersManager', 'Admin\UsersManager::index', ['as' => 'usersManager.index']);
 		$routes->get('usersManager/getManager', 'Admin\UsersManager::getManager', ['as' => 'usersManager.getManager']);
+		$routes->post('usersManager/store', 'Admin\UsersManager::store', ['as' => 'usersManager.store']);
 		$routes->post('usersManager/delete', 'Admin\UsersManager::delete', ['as' => 'usersManager.delete']);
 		$routes->get('usersManager/(:any)', 'Admin\UsersManager::show/$1', ['as' => 'usersManager.show']);
 	});

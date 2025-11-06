@@ -5,6 +5,8 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\UsersManagerModel;
 use App\Models\UserDetailModel;
+use Exception;
+use Ramsey\Uuid\Uuid;
 
 class UsersManager extends BaseController
 {
@@ -19,22 +21,63 @@ class UsersManager extends BaseController
 
 	public function index()
 	{
-		// if ($this->request->isAJAX()) {
-		// 	return $this->_getManager();
-		// }
-
 		return view('admin/users_manager/index', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'title' => 'Manajemen Pengguna',
 		]);
 	}
 
-	public function show()
+	public function show($id)
 	{
 		return view('admin/users_manager/show', [
 			'userDetail' => $this->userDetailModel->getUserDetail(),
 			'title' => 'Detail Manajemen Pengguna',
+			'id' => $id,
 		]);
+	}
+
+	public function store()
+	{
+		if (empty($_POST['institution_id'])) {
+			return redirect()->to(route_to('usersManager.show', $_POST['id']))->with('error', 'Gagal menambah akses. Instansi tidak boleh kosong.');
+		}
+
+		$dbtrans = \Config\Database::connect();
+		$dbtrans->transBegin();
+		try {
+			// Fetch all access
+			$exist = $this->model->builder()
+				->select('_id_institutions')
+				->where(['_id_users' => $_POST['id']])
+				->get()->getResultArray();
+			$exist = array_column($exist, '_id_institutions');
+
+			$data = [];
+			foreach ($_POST['institution_id'] as $each) {
+				if (in_array($each, $exist)) continue;	// Skip existing data
+
+				$data[] = [
+					'id' => Uuid::uuid7()->toString(),
+					'_id_users' => $_POST['id'],
+					'_id_institutions' => $each,
+					'created_at' => date('Y:m:d H:i:s'),
+				];
+			}
+
+			if (!empty($data)) {
+				if (!$this->model->insertBatch($data)) {
+					throw new \Exception('Gagal menyimpan pertanyaan: ' . json_encode($this->model->errors()));
+				}
+			} else {
+				throw new \Exception('Tidak ada data baru ditambahkan');
+			}
+
+			$dbtrans->transCommit();
+			return redirect()->to(route_to('usersManager.show', $_POST['id']))->with('success', 'Data berhasil disimpan');
+		} catch (\Throwable $e) {
+			$dbtrans->transRollback();
+			return redirect()->to(route_to('usersManager.show', $_POST['id']))->with('error', $e->getMessage());
+		}
 	}
 
 	public function delete() {}
@@ -61,7 +104,7 @@ class UsersManager extends BaseController
 				->groupEnd();
 		}
 		if (!empty($_GET['user_id'])) {
-			$builder->where('user_id', $_GET['user_id']);
+			$builder->where('m._id_users', $_GET['user_id']);
 		}
 		// Sorting
 		$columns = ['fullname', 'institution_name']; // allow sorting

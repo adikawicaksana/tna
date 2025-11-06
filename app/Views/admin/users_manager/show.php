@@ -8,7 +8,20 @@
 			<h5>Form Tambah Akses</h5>
 		</div>
 		<div class="card-body">
-			<form id="add-institution">
+			<?php if (session()->getFlashdata('error')): ?>
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					<?= session()->getFlashdata('error') ?>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			<?php elseif (session()->getFlashdata('success')): ?>
+				<div class="alert alert-success alert-dismissible fade show" role="alert">
+					<?= session()->getFlashdata('success') ?>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			<?php endif; ?>
+
+			<form id="add-institution" method="POST" action="<?= route_to('usersManager.store') ?>">
+				<input type="hidden" name="id" value="<?= $id ?>">
 				<div class="row mb-6">
 					<label class="col-sm-2 col-form-label" for="basic-default-name">Instansi</label>
 					<div class="col-sm-10">
@@ -18,7 +31,7 @@
 					</div>
 				</div>
 				<div class="mb-6 text-end">
-					<button type="button" class="btn btn-sm btn-primary">Tambah</button>
+					<button type="submit" class="btn btn-sm btn-primary">Tambah</button>
 				</div>
 			</form>
 		</div>
@@ -47,6 +60,32 @@
 	$(document).ready(function() {
 		initTable();
 		initSelect2();
+
+		$('#add-institution').submit(function(e) {
+			e.preventDefault();
+			// Check if institution is empty
+			let institution_id = $('#institution_id').val();
+			if (institution_id.length == 0) {
+				Swal.fire({icon: 'warning', title: 'Gagal', text: 'Instansi tidak boleh kosong'});
+				return false;
+			}
+
+			// Confirmation and submit form
+			Swal.fire({
+				icon: 'question',
+				title: 'Yakin?',
+				text: 'Apakah Anda yakin akan menambahkan akses?',
+				showCancelButton: true,
+				confirmButtonText: 'Ya',
+				cancelButtonText: 'Tidak',
+			}).then((result) => {
+				if (result.isConfirmed) {
+					this.submit();
+				}
+			})
+
+			return false;
+		})
 	});
 
 	function initTable() {
@@ -55,10 +94,10 @@
 			serverSide: true,
 			ajax: {
 				url: "<?= route_to('usersManager.getManager') ?>",
-				type: "GET"
-			},
-			data: {
-				user_id: '019a0fe4-fecb-70a9-8929-a63ff7444c5b',
+				type: "GET",
+				data: {
+					user_id: '<?= $id ?>',
+				},
 			},
 			columns: [{
 					data: "no",
@@ -93,7 +132,7 @@
 
 	function initSelect2() {
 		$('#institution_id').select2({
-			placeholder: 'Pilih Dinas Kab/Kota',
+			placeholder: 'Pilih Instansi',
 			allowClear: true,
 			width: '100%',
 			ajax: {
@@ -105,7 +144,6 @@
 					type: 'kabkota',
 				}),
 				processResults: response => {
-					console.log(response)
 					const institutions = response.data.map(item => ({
 						id: item.id,
 						text: item.name

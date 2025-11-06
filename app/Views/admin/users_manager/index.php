@@ -57,6 +57,7 @@
 				targets: [0, 3],
 				className: 'text-center',
 			}],
+			order: [[1, 'ASC'], [2, 'ASC']],
 		});
 	});
 

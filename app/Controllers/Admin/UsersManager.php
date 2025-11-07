@@ -80,7 +80,22 @@ class UsersManager extends BaseController
 		}
 	}
 
-	public function delete() {}
+	public function delete()
+	{
+		$condition = ['_id_users' => $_POST['user_id'], '_id_institutions' => $_POST['institution_id']];
+
+		// Check data
+		if (!$this->model->where($condition)->find()) {
+			return $this->response->setJSON(['success' => false, 'message' => 'Data tidak ditemukan']);
+		}
+
+		// Delete data
+		if (!$this->model->where($condition)->delete()) {
+			return $this->response->setJSON(['success' => false, 'message' => $this->model->db->error()]);
+		} else {
+			return $this->response->setJSON(['success' => true, 'message' => 'Data berhasil dihapus']);
+		}
+	}
 
 	public function getManager()
 	{
@@ -93,7 +108,7 @@ class UsersManager extends BaseController
 
 		$builder = \Config\Database::connect();
 		$builder = $builder->table('users_manager m')
-			->select("m._id_users AS user_id, fullname, CONCAT(i.type, ' ', i.name) AS institution_name")
+			->select("m._id_users AS user_id, fullname, i.id AS institution_id, CONCAT(i.type, ' ', i.name) AS institution_name")
 			->join('users_detail d', 'm._id_users = d._id_users')
 			->join('master_institutions i', 'm._id_institutions = i.id');
 		// Filtering
@@ -131,6 +146,7 @@ class UsersManager extends BaseController
 				'no' => $start + $index + 1,
 				'user_id' => $each['user_id'],
 				'fullname' => $each['fullname'],
+				'institution_id' => $each['institution_id'],
 				'institution_name' => $each['institution_name'],
 				'action' => '<a href="' . route_to("usersManager.show", $each['user_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 			];

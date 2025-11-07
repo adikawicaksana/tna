@@ -88,7 +88,44 @@
 		})
 	});
 
+	$(document).on('click', '.btn-delete', function() {
+		const user_id = $(this).data('user_id');
+		const institution_id = $(this).data('institution_id');
+
+		// Confirmation and delete data
+		Swal.fire({
+			icon: 'question',
+			title: 'Yakin?',
+			text: 'Apakah Anda yakin akan menghapus akses ke instansi ini?',
+			showCancelButton: true,
+			confirmButtonText: 'Ya',
+			cancelButtonText: 'Tidak',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$.ajax({
+					url: "<?= route_to('usersManager.delete') ?>",
+					type: "POST",
+					data: {
+						user_id: user_id,
+						institution_id: institution_id,
+					},
+					success: function(response) {
+						if (response.success) {
+							initTable();
+						} else {
+							Swal.fire('Gagal!', response.message, 'error');
+						}
+					}
+				});
+			}
+		})
+	});
+
 	function initTable() {
+		if ($.fn.DataTable.isDataTable('#table-list')) {
+			$('#table-list').DataTable().clear().destroy();
+		}
+
 		$('#table-list').DataTable({
 			processing: true,
 			serverSide: true,
@@ -111,7 +148,7 @@
 				{
 					data: "user_id",
 					render: function(data, type, row) {
-						return renderAction(data);
+						return renderAction(row.user_id, row.institution_id);
 					},
 					orderable: false,
 					searchable: false
@@ -125,9 +162,9 @@
 		});
 	}
 
-	function renderAction(userId) {
-		return `<a href="#"
-			class="btn btn-outline-info btn-sm p-2"><i class="fas fa-times"></i></a>`;
+	function renderAction(userId, institutionId) {
+		return `<button class="btn btn-outline-info btn-sm btn-delete p-2"
+			data-user_id="${userId}" data-institution_id="${institutionId}"><i class="fas fa-times"></i></button>`;
 	}
 
 	function initSelect2() {
@@ -141,7 +178,6 @@
 				delay: 250,
 				data: params => ({
 					term: params.term,
-					type: 'kabkota',
 				}),
 				processResults: response => {
 					const institutions = response.data.map(item => ({

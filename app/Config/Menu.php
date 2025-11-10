@@ -18,6 +18,7 @@ class Menu
             //             'label' => 'Dashboard',
             //             'url'   => base_url('dashboard'),
             //             'active' => 'dashboard',
+
             //         ],
             //         [
             //             'label' => 'Profil',
@@ -66,7 +67,7 @@ class Menu
                     [
                         'label' => 'Rekapitulasi Kebutuhan Pelatihan Fasyankes',
                         'url'   => route_to('report.trainingNeedsSummary'),
-                        'active' => 'report',
+                        'active' => 'report.trainingNeedsSummary',
                         'access' => ['Report', 'trainingNeedsSummary'],
                     ],
                     [
@@ -84,7 +85,7 @@ class Menu
                 ]
             ],
             [
-                'label' => 'Master',
+                'label' => 'Master Data',
                 'icon'  => 'ti tabler-database-cog',
                 'active' => 'master',
                 'children' => [
@@ -104,6 +105,12 @@ class Menu
                         'label' => 'Pelatihan',
                         'url'   => route_to('master-training.index'),
                         'active' => 'master-training.',
+                    ],
+                    [
+                        'label' => 'Manajemen Pengguna',
+                        'url'   => route_to('usersManager.index'),
+                        'active' => 'usersManager.',
+                        'access' => ['usersManager', 'index'],
                     ],
                 ]
             ],

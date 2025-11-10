@@ -27,41 +27,40 @@ class UsersManager extends BaseController
 		]);
 	}
 
-	public function show($id)
-	{
-		return view('admin/users_manager/show', [
-			'userDetail' => $this->userDetailModel->getUserDetail(),
-			'title' => 'Detail Manajemen Pengguna',
-			'id' => $id,
-		]);
-	}
-
 	public function store()
 	{
-		if (empty($_POST['institution_id'])) {
-			return redirect()->to(route_to('usersManager.show', $_POST['id']))->with('error', 'Gagal menambah akses. Instansi tidak boleh kosong.');
+		if (empty($_POST['user_id']) || empty($_POST['institution_id'])) {
+			throw new \Exception('Gagal menambah akses. Pengguna dan instansi tidak boleh kosong.');
 		}
 
 		$dbtrans = \Config\Database::connect();
 		$dbtrans->transBegin();
 		try {
-			// Fetch all access
-			$exist = $this->model->builder()
-				->select('_id_institutions')
-				->where(['_id_users' => $_POST['id']])
-				->get()->getResultArray();
-			$exist = array_column($exist, '_id_institutions');
 
 			$data = [];
-			foreach ($_POST['institution_id'] as $each) {
-				if (in_array($each, $exist)) continue;	// Skip existing data
+			// Fetch all access
+			$data = $this->model->builder()
+				->select('_id_users, _id_institutions')
+				->whereIn('_id_users', $_POST['user_id'])
+				->orWhereIn('_id_institutions', $_POST['institution_id'])
+				->get()->getResultArray();
+			$exist = [];
+			foreach ($data as $each) {
+				$exist[$each['_id_users']][] = $each['_id_institutions'];
+			}
 
-				$data[] = [
-					'id' => Uuid::uuid7()->toString(),
-					'_id_users' => $_POST['id'],
-					'_id_institutions' => $each,
-					'created_at' => date('Y:m:d H:i:s'),
-				];
+			$data = [];
+			foreach ($_POST['user_id'] as $key => $user_id) {
+				foreach ($_POST['institution_id'] as $institution_id) {
+					if (in_array($institution_id, $exist[$user_id])) continue;	// Skip existing data
+
+					$data[] = [
+						'id' => Uuid::uuid7()->toString(),
+						'_id_users' => $user_id,
+						'_id_institutions' => $institution_id,
+						'created_at' => date('Y:m:d H:i:s'),
+					];
+				}
 			}
 
 			if (!empty($data)) {
@@ -73,10 +72,10 @@ class UsersManager extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('usersManager.show', $_POST['id']))->with('success', 'Data berhasil disimpan');
+			return $this->response->setJSON(['status' => true, 'message' => 'Data berhasil disimpan']);
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
-			return redirect()->to(route_to('usersManager.show', $_POST['id']))->with('error', $e->getMessage());
+			return $this->response->setJSON(['status' => false, 'message' => $e->getMessage()]);
 		}
 	}
 

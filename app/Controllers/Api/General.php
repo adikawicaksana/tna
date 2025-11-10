@@ -5,10 +5,11 @@ namespace App\Controllers\Api;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\InstitutionsModel;
 use App\Models\MasterTrainingModel;
+use App\Models\UserDetailModel;
 
 class General extends ResourceController
 {
-     
+
     protected $institutions;
 
     public function __construct()
@@ -103,5 +104,21 @@ class General extends ResourceController
         }
 
         return $this->response->setJSON($data);
+    }
+
+    public function listUser()
+    {
+        $builder = (new UserDetailModel());
+        if (isset($_GET['term']) & !empty($_GET['term'])) {
+            $builder->where("fullname ilike '%{$_GET['term']}%'");
+        }
+        if (isset($_GET['term']) & !empty($_GET['term'])) {
+            $builder->orWhere("nik ilike '%{$_GET['term']}%'");
+        }
+
+        $data = $builder->select("CONCAT(fullname, ' - ', nik) AS name, _id_users as id")
+            ->get()->getResultArray();
+
+        return $this->response->setJSON(['data' => $data]);
     }
 }

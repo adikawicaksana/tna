@@ -21,6 +21,7 @@ $routes->post('/register/resendOtp', 'Register::resendOtp');
 
 $routes->get('/master-training', 'MasterTraining::index', ['as' => 'master-training.index']);
 $routes->get('/listInstitution', 'Institusi::listInstitution', ['as' => 'institution.listInstitution']);
+$routes->get('/listUser', 'Api\General::listUser');
 
 $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], function ($routes) {
 	// $routes->get('/dashboard', 'Dashboard::index', ['as' => 'dashboard']);
@@ -81,7 +82,6 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 		$routes->get('usersManager/getManager', 'Admin\UsersManager::getManager', ['as' => 'usersManager.getManager']);
 		$routes->post('usersManager/store', 'Admin\UsersManager::store', ['as' => 'usersManager.store']);
 		$routes->post('usersManager/delete', 'Admin\UsersManager::delete', ['as' => 'usersManager.delete']);
-		$routes->get('usersManager/(:any)', 'Admin\UsersManager::show/$1', ['as' => 'usersManager.show']);
 	});
 
 	// Survey

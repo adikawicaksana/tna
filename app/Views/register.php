@@ -729,31 +729,34 @@
           dataType: 'json',
           success: res => {
             Swal.close();
-            if (res.code === 400) {
-              if (res.show_otp_modal) {
-                const otpModal = new bootstrap.Modal('#otpModal');
+            showAlert(res.type, res.message, './login');
+            reloadCaptcha();
+            $('input[name="captcha"]').val('');
+            // if (res.code === 400) {
+            //   if (res.show_otp_modal) {
+            //     const otpModal = new bootstrap.Modal('#otpModal');
 
-                Swal.fire({
-                  text: res.message,
-                  icon: res.type,
-                  confirmButtonText: 'OK'
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    $('#otpPhoneNumber').text(res.data.mobile);
-                    otpModal.show();
-                  }
-                });
+            //     Swal.fire({
+            //       text: res.message,
+            //       icon: res.type,
+            //       confirmButtonText: 'OK'
+            //     }).then((result) => {
+            //       if (result.isConfirmed) {
+            //         $('#otpPhoneNumber').text(res.data.mobile);
+            //         otpModal.show();
+            //       }
+            //     });
 
-              } else {
-                showAlert(res.type, res.message);
-                reloadCaptcha();
-                $('input[name="captcha"]').val('');
-              }
-            } else {
-              const otpModal = new bootstrap.Modal('#otpModal');
-              $('#otpPhoneNumber').text('+' + res.data.mobile);
-              otpModal.show();
-            }
+            //   } else {
+            //     showAlert(res.type, res.message);
+            //     reloadCaptcha();
+            //     $('input[name="captcha"]').val('');
+            //   }
+            // } else {
+            //   const otpModal = new bootstrap.Modal('#otpModal');
+            //   $('#otpPhoneNumber').text('+' + res.data.mobile);
+            //   otpModal.show();
+            // }
           }
         });
       });

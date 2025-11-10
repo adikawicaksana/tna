@@ -94,16 +94,17 @@ class Register extends BaseController
         }
         $session->remove('captcha');
         
-       $checknumber = $this->notifService->checkNumberWhatsApp($mobile);
-       if(empty($checknumber['jid'])){
-            return $this->response->setJSON([
-                'status'  => false,
-                'code'    => 400,
-                'type'    => 'warning',
-                'message' => 'Nomor yang anda masukan tidak terdaftar sebagai Nomor WhatsApp, Masukan nomor WhatsApp anda',
-                'data'    => []
-            ]);
-        }
+        // ANTISIPASI WA GARLAT TERBLOKIR
+    //    $checknumber = $this->notifService->checkNumberWhatsApp($mobile);
+    //    if(empty($checknumber['jid'])){
+    //         return $this->response->setJSON([
+    //             'status'  => false,
+    //             'code'    => 400,
+    //             'type'    => 'warning',
+    //             'message' => 'Nomor yang anda masukan tidak terdaftar sebagai Nomor WhatsApp, Masukan nomor WhatsApp anda',
+    //             'data'    => []
+    //         ]);
+    //     }
 
         $userModel   = new UserModel();
         $detailModel = new UserDetailModel();
@@ -136,7 +137,7 @@ class Register extends BaseController
             'id'        => $newIDUser,
             'email'     => $email,
             'password'  => password_hash($password, PASSWORD_DEFAULT),
-            'status'    => 'pending',
+            'status'    => 'active',
             'user_role' => 3
         ]);
 
@@ -173,7 +174,8 @@ class Register extends BaseController
             }
         }
 
-        $this->generateOtpAndResponse($session, $mobile, $email, $newIDUser);
+        // ANTISIPASI WA GARLAT TERBLOKIR
+        // $this->generateOtpAndResponse($session, $mobile, $email, $newIDUser);
 
         
        
@@ -182,7 +184,9 @@ class Register extends BaseController
                 'status'    => true,
                 'code'      => 200,
                 'type'      => 'success',
-                'message'   => 'Registrasi diterima, dan OTP telah dikirim.',
+                // 'message'   => 'Registrasi diterima, dan OTP telah dikirim.',
+                // ANTISIPASI WA GARLAT TERBLOKIR
+                'message'   => 'Registrasi berhasil',
                 'data'      => $detail_user
             ])->setStatusCode(200);
 

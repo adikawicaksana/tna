@@ -120,6 +120,12 @@ class Menu
                 'url' => route_to('survey.index'),
                 'active' => 'survey.',
             ],
+            [
+                'label' => 'Bantuan',
+                'icon'  => 'ti tabler-question-circle',
+                'url' => route_to('support'),
+                'active' => 'support',
+            ],
         ];
 
         return self::filterSidebarAccess($menu);

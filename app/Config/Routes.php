@@ -29,6 +29,7 @@ $routes->group('', ['filter' => ['authweb', 'checkprofile', 'autologin']], funct
 	// $routes->get('/dashboard/countIncompleteCompetence', 'Dashboard::countIncompleteCompetence', ['as' => 'countIncompleteCompetence']);
 	$routes->get('dashboard', 'Survey::index', ['as' => 'dashboard']);
 	$routes->get('/profile', 'Profile::index', ['as' => 'profile']);
+	$routes->get('support', 'Support::index', ['as' => 'support']);
 });
 
 

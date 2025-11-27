@@ -61,7 +61,7 @@ class Questionnaire extends BaseController
 					'created_at' => CommonHelper::formatDate($each['created_at']),
 					'questionnaire_type' => $type[$each['questionnaire_type']],
 					'questionnaire_status' => $status[$each['questionnaire_status']],
-					'action' => '<a href="' . route_to("questionnaire.show", $each['questionnaire_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+					'action' => '<a href="' . url_to("questionnaire.show", $each['questionnaire_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 				];
 			}
 
@@ -150,7 +150,7 @@ class Questionnaire extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('questionnaire.index'))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(url_to('questionnaire.index'))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			// dd($e->getMessage());

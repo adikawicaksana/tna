@@ -99,7 +99,7 @@ class Institusi extends BaseController
                     'fullname' => $each['fullname'],
                     'survey_status' => $status[$each['survey_status']],
                     'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-                    'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+                    'action' => '<a href="' . url_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
                 ];
             }
 

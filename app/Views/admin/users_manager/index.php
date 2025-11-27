@@ -20,7 +20,7 @@
 				</div>
 			<?php endif; ?>
 
-			<form id="add-access" method="POST" action="<?= route_to('usersManager.store') ?>">
+			<form id="add-access" method="POST" action="<?= url_to('usersManager.store') ?>">
 				<div class="row mb-6">
 					<label class="col-sm-2 col-form-label" for="basic-default-name">Pengguna</label>
 					<div class="col-sm-10">
@@ -132,7 +132,7 @@
 		}).then((result) => {
 			if (result.isConfirmed) {
 				$.ajax({
-					url: "<?= route_to('usersManager.delete') ?>",
+					url: "<?= url_to('usersManager.delete') ?>",
 					type: "POST",
 					data: {
 						user_id: user_id,
@@ -159,7 +159,7 @@
 			processing: true,
 			serverSide: true,
 			ajax: {
-				url: "<?= route_to('usersManager.getManager') ?>",
+				url: "<?= url_to('usersManager.getManager') ?>",
 				type: "GET",
 			},
 			columns: [{

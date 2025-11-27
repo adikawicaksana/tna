@@ -64,7 +64,7 @@ class Survey extends BaseController
 			// Filter by user access
 			$user_id = session()->get('_id_users');
 			if (session()->get('user_role') == UserModel::ROLE_USER) {
-				$user = (new UserModel())->find($user_id);				
+				$user = (new UserModel())->find($user_id);
 				$p_institusi = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
 				$p_kabkota = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
 				$p_provinsi = $m_institutions ? array_column($m_institutions, '_id_institutions') : [];
@@ -117,7 +117,7 @@ class Survey extends BaseController
 					'fullname' => $each['fullname'],
 					'survey_status' => $status[$each['survey_status']],
 					'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-					'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+					'action' => '<a href="' . url_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 				];
 			}
 
@@ -338,7 +338,7 @@ class Survey extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('survey.index'))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(url_to('survey.index'))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			return redirect()->back()->withInput()->with('error', $e->getMessage());
@@ -501,7 +501,7 @@ class Survey extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('survey.show', $survey_id))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(url_to('survey.show', $survey_id))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			return redirect()->back()->withInput()->with('error', $e->getMessage());
@@ -662,7 +662,7 @@ class Survey extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('survey.show', $survey_id))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(url_to('survey.show', $survey_id))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			return redirect()->back()->withInput()->with('error', $e->getMessage());

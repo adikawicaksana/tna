@@ -10,7 +10,7 @@ use App\Models\QuestionModel;
 		<div class="card-header">
 			<h5><?= $title ?></h5>
 			<?php if (QuestionModel::isDeactivatable($data[0]['question_id'])): ?>
-				<a href="<?= route_to('question.edit', $data[0]['question_id']) ?>" class="btn btn-sm btn-outline-warning">
+				<a href="<?= url_to('question.edit', $data[0]['question_id']) ?>" class="btn btn-sm btn-outline-warning">
 					<span class="me-2"><i class="fas fa-pen"></i></span> Edit
 				</a>
 				<a href="<?= url_to('question.deactivate', $data[0]['question_id']) ?>" class="btn btn-sm btn-outline-danger">

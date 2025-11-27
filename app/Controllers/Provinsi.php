@@ -96,7 +96,7 @@ class Provinsi extends BaseController
                     'fullname' => $each['fullname'],
                     'survey_status' => $status[$each['survey_status']],
                     'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-                    'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+                    'action' => '<a href="' . url_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
                 ];
             }
 
@@ -125,7 +125,7 @@ class Provinsi extends BaseController
         }elseif ($session->get('user_role') != UserModel::ROLE_USER) {
             $p_institusi = array_merge(array_column($this->institutions->getParentsBySurvey('provinsi'), 'parent_id'),array_column($m_institutions, '_id_institutions'));
         }
-       
+
         $institusi = !empty($p_institusi) ? $this->institutions->whereIn('id', $p_institusi)->findAll(): [];
 
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
@@ -138,9 +138,9 @@ class Provinsi extends BaseController
 
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
 
-            $child['fasyankes'] = $this->institutions->where('parent',$institusiDetail['id'])->where('category','fasyankes')->findAll();            
-            $child['dinas'] = $this->institutions->where('parent',$institusiDetail['id'])->where('category','nonfasyankes')->findAll();         
-            $child['upt'] = $this->institutions->where('parent',$institusiDetail['id'])->where('category','nonfasyankes')->where('type','institusi')->findAll();     
+            $child['fasyankes'] = $this->institutions->where('parent',$institusiDetail['id'])->where('category','fasyankes')->findAll();
+            $child['dinas'] = $this->institutions->where('parent',$institusiDetail['id'])->where('category','nonfasyankes')->findAll();
+            $child['upt'] = $this->institutions->where('parent',$institusiDetail['id'])->where('category','nonfasyankes')->where('type','institusi')->findAll();
             // $child['institusi'] = $this->institutions->getByParentID($institusiDetail['id'],'institusi');
         }else{
             throw PageNotFoundException::forPageNotFound();
@@ -227,7 +227,7 @@ class Provinsi extends BaseController
                     'fullname' => $each['fullname'],
                     'survey_status' => $status[$each['survey_status']],
                     'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-                    'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+                    'action' => '<a href="' . url_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
                 ];
             }
 
@@ -239,7 +239,7 @@ class Provinsi extends BaseController
             ]);
         }
 
-        
+
         $id_child = $this->request->getGet('ic') ?? null;
         $year = $this->request->getGet('y') ?? date("Y");
         $userDetail = $this->userDetailModel->getUserDetail();
@@ -247,7 +247,7 @@ class Provinsi extends BaseController
         $institusi=[];
         $p_institusi = [];
 
-        
+
         $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'kabkota');
 
        if (!in_array($id, array_column($m_institutions, '_id_institutions')) && $session->get('user_role') == UserModel::ROLE_USER) {
@@ -266,7 +266,7 @@ class Provinsi extends BaseController
 
         $selectedId = $id_child ?: $institusi[0]['id'];
         $institusiDetail = $this->institutions->detail($selectedId);
-        
+
         if ($institusiDetail) {
             $jumlahUserInstitusi = $this->userInstitutions
                 ->countByInstitution($institusiDetail['id']) ?? 0;
@@ -296,7 +296,7 @@ class Provinsi extends BaseController
 
 
 
-   
+
 
 
 

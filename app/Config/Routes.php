@@ -5,8 +5,8 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-// $routes->get('/', 'Home::index', ['filter' => 'redirectIfAuth']);
-$routes->get('/', 'Auth::login', ['filter' => 'redirectIfAuth']);
+$routes->get('/', 'Home::index', ['filter' => 'redirectIfAuth']);
+// $routes->get('/', 'Auth::login', ['filter' => 'redirectIfAuth']);
 
 $routes->get('/login', 'Auth::login', ['filter' => 'redirectIfAuth']);
 $routes->post('/login', 'Auth::loginPost');
@@ -14,7 +14,7 @@ $routes->post('/refresh-token', 'Auth::refreshWebToken');
 $routes->get('/captcha', 'Captcha::generate');
 $routes->get('/logout', 'Auth::logout', ['as' => 'logout']);
 
-$routes->get('/register', 'Register::index', ['filter' => 'redirectIfAuth']);
+$routes->get('/register', 'Register::index', ['filter' => 'redirectIfAuth', 'as' => 'register']);
 $routes->post('/register', 'Register::store');
 $routes->post('/register/verifyOtp', 'Register::verifyOtp');
 $routes->post('/register/resendOtp', 'Register::resendOtp');

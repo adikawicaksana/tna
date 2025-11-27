@@ -147,7 +147,7 @@ class UsersManager extends BaseController
 				'fullname' => $each['fullname'],
 				'institution_id' => $each['institution_id'],
 				'institution_name' => $each['institution_name'],
-				'action' => '<a href="' . route_to("usersManager.show", $each['user_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+				'action' => '<a href="' . url_to("usersManager.show", $each['user_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 			];
 		}
 

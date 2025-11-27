@@ -163,7 +163,7 @@ class Question extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('question.index'))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(url_to('question.index'))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			// dd($e->getMessage());
@@ -248,7 +248,7 @@ class Question extends BaseController
 			}
 
 			$dbtrans->transCommit();
-			return redirect()->to(route_to('question.index'))->with('success', 'Data berhasil disimpan');
+			return redirect()->to(url_to('question.index'))->with('success', 'Data berhasil disimpan');
 		} catch (\Throwable $e) {
 			$dbtrans->transRollback();
 			return redirect()->back()->withInput()->with('error', $e->getMessage());

@@ -26,7 +26,7 @@ $oldQuestion = old('question_id') ?? [];
 				Nonaktifkan yang lain agar pembuatan baru dapat otomatis aktif atau aktifkan secara manual <br>
 				setelah menonaktifkan yang lain.
 			</div>
-			<form action="<?= route_to('questionnaire.store') ?>" method="post">
+			<form action="<?= url_to('questionnaire.store') ?>" method="post">
 				<?= csrf_field() ?>
 				<div class="row mb-3">
 					<label for="question" class="col-sm-2 col-form-label">Tipe</label>

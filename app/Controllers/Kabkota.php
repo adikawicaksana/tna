@@ -96,7 +96,7 @@ class Kabkota extends BaseController
                     'fullname' => $each['fullname'],
                     'survey_status' => $status[$each['survey_status']],
                     'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-                    'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+                    'action' => '<a href="' . url_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
                 ];
             }
 
@@ -125,7 +125,7 @@ class Kabkota extends BaseController
         }elseif ($session->get('user_role') != UserModel::ROLE_USER) {
             $p_institusi = array_merge(array_column($this->institutions->getParentsBySurvey('kabkota'), 'parent_id'),array_column($m_institutions, '_id_institutions'));
         }
-       
+
         $institusi = !empty($p_institusi) ? $this->institutions->whereIn('id', $p_institusi)->findAll(): [];
 
         $selectedId = ($id && in_array($id, $p_institusi, true)) ? $id : ($p_institusi[0] ?? null);
@@ -138,10 +138,10 @@ class Kabkota extends BaseController
 
             $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
 
-            $child['puskesmas'] = $this->institutions->getByParentID($institusiDetail['id'],'puskesmas');            
-            $child['rumahsakit'] = $this->institutions->getByParentID($institusiDetail['id'],'rumahsakit');       
+            $child['puskesmas'] = $this->institutions->getByParentID($institusiDetail['id'],'puskesmas');
+            $child['rumahsakit'] = $this->institutions->getByParentID($institusiDetail['id'],'rumahsakit');
             $child['institusi'] = $this->institutions->getByParentID($institusiDetail['id'],'institusi');
-            
+
             $datapermintaan = $this->survey->getTrainingSummaryByYear($year, $institusiDetail['id']);
         }
 
@@ -161,7 +161,7 @@ class Kabkota extends BaseController
                 'years' => CommonHelper::years(date('Y')),
                 'pengelola' => $pengelola,
                 'datapermintaan' => $datapermintaan,
-                
+
             ],
         ]);
     }
@@ -228,7 +228,7 @@ class Kabkota extends BaseController
                     'fullname' => $each['fullname'],
                     'survey_status' => $status[$each['survey_status']],
                     'approved_at' => !empty($each['approved_at']) ? CommonHelper::formatDate($each['approved_at']) : '-',
-                    'action' => '<a href="' . route_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+                    'action' => '<a href="' . url_to("survey.show", $each['survey_id']) . '" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
                 ];
             }
 
@@ -240,7 +240,7 @@ class Kabkota extends BaseController
             ]);
         }
 
-        
+
         $id_child = $this->request->getGet('ic') ?? null;
         $year = $this->request->getGet('y') ?? date("Y");
         $userDetail = $this->userDetailModel->getUserDetail();
@@ -248,7 +248,7 @@ class Kabkota extends BaseController
         $institusi=[];
         $p_institusi = [];
 
-        
+
         $m_institutions = (new UsersManagerModel())->searchByIDusers($session->get('_id_users'), 'kabkota');
 
        if (!in_array($id, array_column($m_institutions, '_id_institutions')) && $session->get('user_role') == UserModel::ROLE_USER) {
@@ -267,12 +267,12 @@ class Kabkota extends BaseController
 
         $selectedId = $id_child ?: $institusi[0]['id'];
         $institusiDetail = $this->institutions->detail($selectedId);
-        
+
         if ($institusiDetail) {
             $jumlahUserInstitusi = $this->userInstitutions->countByInstitution($institusiDetail['id']) ?? 0;
             $totalSurvey = count($this->survey->surveyByInstitusi($institusiDetail['id'], $year)) ?? 0;
 
-            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);            
+            $pengelola = $this->managerInstitution->searchByIDInstitution($institusiDetail['id']);
             $datapermintaan = $this->survey->getTrainingSummaryByYear($year, $institusiDetail['id']);
 
         }
@@ -298,7 +298,7 @@ class Kabkota extends BaseController
 
 
 
-   
+
 
 
 

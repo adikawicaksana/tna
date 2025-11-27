@@ -115,7 +115,7 @@ use App\Helpers\CommonHelper;
 		let trainingPlan = $('#training_plan');
 		trainingPlan.html('');
 		$.get({
-			url: "<?= route_to('user.getIncompleteCompetence') ?>",
+			url: "<?= url_to('user.getIncompleteCompetence') ?>",
 			data: {
 				_id_users: "<?= session()->get('_id_users') ?>"
 			},

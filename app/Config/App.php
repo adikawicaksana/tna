@@ -17,13 +17,13 @@ class App extends BaseConfig
      * E.g., http://example.com/
      */
     // public string $baseURL = 'http://localhost/';
-    
+
     public string $baseURL;
 
     public function __construct()
     {
         parent::__construct();
-        $this->baseURL = rtrim(env('app.baseURL', 'http://localhost/'), '/') . '/';
+        $this->baseURL = rtrim(env('app.baseURL'), '/') . '/';  // define app.baseURL = 'http://localhost/tna/' in .env
     }
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

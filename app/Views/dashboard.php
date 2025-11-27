@@ -64,8 +64,8 @@
 <?= $this->section('scripts') ?>
 <!-- Page JS -->
 <script>
-  const urlCompetencyPercentage = "<?= route_to('getCompetencyPercentage') ?>";
-  const urlIncompleteCompetence = "<?= route_to('countIncompleteCompetence') ?>";
+  const urlCompetencyPercentage = "<?= url_to('getCompetencyPercentage') ?>";
+  const urlIncompleteCompetence = "<?= url_to('countIncompleteCompetence') ?>";
 </script>
 <script src="<?= base_url('assets/js/dashboards-analytics.js') ?>"></script>
 

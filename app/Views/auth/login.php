@@ -151,7 +151,7 @@
 
             <p class="text-center">
               <span>Belum punya akun ?</span>
-              <a href="./register">
+              <a href="<?= url_to('register') ?>">
                 <span>Buat Akun</span>
               </a>
             </p>

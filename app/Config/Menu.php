@@ -22,7 +22,7 @@ class Menu
             //         ],
             //         [
             //             'label' => 'Profil',
-            //             'url'   => route_to('profile'),
+            //             'url'   => url_to('profile'),
             //             'active' => 'profile',
             //         ],
             //     ]
@@ -36,7 +36,7 @@ class Menu
             [
                 'label' => 'Institusi',
                 'icon'  => 'ti tabler-building',
-                'url' => route_to('institusi.index'),
+                'url' => url_to('institusi.index'),
                 'active' => 'institusi',
                 'access' => ['institusi', 'index'],
             ],
@@ -47,13 +47,13 @@ class Menu
                 'children' => [
                     [
                         'label' => 'Kabupaten/Kota',
-                        'url'   => route_to('kabkota.index'),
+                        'url'   => url_to('kabkota.index'),
                         'active' => 'kabkota',
                         'access' => ['kabkota', 'index'],
                     ],
                     [
                         'label' => 'Provinsi',
-                        'url'   => route_to('provinsi.index'),
+                        'url'   => url_to('provinsi.index'),
                         'active' => 'provinsi',
                         'access' => ['provinsi', 'index'],
                     ],
@@ -66,19 +66,19 @@ class Menu
                 'children' => [
                     [
                         'label' => 'Rekapitulasi Kebutuhan Pelatihan Fasyankes',
-                        'url'   => route_to('report.trainingNeedsSummary'),
+                        'url'   => url_to('report.trainingNeedsSummary'),
                         'active' => 'report.trainingNeedsSummary',
                         'access' => ['Report', 'trainingNeedsSummary'],
                     ],
                     [
                         'label' => 'Rekapitulasi Pelatihan atau Peningkatan Kompetensi yang Dibutuhkan Pegawai Fasyankes',
-                        'url'   => route_to('report.trainingNeedsSummary2'),
+                        'url'   => url_to('report.trainingNeedsSummary2'),
                         'active' => 'report.trainingNeedsSummary2',
                         'access' => ['Report', 'trainingNeedsSummary2'],
                     ],
                     [
                         'label' => 'Rekapitulasi Kebutuhan Pelatihan di Kabupaten',
-                        'url'   => route_to('report.trainingNeedsSummaryByRegency'),
+                        'url'   => url_to('report.trainingNeedsSummaryByRegency'),
                         'active' => 'report',
                         'access' => ['Report', 'trainingNeedsSummaryByRegency'],
                     ],
@@ -91,24 +91,24 @@ class Menu
                 'children' => [
                     [
                         'label' => 'Pertanyaan',
-                        'url'   => route_to('question.index'),
+                        'url'   => url_to('question.index'),
                         'active' => 'question.',
                         'access' => ['Question', 'index'],
                     ],
                     [
                         'label' => 'Kuesioner',
-                        'url'   => route_to('questionnaire.index'),
+                        'url'   => url_to('questionnaire.index'),
                         'active' => 'questionnaire.',
                         'access' => ['Questionnaire', 'index'],
                     ],
                     [
                         'label' => 'Pelatihan',
-                        'url'   => route_to('master-training.index'),
+                        'url'   => url_to('master-training.index'),
                         'active' => 'master-training.',
                     ],
                     [
                         'label' => 'Manajemen Pengguna',
-                        'url'   => route_to('usersManager.index'),
+                        'url'   => url_to('usersManager.index'),
                         'active' => 'usersManager.',
                         'access' => ['usersManager', 'index'],
                     ],
@@ -117,13 +117,13 @@ class Menu
             [
                 'label' => 'Assessment / Penilaian',
                 'icon'  => 'ti tabler-clipboard-text',
-                'url' => route_to('survey.index'),
+                'url' => url_to('survey.index'),
                 'active' => 'survey.',
             ],
             [
                 'label' => 'Bantuan',
                 'icon'  => 'ti tabler-question-circle',
-                'url' => route_to('support'),
+                'url' => url_to('support'),
                 'active' => 'support',
             ],
         ];

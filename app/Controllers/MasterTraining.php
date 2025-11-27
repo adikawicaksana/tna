@@ -63,7 +63,7 @@ class MasterTraining extends BaseController
 					'jenis_pelatihan' => $each['jenis_pelatihan'],
 					'nama_pelatihan' => $each['nama_pelatihan'],
 					'instansi_pengusul' => $each['instansi_pengusul'],
-					'action' => '<a href="'. route_to("master-training.show", $each['id']) .'" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
+					'action' => '<a href="'. url_to("master-training.show", $each['id']) .'" class="btn btn-outline-info btn-sm p-2"><i class="fas fa-eye"></i></a>',
 				];
 			}
 

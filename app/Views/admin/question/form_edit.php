@@ -19,7 +19,7 @@ $oldDescriptions = old('option_description') ?? [];
 				</div>
 			<?php endif; ?>
 
-			<form action="<?= route_to('question.update') ?>" method="post">
+			<form action="<?= url_to('question.update') ?>" method="post">
 				<?= csrf_field() ?>
 				<input type="hidden" name="question_id" value="<?= $data[0]['question_id'] ?>">
 				<div class="row mb-3">

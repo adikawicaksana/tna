@@ -816,24 +816,38 @@ const getInstitutionDetail = (id, type = "fasyankes", cb) => {
     }
 
     function renderKompetensi(data) {
-        return `<ul class="mb-0">
-            ${data.map(item => `
+    return `<ul class="mb-0">
+        ${data.map(item => {
+
+            const status = item.status === '1'
+                ? { text: 'Sudah', btn: 'btn-success' }
+                : item.status === '0'
+                    ? { text: 'Belum', btn: 'btn-danger' }
+                    : { text: 'Tidak Valid', btn: 'btn-secondary' };
+
+            return `
                 <li class="mb-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="me-2">${item.nama_pelatihan}</span>
                         <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn rounded-pill ${item.status == '1' ? 'btn-success' : 'btn-danger'} toggle-status"
-                                data-id="${item.id}" data-status="${item.status}">
-                                ${item.status == '1' ? 'Sudah' : 'Belum'}
+                            <button type="button"
+                                class="btn rounded-pill ${status.btn} toggle-status"
+                                data-id="${item.id}"
+                                data-status="${item.status ?? ''}">
+                                ${status.text}
                             </button>
-                            <button type="button" class="btn rounded-pill btn-danger delete-competence ms-1" data-id="${item.id}">
+                            <button type="button"
+                                class="btn rounded-pill btn-danger delete-competence ms-1"
+                                data-id="${item.id}">
                                 <i class="icon-base ti tabler-trash icon-sm"></i>
                             </button>
                         </div>
                     </div>
-                </li>`).join('')}
-        </ul>`;
-    }
+                </li>`;
+        }).join('')}
+    </ul>`;
+}
+
 
     function showSwal(icon, title, text) {
         Swal.fire({ icon, title, text });
@@ -842,30 +856,27 @@ const getInstitutionDetail = (id, type = "fasyankes", cb) => {
     $('#formUraianTugas').on('submit', function(e) {
         e.preventDefault();
 
-        let userUraian = $('#user_uraiantugas').val();
-        let userPelatihan = $('#user_pelatihan').val();
-
-        if (!userUraian) return showSwal('warning', 'Peringatan', 'Uraian tugas wajib diisi!');
+        const userUraian = $('#user_uraiantugas').val();
+        const userPelatihan = $('#user_pelatihan').val();
 
         $.post({
             url: "<?= base_url('profile/jobdesc-competence') ?>",
-            data: { user_uraiantugas: userUraian, user_pelatihan: userPelatihan },
+            data: { "<?= csrf_token() ?>": "<?= csrf_hash() ?>", user_uraiantugas: userUraian, user_pelatihan: userPelatihan },
             dataType: 'json',
             success: function(response) {
                 if(response.success){
                     showSwal('success', 'Berhasil', response.message);
                     tableJobdesc.ajax.reload(null, false);
+                    $('#formUraianTugas')[0].reset();
+                    $('#user_pelatihan').val(null).trigger('change');
                     $('#modalUraianTugas').modal('hide');
                 } else {
                     showSwal('warning', 'Gagal', response.message);
                 }
-            },
-            error: function(xhr) {
-                showSwal('error', 'Terjadi Kesalahan', 'Silakan coba lagi');
-                console.error(xhr.responseText);
             }
         });
     });
+
 
     $('#tableUraianTugas').on('click', '.toggle-status, .delete-competence', function(e) {
         e.stopPropagation();

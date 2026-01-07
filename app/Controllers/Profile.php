@@ -10,6 +10,7 @@ use App\Models\UsersInstitutionsModel;
 use App\Models\ReferenceDataModel;
 use App\Models\UsersJobdescModel;
 use App\Models\UsersCompetenceModel;
+use App\Models\MasterTrainingModel;
 use App\Services\NotificationService;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -46,6 +47,17 @@ class Profile extends BaseController
 
 
         return view('users/profile', ['title' => 'Profile', 'userDetail' => $userDetail, 'data'  => $userDetail, 'jenjangPendidikan' => $jenjangPendidikan, 'jurusanProfesi' => $jurusanProfesi]);
+    }
+
+    /**
+     * Helper response
+     */
+    private function errorResponse(string $message, int $code = 400)
+    {
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => $message
+        ], $code);
     }
 
     public function putDetail()
@@ -271,57 +283,130 @@ class Profile extends BaseController
     {
         $session = session();
 
-        $_id_users      = $session->get('_id_users');
-        $jobdescModel   = new UsersJobdescModel();
-        $competenceModel = new UsersCompetenceModel();
+        $_id_users = $session->get('_id_users');
+        if (!$_id_users) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], ResponseInterface::HTTP_UNAUTHORIZED);
+        }
 
-        $jobDescription = $this->request->getPost('user_uraiantugas');
+        $jobDescription = trim((string) $this->request->getPost('user_uraiantugas'));
         $trainings      = $this->request->getPost('user_pelatihan');
 
-        $jobdesc = $jobdescModel
-            ->where('_id_users', $_id_users)
-            ->where('job_description', $jobDescription)
-            ->first();
-
-        if (!$jobdesc) {
-            $newJobdescId = Uuid::uuid7()->toString();
-
-            $jobdescModel->insert([
-                'id'              => $newJobdescId,
-                '_id_users'       => $_id_users,
-                'job_description' => $jobDescription
-            ]);
-
-            $idUsersJobdesc = $newJobdescId;
-        } else {
-            $idUsersJobdesc = $jobdesc['id'];
+        if ($jobDescription === '') {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Uraian tugas wajib diisi!'
+            ], 400);
         }
 
-        if (is_array($trainings)) {
-            foreach ($trainings as $training) {
-                $trainingData = explode("&&", $training);
+        if (!is_array($trainings) || empty($trainings)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Pengembangan kompetensi wajib diisi!'
+            ], 400);
+        }
 
-                $exists = $competenceModel
-                    ->where('_id_users_jobdesc', $idUsersJobdesc)
-                    ->where('_id_master_training', $trainingData[0])
-                    ->first();
+        $validatedTrainings = [];
+        $trainingIds        = [];
 
-                if (!$exists) {
-                    $newCompetenceId = Uuid::uuid7()->toString();
-                    $competenceModel->insert([
-                        'id'                  => $newCompetenceId,
-                        '_id_users_jobdesc'   => $idUsersJobdesc,
-                        '_id_master_training' => $trainingData[0],
-                        'status'              => $trainingData[1]
-                    ]);
-                }
+        foreach ($trainings as $training) {
+
+            if (!is_string($training)) {
+                return $this->errorResponse('Data pengembangan kompetensi tidak valid');
             }
+
+            $parts = explode('&&', $training, 2);
+            if (count($parts) !== 2) {
+                return $this->errorResponse('Format data pengembangan kompetensi tidak valid');
+            }
+
+            [$trainingId, $status] = $parts;
+
+            if ($trainingId === '' || !in_array($status, ['0', '1'], true)) {
+                return $this->errorResponse('Data pengembangan kompetensi tidak valid');
+            }
+
+            $validatedTrainings[] = [
+                'training_id' => $trainingId,
+                'status'      => $status
+            ];
+
+            $trainingIds[] = $trainingId;
         }
 
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Data berhasil disimpan.'
-        ], ResponseInterface::HTTP_OK);
+        $trainingModel = new \App\Models\MasterTrainingModel();
+
+        $existingIds = $trainingModel
+            ->whereIn('id', $trainingIds)
+            ->findColumn('id');
+
+        if (count($existingIds) !== count(array_unique($trainingIds))) {
+            return $this->errorResponse('Data pengembangan kompetensi tidak ditemukan');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            $jobdescModel    = new \App\Models\UsersJobdescModel();
+            $competenceModel = new \App\Models\UsersCompetenceModel();
+
+            // Jobdesc
+            $jobdesc = $jobdescModel
+                ->where('_id_users', $_id_users)
+                ->where('job_description', $jobDescription)
+                ->first();
+
+            $idUsersJobdesc = $jobdesc['id'] ?? Uuid::uuid7()->toString();
+
+            if (!$jobdesc) {
+                $jobdescModel->insert([
+                    'id'              => $idUsersJobdesc,
+                    '_id_users'       => $_id_users,
+                    'job_description' => $jobDescription
+                ]);
+            }
+
+            // Existing competence
+            $existingCompetence = $competenceModel
+                ->where('_id_users_jobdesc', $idUsersJobdesc)
+                ->findColumn('_id_master_training');
+
+            // Insert competence
+            foreach ($validatedTrainings as $item) {
+                if (in_array($item['training_id'], $existingCompetence, true)) {
+                    continue;
+                }
+
+                $competenceModel->insert([
+                    'id'                  => Uuid::uuid7()->toString(),
+                    '_id_users_jobdesc'   => $idUsersJobdesc,
+                    '_id_master_training' => $item['training_id'],
+                    'status'              => $item['status']
+                ]);
+            }
+
+            if ($db->transStatus() === false) {
+                $db->transRollback();
+                return $this->errorResponse('Gagal menyimpan data', 500);
+            }
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Data berhasil disimpan.'
+            ], ResponseInterface::HTTP_OK);
+
+        } catch (\Throwable $e) {
+
+            $db->transRollback();
+            log_message('error', $e->getMessage());
+
+            return $this->errorResponse('Terjadi kesalahan sistem', 500);
+        }
     }
 
     public function listJobDescCompetence()

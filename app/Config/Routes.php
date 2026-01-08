@@ -59,6 +59,7 @@ $routes->group('', ['filter' => ['authweb',  'autologin', 'role']], function ($r
 	$routes->post('/profile/update-status-competence', 'Profile::updateStatusCompetence');
 	$routes->post('/profile/delete-competence', 'Profile::deleteCompetence');
 	$routes->get('/profile/incomplete-competence', 'Profile::getIncompleteCompetence', ['as' => 'user.getIncompleteCompetence']);
+	$routes->get('/profile/competence', 'Profile::getCompetence', ['as' => 'user.getCompetence']);
 
 	$routes->post('/profile', 'Profile::putDetail', ['as' => 'profile']);
 

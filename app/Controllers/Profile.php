@@ -87,9 +87,9 @@ class Profile extends BaseController
             '_id_villages' => $this->request->getPost('user_villages'),
             'jenjang_pendidikan' => $this->request->getPost('user_jenjang_pendidikan'),
             'jurusan_profesi' => $this->request->getPost('user_jurusan_profesi'),
-            
+
         ];
-        
+
         $data['jurusan_profesi_others'] = $this->request->getPost('user_jurusan_profesi_manual') ?? null;
 
 
@@ -540,6 +540,23 @@ class Profile extends BaseController
             ->select('DISTINCT(c._id_master_training) AS training_id, t.nama_pelatihan')
             ->where([
                 'c.status' => 0,
+                'j._id_users' => $_id_users
+            ])
+            ->get()
+            ->getResult();
+
+        return $this->response->setJSON($result);
+    }
+
+    public function getCompetence()
+    {
+        $_id_users = $this->request->getGet('_id_users') ?? session()->get('_id_users');
+        $builder = \Config\Database::connect();
+        $result = $builder->table('users_competence c')
+            ->join('users_jobdesc j', 'c._id_users_jobdesc = j.id')
+            ->join('master_training t', 'c._id_master_training = t.id')
+            ->select('DISTINCT(c._id_master_training) AS training_id, t.nama_pelatihan')
+            ->where([
                 'j._id_users' => $_id_users
             ])
             ->get()

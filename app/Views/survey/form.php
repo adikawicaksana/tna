@@ -160,7 +160,7 @@
 							}, function(res) {
 								if (res.success) {
 									tableJobdesc.ajax.reload(null, false);
-									getTrainingPlanDropdown();
+									// getTrainingPlanDropdown();
 								} else {
 									alert('Gagal update status');
 								}
@@ -183,7 +183,7 @@
 							}, function(res) {
 								if (res.success) {
 									tableJobdesc.ajax.reload(null, false);
-									getTrainingPlanDropdown();
+									// getTrainingPlanDropdown();
 								} else {
 									showSwal('error', 'Gagal', res.message);
 								}
@@ -272,7 +272,7 @@
 						showSwal('success', 'Berhasil', response.message);
 						tableJobdesc.ajax.reload(null, false);
 						$('#modalUraianTugas').modal('hide');
-						getTrainingPlanDropdown();
+						// getTrainingPlanDropdown();
 					} else {
 						showSwal('warning', 'Gagal', response.message);
 					}

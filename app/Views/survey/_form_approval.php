@@ -127,7 +127,7 @@ use App\Models\SurveyModel;
 		let trainingPlan = $('#training_plan');
 		trainingPlan.html('');
 		$.get({
-			url: "<?= route_to('user.getIncompleteCompetence') ?>",
+			url: "<?= route_to('user.getCompetence') ?>",
 			data: {
 				_id_users: "<?= $data->respondent_id ?>"
 			},
